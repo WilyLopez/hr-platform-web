@@ -1,18 +1,15 @@
-import type { Metadata } from 'next';
+import { LandingTopbar } from "@/components/layout/landing/Topbar";
+import { LandingFooter } from "@/components/layout/landing/Footer";
+import { ToastProvider } from "@/components/feedback/ToastProvider";
 
-export const metadata: Metadata = {
-  title: 'SisRRHH - Plataforma SaaS de Gestión de RRHH',
-  description: 'Gestiona tu equipo con tecnología enterprise. Automatiza asistencia, vacaciones, permisos y nómina.',
-};
-
-export default function LandingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function LandingLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      {children}
-    </>
+    <ToastProvider>
+      <div className="min-h-screen flex flex-col bg-white">
+        <LandingTopbar />
+        <main className="flex-1">{children}</main>
+        <LandingFooter />
+      </div>
+    </ToastProvider>
   );
 }
