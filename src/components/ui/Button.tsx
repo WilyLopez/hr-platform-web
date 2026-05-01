@@ -3,16 +3,17 @@ import { forwardRef } from "react";
 import { cn } from "@/utils/cn";
 import { Spinner } from "./Spinner";
 
-type Variant = "primary" | "secondary" | "danger" | "ghost" | "outline";
+type Variant = "primary" | "secondary" | "danger" | "ghost" | "outline" | "brand" | "link";
 type Size    = "sm" | "md" | "lg";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?:  Variant;
-  size?:     Size;
-  loading?:  boolean;
-  leftIcon?: React.ReactNode;
+  variant?:   Variant;
+  size?:      Size;
+  loading?:   boolean;
+  leftIcon?:  React.ReactNode;
   rightIcon?: React.ReactNode;
   fullWidth?: boolean;
+  isIcon?:    boolean;
 }
 
 const variants: Record<Variant, string> = {
@@ -21,6 +22,8 @@ const variants: Record<Variant, string> = {
   danger:    "bg-danger text-white hover:bg-danger-dark border-transparent",
   ghost:     "bg-transparent text-neutral-600 hover:bg-neutral-100 border-transparent",
   outline:   "bg-white text-brand border-brand hover:bg-brand-pale",
+  brand:     "bg-brand text-white hover:bg-brand-dark active:bg-brand-dark border-transparent",
+  link:      "bg-transparent text-brand hover:underline p-0 h-auto border-transparent font-normal",
 };
 
 const sizes: Record<Size, string> = {
@@ -38,6 +41,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       leftIcon,
       rightIcon,
       fullWidth = false,
+      isIcon = false,
       disabled,
       className,
       children,
@@ -55,7 +59,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           "transition-colors focus-visible:outline-none focus-visible:ring-2",
           "focus-visible:ring-brand/40 disabled:opacity-50 disabled:cursor-not-allowed",
           variants[variant],
-          sizes[size],
+          !isIcon && sizes[size],
+          isIcon && "p-1.5",
           fullWidth && "w-full",
           className
         )}

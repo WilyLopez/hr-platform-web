@@ -1,9 +1,10 @@
 import { cn } from "@/utils/cn";
 
 interface CardProps {
-  children:   React.ReactNode;
-  className?: string;
-  padding?:   boolean;
+  children:       React.ReactNode;
+  className?:     string;
+  padding?:       boolean;
+  overflowHidden?: boolean;
 }
 
 interface CardHeaderProps {
@@ -18,9 +19,9 @@ interface CardBodyProps {
   className?: string;
 }
 
-export function Card({ children, className, padding = false }: CardProps) {
+export function Card({ children, className, padding = false, overflowHidden = false }: CardProps) {
   return (
-    <div className={cn("card", padding && "p-6", className)}>
+    <div className={cn("card", padding && "p-6", overflowHidden && "overflow-hidden", className)}>
       {children}
     </div>
   );
