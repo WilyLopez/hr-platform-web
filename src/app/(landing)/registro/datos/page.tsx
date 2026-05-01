@@ -6,55 +6,57 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Select, Card } from "@/components/ui";
 import { StepIndicator } from "@/components/forms/StepIndicator";
 import { FormSection } from "@/components/forms/FormSection";
-import { empresaService } from "@/services/empresa.service";
-import { registrarEmpresaSchema, type RegistrarEmpresaInput } from "@/lib/schemas/empresa.schema";
-import { useToast } from "@/hooks/useToast";
+import { datosEmpresaSchema, type DatosEmpresaInput } from "@/lib/schemas/empresa.schema";
 import { usePlanes } from "@/hooks/usePlanes";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 const STEPS = [
   { label: "Validar RUC" },
   { label: "Datos empresa" },
+  { label: "Datos propietario" },
   { label: "Confirmación" },
 ];
 
 export default function RegistroDatosPage() {
   const router = useRouter();
-  const toast  = useToast();
   const { data: planes, isLoading: loadingPlanes } = usePlanes();
-  const [loading, setLoading] = useState(false);
-  const [rucData, setRucData] = useState<Record<string, string> | null>(null);
-
-  useEffect(() => {
-    const raw = sessionStorage.getItem("ruc_data");
-    if (!raw) { router.replace("/registro"); return; }
-    setRucData(JSON.parse(raw));
-  }, [router]);
+  const [rucData, setRucData] = useState<any>(null);
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<RegistrarEmpresaInput>({
-    resolver:      zodResolver(registrarEmpresaSchema),
-    defaultValues: {
-      ruc:       rucData?.ruc ?? "",
-      direccion: rucData?.direccion ?? "",
-    },
+  } = useForm<DatosEmpresaInput>({
+    resolver: zodResolver(datosEmpresaSchema),
   });
 
-  async function onSubmit(data: RegistrarEmpresaInput) {
-    setLoading(true);
-    try {
-      const empresa = await empresaService.registrar(data);
-      sessionStorage.setItem("empresa_registrada", JSON.stringify(empresa));
-      sessionStorage.removeItem("ruc_data");
-      router.push("/registro/confirmacion");
-    } catch {
-      toast.error("No se pudo completar el registro. Verifica los datos e intenta nuevamente.");
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    const raw = sessionStorage.getItem("ruc_data");
+    if (!raw) {
+      router.replace("/registro");
+      return;
     }
+    const parsedData = JSON.parse(raw);
+    setRucData(parsedData);
+    
+    // Obtener datos previos si el usuario regresó de la siguiente pantalla
+    const savedForm = sessionStorage.getItem("registro_form_data");
+    const initialData = savedForm ? JSON.parse(savedForm) : {};
+
+    reset({
+      ruc: parsedData.ruc ?? "",
+      direccion: initialData.direccion || parsedData.direccion || "",
+      correo: initialData.correo || "",
+      telefono: initialData.telefono || "",
+      plan_id: initialData.plan_id || undefined,
+    });
+  }, [router, reset]);
+
+  async function onSubmit(data: DatosEmpresaInput) {
+    // Guardar temporalmente y pasar al siguiente paso
+    sessionStorage.setItem("registro_form_data", JSON.stringify(data));
+    router.push("/registro/propietario");
   }
 
   const planOptions = (planes ?? []).map((p) => ({
@@ -65,9 +67,9 @@ export default function RegistroDatosPage() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-neutral-900">Completa tus datos</h1>
+        <h1 className="text-2xl font-bold text-neutral-900">Datos de la Empresa</h1>
         <p className="text-sm text-neutral-500 mt-1">
-          Empresa: <strong>{rucData?.razon_social}</strong>
+          RUC: <strong>{rucData?.ruc}</strong> - {rucData?.razon_social}
         </p>
       </div>
 
@@ -78,23 +80,29 @@ export default function RegistroDatosPage() {
       <Card padding>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <Input
-            label="RUC"
+            label="RUC (Solo lectura)"
             value={rucData?.ruc ?? ""}
             disabled
-            {...register("ruc")}
           />
 
-          <FormSection title="Información de contacto">
+          <FormSection title="Información de la empresa">
+             <Input
+              label="Dirección fiscal"
+              placeholder="Av. Principal 123, Lima"
+              required
+              error={errors.direccion?.message}
+              {...register("direccion")}
+            />
             <Input
-              label="Correo electrónico"
+              label="Correo corporativo"
               type="email"
-              placeholder="admin@empresa.com"
+              placeholder="contacto@empresa.com"
               required
               error={errors.correo?.message}
               {...register("correo")}
             />
             <Input
-              label="Teléfono"
+              label="Teléfono corporativo"
               placeholder="999888777"
               required
               error={errors.telefono?.message}
@@ -102,26 +110,8 @@ export default function RegistroDatosPage() {
             />
           </FormSection>
 
-          <Input
-            label="Dirección fiscal"
-            placeholder="Av. Principal 123, Lima"
-            required
-            error={errors.direccion?.message}
-            {...register("direccion")}
-          />
-
-          <Input
-            label="Contraseña"
-            type="password"
-            placeholder="Mínimo 8 caracteres"
-            required
-            hint="Esta será la contraseña del PROPIETARIO de la cuenta."
-            error={errors.contrasena?.message}
-            {...register("contrasena")}
-          />
-
           <Select
-            label="Plan"
+            label="Selecciona un Plan"
             options={planOptions}
             placeholder={loadingPlanes ? "Cargando planes..." : "Selecciona un plan"}
             required
@@ -142,10 +132,9 @@ export default function RegistroDatosPage() {
             <Button
               type="submit"
               fullWidth
-              loading={loading}
               rightIcon={<ArrowRight size={15} />}
             >
-              Registrar empresa
+              Siguiente: Datos Propietario
             </Button>
           </div>
         </form>

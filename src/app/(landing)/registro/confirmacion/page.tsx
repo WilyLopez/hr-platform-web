@@ -8,24 +8,25 @@ import { CheckCircle, ArrowRight, Mail } from "lucide-react";
 const STEPS = [
   { label: "Validar RUC" },
   { label: "Datos empresa" },
+  { label: "Datos propietario" },
   { label: "Confirmación" },
 ];
 
 export default function RegistroConfirmacionPage() {
   const router  = useRouter();
-  const [empresa, setEmpresa] = useState<Record<string, string> | null>(null);
+  const [empresa, setEmpresa] = useState<any>(null);
 
   useEffect(() => {
     const raw = sessionStorage.getItem("empresa_registrada");
     if (!raw) { router.replace("/registro"); return; }
     setEmpresa(JSON.parse(raw));
-    sessionStorage.removeItem("empresa_registrada");
+    // No eliminar inmediatamente para permitir ver los datos si refresca
   }, [router]);
 
   return (
     <div className="space-y-6">
       <div className="flex justify-center">
-        <StepIndicator steps={STEPS} current={2} />
+        <StepIndicator steps={STEPS} current={3} />
       </div>
 
       <Card padding>
