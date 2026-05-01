@@ -12,19 +12,29 @@ export const registrarEmpresaSchema = z.object({
   correo:     z.string().email("Correo inválido"),
   telefono:   z.string().min(7, "Teléfono inválido").max(15),
   direccion:  z.string().min(5, "Ingresa una dirección válida"),
+  nombres:    z.string().min(2, "Ingresa los nombres"),
+  apellidos:  z.string().min(2, "Ingresa los apellidos"),
   contrasena: z
     .string()
     .min(8, "La contraseña debe tener al menos 8 caracteres"),
   plan_id: z.number({ required_error: "Selecciona un plan" }),
 });
 
-export const actualizarEmpresaSchema = z.object({
-  nombre_comercial: z.string().min(2, "Ingresa el nombre comercial"),
-  telefono:         z.string().min(7).max(15),
-  direccion:        z.string().min(5),
-  logo_url:         z.string().url().optional().nullable(),
+// Esquema para el Paso 2 (Datos Empresa)
+export const datosEmpresaSchema = registrarEmpresaSchema.omit({
+  nombres: true,
+  apellidos: true,
+  contrasena: true,
+});
+
+// Esquema para el Paso 3 (Datos Propietario)
+export const datosPropietarioSchema = registrarEmpresaSchema.pick({
+  nombres: true,
+  apellidos: true,
+  contrasena: true,
 });
 
 export type ValidarRucInput       = z.infer<typeof validarRucSchema>;
 export type RegistrarEmpresaInput = z.infer<typeof registrarEmpresaSchema>;
-export type ActualizarEmpresaInput = z.infer<typeof actualizarEmpresaSchema>;
+export type DatosEmpresaInput     = z.infer<typeof datosEmpresaSchema>;
+export type DatosPropietarioInput = z.infer<typeof datosPropietarioSchema>;
