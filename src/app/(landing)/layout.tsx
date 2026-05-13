@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'SisRRHH - Plataforma SaaS de Gestión de RRHH',
-  description: 'Gestiona tu equipo con tecnología enterprise. Automatiza asistencia, vacaciones, permisos y nómina.',
+  title: 'NexusRH - Gestion de Recursos Humanos SaaS',
+  description: 'Plataforma SaaS multi-tenant para asistencia QR, empleados, solicitudes, auditoria y reportes.',
 };
 
 export default function LandingLayout({
