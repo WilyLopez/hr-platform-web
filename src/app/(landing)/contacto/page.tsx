@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { contactoService } from "@/services/contacto.service";
 
 export default function ContactoPage() {
     const [formData, setFormData] = useState({
@@ -22,18 +23,33 @@ export default function ContactoPage() {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const [enviando, setEnviando] = useState(false);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Aquí iría la lógica de envío del formulario
-        console.log("Formulario enviado:", formData);
-        alert("¡Gracias! Nos contactaremos pronto.");
-        setFormData({
-            nombre: "",
-            email: "",
-            empresa: "",
-            telefono: "",
-            mensaje: "",
-        });
+        setEnviando(true);
+        setError("");
+        setSuccess(false);
+        
+        try {
+            await contactoService.enviarContacto(formData);
+            setSuccess(true);
+            setFormData({
+                nombre: "",
+                email: "",
+                empresa: "",
+                telefono: "",
+                mensaje: "",
+            });
+            setTimeout(() => setSuccess(false), 5000);
+        } catch (err: any) {
+            setError("Error al enviar el mensaje. Intenta de nuevo.");
+            console.error("Error:", err);
+        } finally {
+            setEnviando(false);
+        }
     };
 
     return (
@@ -249,12 +265,22 @@ export default function ContactoPage() {
                                         placeholder="Cuéntanos cómo podemos ayudarte..."
                                     />
                                 </div>
-
+                                {error && (
+                                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                                        {error}
+                                    </div>
+                                )}
+                                {success && (
+                                    <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                                        ¡Gracias! Tu mensaje fue enviado exitosamente. Nos contactaremos pronto.
+                                    </div>
+                                )}
                                 <button
                                     type="submit"
-                                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-medium"
+                                    disabled={enviando}
+                                    className="w-full bg-blue-600 text-white py-3 rounded-md font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400"
                                 >
-                                    Enviar Mensaje
+                                    {enviando ? "Enviando..." : "Enviar Mensaje"}
                                 </button>
                             </form>
                         </div>

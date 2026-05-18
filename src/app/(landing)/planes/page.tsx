@@ -1,7 +1,10 @@
+"use client";
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui";
 import { CheckCircle, X } from "lucide-react";
+import { usePlanes } from "@/hooks/usePlanes";
 
 export const metadata: Metadata = { title: "Planes y precios" };
 
@@ -26,6 +29,16 @@ function FeatureValue({ value }: { value: boolean | string }) {
 }
 
 export default function PlanesPage() {
+  const { data: planes, isLoading } = usePlanes();
+  
+  if (isLoading) {
+    return <div className="max-w-4xl mx-auto px-4 py-16 text-center">Cargando planes...</div>;
+  }
+
+  if (!planes || planes.length === 0) {
+    return <div className="max-w-4xl mx-auto px-4 py-16 text-center">No hay planes disponibles</div>;
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-16">
       <div className="text-center mb-12">
@@ -36,22 +49,19 @@ export default function PlanesPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-4">
-        {[
-          { name: "Básico", price: "S/ 49.90", highlight: false },
-          { name: "Pro",    price: "S/ 99.90", highlight: true  },
-        ].map((plan) => (
+        {planes.map((plan, index) => (
           <div
-            key={plan.name}
-            className={`card p-6 text-center ${plan.highlight ? "ring-2 ring-brand" : ""}`}
+            key={plan.id}
+            className={`card p-6 text-center ${index === planes.length - 1 ? "ring-2 ring-brand" : ""}`}
           >
-            {plan.highlight && (
+            {index === planes.length - 1 && (
               <span className="inline-block mb-2 px-2.5 py-0.5 rounded-full bg-brand text-white text-xs font-medium">
                 Más popular
               </span>
             )}
-            <h2 className="text-lg font-bold text-neutral-900">{plan.name}</h2>
+            <h2 className="text-lg font-bold text-neutral-900">{plan.nombre}</h2>
             <div className="mt-2">
-              <span className="text-3xl font-bold">{plan.price}</span>
+              <span className="text-3xl font-bold">S/ {plan.precio}</span>
               <span className="text-sm text-neutral-400"> / mes</span>
             </div>
             <Link href="/registro" className="block mt-4">

@@ -12,6 +12,7 @@ import {
   BarChart2,
   ChevronRight
 } from "lucide-react";
+import { usePlanes } from "@/hooks/usePlanes";
 
 const stats = [
   { value: "86", label: "requisitos funcionales" },
@@ -76,23 +77,22 @@ const slides = [
   },
 ];
 
-const plans = [
-  {
-    name: "Básico",
-    price: "S/ 49.90",
-    features: ["Hasta 20 usuarios activos", "5 GB de almacenamiento", "Soporte incluido", "Cambio de plan desde panel"]
-  },
-  {
-    name: "Pro",
-    price: "S/ 99.90",
-    features: ["Hasta 100 usuarios activos", "20 GB de almacenamiento", "Soporte incluido", "Cambio de plan desde panel"],
-    highlight: true
-  },
-];
-
 export default function LandingPage() {
   const [activeSlide, setActiveSlide] = useState(0);
   const slide = slides[activeSlide];
+  const { data: planesData, isLoading: loadingPlanes } = usePlanes();
+  
+  const plans = planesData?.slice(0, 2).map((plan: any, index: number) => ({
+    name: plan.nombre,
+    price: `S/ ${plan.precio}`,
+    features: [
+      `Hasta ${plan.usuarios_maximos} usuarios activos`,
+      `${plan.almacenamiento_gb} GB de almacenamiento`,
+      "Soporte incluido",
+      "Cambio de plan desde panel"
+    ],
+    highlight: index === 1
+  })) || [];
 
   return (
     <div className="min-h-screen bg-white text-slate-950">
@@ -298,7 +298,12 @@ export default function LandingPage() {
               <h2 className="mt-3 text-3xl font-bold text-slate-950">Planes simples con prueba gratuita</h2>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
-              {plans.map((plan) => (
+              {loadingPlanes ? (
+                <div className="col-span-2 text-center py-8">Cargando planes...</div>
+              ) : plans.length === 0 ? (
+                <div className="col-span-2 text-center py-8">No hay planes disponibles</div>
+              ) : (
+                plans.map((plan) => (
                 <article 
                   key={plan.name} 
                   className={`rounded-xl border bg-white p-6 shadow-sm ${
