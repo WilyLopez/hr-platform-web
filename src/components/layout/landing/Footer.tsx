@@ -6,11 +6,7 @@ export function LandingFooter() {
             <div className="max-w-6xl mx-auto px-4 py-10">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-md bg-brand flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">
-                                S
-                            </span>
-                        </div>
+                        <img src="/logo.svg" alt="NexusRH" className="h-7 w-auto" />
                         <span className="text-sm font-bold text-neutral-800">
                             NexusRH
                         </span>
