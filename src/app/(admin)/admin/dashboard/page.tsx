@@ -20,17 +20,33 @@ export default function AdminDashboardPage() {
   const [solicitudesPendientes, setSolicitudesPendientes] = useState<number>(0);
   const [solicitudesRecientes, setSolicitudesRecientes] = useState<Solicitud[]>([]);
 
+  // Nuevos estados para asistencias
+  const [marcajesHoy, setMarcajesHoy] = useState<number>(0);
+  const [tardanzasHoy, setTardanzasHoy] = useState<number>(0);
+
   useEffect(() => {
     const cargarDashboard = async () => {
       setLoading(true);
       try {
-        // Ejecutamos ambas peticiones en paralelo para mayor velocidad
-        const [empleadosRes, solicitudesRes] = await Promise.all([
+        // Obtenemos la fecha local exacta para evitar saltos por UTC
+        const hoy = new Date();
+        const year = hoy.getFullYear();
+        const month = String(hoy.getMonth() + 1).padStart(2, "0");
+        const day = String(hoy.getDate()).padStart(2, "0");
+        const fechaFormateada = `${year}-${month}-${day}`;
+
+        // Ejecutamos las tres peticiones en paralelo para mayor velocidad
+        const [empleadosRes, solicitudesRes, asistenciaRes] = await Promise.all([
           empleadoService.listar({ estado: "ACTIVO", page: 1, page_size: 5 }),
-          solicitudService.listar({ estado: "PENDIENTE", page: 1 })
+          solicitudService.listar({ estado: "PENDIENTE", page: 1 }),
+          fetch(`/api/v1/asistencia/?fecha=${fechaFormateada}`, {
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem("token") || ""}`
+            }
+          }).then(res => res.ok ? res.json() : [])
         ]);
 
-        // Adaptación para PaginatedResponse
+        // Adaptación para PaginatedResponse (Empleados y Solicitudes)
         const empData = (empleadosRes as any).results || (empleadosRes as any).data || empleadosRes;
         const solData = (solicitudesRes as any).results || (solicitudesRes as any).data || solicitudesRes;
 
@@ -39,6 +55,13 @@ export default function AdminDashboardPage() {
 
         setSolicitudesRecientes(Array.isArray(solData) ? solData.slice(0, 5) : []);
         setSolicitudesPendientes((solicitudesRes as any).count || (Array.isArray(solData) ? solData.length : 0));
+
+        // Adaptación para Asistencias
+        const asisData = (asistenciaRes as any).results || (asistenciaRes as any).data || asistenciaRes;
+        const arrAsistencias = Array.isArray(asisData) ? asisData : [];
+        
+        setMarcajesHoy(arrAsistencias.length);
+        setTardanzasHoy(arrAsistencias.filter((a: any) => a.es_tardanza).length);
 
       } catch (error) {
         console.error("Error al cargar los datos del dashboard", error);
@@ -95,7 +118,7 @@ export default function AdminDashboardPage() {
           </CardBody>
         </Card>
 
-        {/* Card: Marcajes Hoy (Mock/Placeholder para futura integración) */}
+        {/* Card: Marcajes Hoy */}
         <Card>
           <CardBody className="flex items-center gap-4 p-4">
             <div className="p-3 bg-green-100 text-green-600 rounded-xl">
@@ -104,22 +127,22 @@ export default function AdminDashboardPage() {
             <div>
               <p className="text-sm text-neutral-500 font-medium">Marcajes hoy</p>
               <h4 className="text-2xl font-bold text-neutral-800">
-                {loading ? <Spinner size="sm" /> : "—"}
+                {loading ? <Spinner size="sm" /> : marcajesHoy}
               </h4>
             </div>
           </CardBody>
         </Card>
 
-        {/* Card: Tardanzas Hoy (Mock/Placeholder para futura integración) */}
+        {/* Card: Tardanzas Hoy */}
         <Card>
           <CardBody className="flex items-center gap-4 p-4">
-            <div className="p-3 bg-red-100 text-red-600 rounded-xl">
+            <div className={`p-3 rounded-xl ${tardanzasHoy > 0 ? 'bg-red-100 text-red-600' : 'bg-neutral-100 text-neutral-600'}`}>
               <FileText size={24} />
             </div>
             <div>
               <p className="text-sm text-neutral-500 font-medium">Tardanzas hoy</p>
-              <h4 className="text-2xl font-bold text-neutral-800">
-                {loading ? <Spinner size="sm" /> : "—"}
+              <h4 className={`text-2xl font-bold ${tardanzasHoy > 0 ? 'text-red-600' : 'text-neutral-800'}`}>
+                {loading ? <Spinner size="sm" /> : tardanzasHoy}
               </h4>
             </div>
           </CardBody>
