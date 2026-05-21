@@ -1,0 +1,301 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { PageHeader } from "@/components/layout/shared/PageHeader";
+import { Card, CardBody, Button } from "@/components/ui";
+import { empleadoService } from "@/services/empleado.service";
+import { useToast } from "@/hooks/useToast";
+import type { TipoDocumento, RegistrarEmpleadoInput } from "@/types/empleado.types";
+import { 
+  ArrowLeft, 
+  Save, 
+  User, 
+  Mail, 
+  Briefcase, 
+  CreditCard, 
+  MapPin, 
+  Calendar 
+} from "lucide-react";
+import Link from 'next/link';
+
+export default function NuevoEmpleadoPage() {
+  const router = useRouter();
+  const toast = useToast();
+  const [loading, setLoading] = useState(false);
+
+  // Estados individuales para cada campo del formulario
+  const [nombres, setNombres] = useState('');
+  const [apellidos, setApellidos] = useState('');
+  const [tipoDocumento, setTipoDocumento] = useState<TipoDocumento>('DNI');
+  const [numeroDocumento, setNumeroDocumento] = useState('');
+  const [correo, setCorreo] = useState('');
+  const [cargo, setCargo] = useState('');
+  const [area, setArea] = useState('');
+  const [sedeId, setSedeId] = useState('');
+  const [fechaIngreso, setFechaIngreso] = useState(new Date().toISOString().split('T')[0]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validaciones básicas antes del envío
+    if (!numeroDocumento.trim() || !correo.trim()) {
+      toast.error("Por favor, completa los campos obligatorios.");
+      return;
+    }
+
+    setLoading(true);
+
+    const payload: RegistrarEmpleadoInput = {
+      nombres: nombres.trim(),
+      apellidos: apellidos.trim(),
+      tipo_documento: tipoDocumento,
+      numero_documento: numeroDocumento.trim(),
+      correo: correo.trim(),
+      cargo: cargo.trim(),
+      area: area.trim(),
+      sede_id: Number(sedeId) || 1, // Asigna una sede por defecto si está vacía
+      fecha_ingreso: fechaIngreso
+    };
+
+    try {
+      await empleadoService.registrar(payload);
+      toast.success("Empleado registrado exitosamente.");
+      
+      // Retornar a la lista principal y refrescar los datos
+      router.push('/admin/empleados');
+      router.refresh();
+    } catch (error) {
+      toast.error("Hubo un error al registrar al empleado. Verifica que el correo o documento no estén duplicados.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6 max-w-4xl mx-auto">
+      <PageHeader
+        title="Registrar Nuevo Empleado"
+        description="Ingresa la información básica y laboral del nuevo colaborador"
+        action={
+          <Link href="/admin/empleados">
+            <Button variant="outline" size="sm" leftIcon={<ArrowLeft size={16} />}>
+              Volver al listado
+            </Button>
+          </Link>
+        }
+      />
+
+      <Card>
+        <CardBody>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            
+            {/* Sección: Información Personal */}
+            <div>
+              <h3 className="text-sm font-bold text-neutral-800 mb-4 border-b pb-2">
+                Información Personal
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Nombres */}
+                <div>
+                  <label htmlFor="nombres" className="block text-xs font-semibold text-neutral-700 mb-1">
+                    Nombres
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <input
+                      id="nombres"
+                      type="text"
+                      required
+                      placeholder="Ej: Juan Carlos"
+                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                      value={nombres}
+                      onChange={(e) => setNombres(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Apellidos */}
+                <div>
+                  <label htmlFor="apellidos" className="block text-xs font-semibold text-neutral-700 mb-1">
+                    Apellidos
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <input
+                      id="apellidos"
+                      type="text"
+                      required
+                      placeholder="Ej: Pérez Quispe"
+                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                      value={apellidos}
+                      onChange={(e) => setApellidos(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Tipo de Documento */}
+                <div>
+                  <label htmlFor="tipo_documento" className="block text-xs font-semibold text-neutral-700 mb-1">
+                    Tipo de Documento
+                  </label>
+                  <select
+                    id="tipo_documento"
+                    className="w-full px-3 py-2 border rounded-lg text-sm text-neutral-800 outline-none bg-white focus:ring-2 focus:ring-brand"
+                    value={tipoDocumento}
+                    onChange={(e) => setTipoDocumento(e.target.value as TipoDocumento)}
+                  >
+                    <option value="DNI">DNI (Documento Nacional de Identidad)</option>
+                    <option value="CE">CE (Carnet de Extranjería)</option>
+                    <option value="PASAPORTE">Pasaporte</option>
+                    <option value="RUC">RUC</option>
+                  </select>
+                </div>
+
+                {/* Número de Documento */}
+                <div>
+                  <label htmlFor="numero_documento" className="block text-xs font-semibold text-neutral-700 mb-1">
+                    Número de Documento
+                  </label>
+                  <div className="relative">
+                    <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <input
+                      id="numero_documento"
+                      type="text"
+                      required
+                      placeholder={tipoDocumento === 'DNI' ? '8 dígitos' : 'Ingresa el número'}
+                      maxLength={tipoDocumento === 'DNI' ? 8 : tipoDocumento === 'RUC' ? 11 : 20}
+                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                      value={numeroDocumento}
+                      onChange={(e) => setNumeroDocumento(e.target.value.replace(/\s/g, ''))} // Elimina espacios
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Sección: Información Laboral y de Contacto */}
+            <div>
+              <h3 className="text-sm font-bold text-neutral-800 mb-4 border-b pb-2 pt-2">
+                Información Laboral y de Contacto
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Correo Electrónico */}
+                <div className="md:col-span-2">
+                  <label htmlFor="correo" className="block text-xs font-semibold text-neutral-700 mb-1">
+                    Correo Electrónico
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <input
+                      id="correo"
+                      type="email"
+                      required
+                      placeholder="ejemplo@empresa.com"
+                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                      value={correo}
+                      onChange={(e) => setCorreo(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Área */}
+                <div>
+                  <label htmlFor="area" className="block text-xs font-semibold text-neutral-700 mb-1">
+                    Área / Departamento
+                  </label>
+                  <div className="relative">
+                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <input
+                      id="area"
+                      type="text"
+                      required
+                      placeholder="Ej: Sistemas, Contabilidad, RRHH"
+                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                      value={area}
+                      onChange={(e) => setArea(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Cargo */}
+                <div>
+                  <label htmlFor="cargo" className="block text-xs font-semibold text-neutral-700 mb-1">
+                    Cargo / Puesto
+                  </label>
+                  <div className="relative">
+                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <input
+                      id="cargo"
+                      type="text"
+                      required
+                      placeholder="Ej: Desarrollador Full-Stack, Analista"
+                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                      value={cargo}
+                      onChange={(e) => setCargo(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Sede */}
+                <div>
+                  <label htmlFor="sede_id" className="block text-xs font-semibold text-neutral-700 mb-1">
+                    Sede Asignada
+                  </label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <select
+                      id="sede_id"
+                      required
+                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none bg-white focus:ring-2 focus:ring-brand"
+                      value={sedeId}
+                      onChange={(e) => setSedeId(e.target.value)}
+                    >
+                      <option value="">Selecciona una sede...</option>
+                      <option value="1">Sede Principal - Lima</option>
+                      <option value="2">Sede Chiclayo</option>
+                      <option value="3">Sede Trujillo</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Fecha de Ingreso */}
+                <div>
+                  <label htmlFor="fecha_ingreso" className="block text-xs font-semibold text-neutral-700 mb-1">
+                    Fecha de Ingreso
+                  </label>
+                  <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-brand">
+                    <Calendar size={16} className="text-neutral-400" />
+                    <input
+                      id="fecha_ingreso"
+                      type="date"
+                      required
+                      className="w-full outline-none text-sm text-neutral-800"
+                      value={fechaIngreso}
+                      onChange={(e) => setFechaIngreso(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Acciones */}
+            <div className="flex justify-end gap-3 pt-4 border-t border-neutral-100">
+              <Link href="/admin/empleados">
+                <Button type="button" variant="outline" disabled={loading}>
+                  Cancelar
+                </Button>
+              </Link>
+              <Button type="submit" variant="brand" loading={loading} leftIcon={<Save size={16} />}>
+                Registrar Colaborador
+              </Button>
+            </div>
+
+          </form>
+        </CardBody>
+      </Card>
+    </div>
+  );
+}
