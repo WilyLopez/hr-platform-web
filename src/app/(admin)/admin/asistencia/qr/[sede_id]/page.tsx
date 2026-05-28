@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect, use } from "react";
+
+import { useState, useEffect } from "react";
 import { PageHeader }  from "@/components/layout/shared/PageHeader";
 import { Card, CardBody, Button, Spinner } from "@/components/ui";
 import { asistenciaService } from "@/services/asistencia.service";
@@ -8,9 +9,10 @@ import { calcularDiasRestantes, formatDateTime } from "@/utils/format";
 import type { TokenQR } from "@/types/asistencia.types";
 import { RefreshCw, Clock } from "lucide-react";
 
-export default function QrPage({ params }: { params: Promise<{ sede_id: string }> }) {
-  const { sede_id } = use(params);
-  const sedeId      = parseInt(sede_id, 10);
+// 1. Quitamos "Promise" del tipado de params
+export default function QrPage({ params }: { params: { sede_id: string } }) {
+  // 2. Accedemos directamente a params.sede_id sin el hook use()
+  const sedeId      = parseInt(params.sede_id, 10);
   const toast       = useToast();
   const [qr,      setQr]      = useState<TokenQR | null>(null);
   const [loading, setLoading] = useState(false);
@@ -34,8 +36,10 @@ export default function QrPage({ params }: { params: Promise<{ sede_id: string }
   useEffect(() => {
     if (!qr) return;
     const interval = setInterval(() => {
-      const secsLeft = Math.floor(
-        (new Date(qr.expira_en).getTime() - Date.now()) / 1000
+      // Usamos Math.max para evitar que el contador muestre números negativos
+      const secsLeft = Math.max(
+        0,
+        Math.floor((new Date(qr.expira_en).getTime() - Date.now()) / 1000)
       );
       setExpCount(secsLeft);
       if (secsLeft <= 0) clearInterval(interval);
