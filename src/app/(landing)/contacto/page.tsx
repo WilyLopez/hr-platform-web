@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { contactoService } from "@/services/contacto.service";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,6 +17,34 @@ const contactoSchema = z.object({
   mensaje: z.string().min(10, "El mensaje debe tener al menos 10 caracteres"),
 });
 
+    const [enviando, setEnviando] = useState(false);
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState(false);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setEnviando(true);
+        setError("");
+        setSuccess(false);
+        
+        try {
+            await contactoService.enviarContacto(formData);
+            setSuccess(true);
+            setFormData({
+                nombre: "",
+                email: "",
+                empresa: "",
+                telefono: "",
+                mensaje: "",
+            });
+            setTimeout(() => setSuccess(false), 5000);
+        } catch (err: any) {
+            setError("Error al enviar el mensaje. Intenta de nuevo.");
+            console.error("Error:", err);
+        } finally {
+            setEnviando(false);
+        }
+    };
 type ContactoFormData = z.infer<typeof contactoSchema>;
 
 const CONTACT_INFO = {
@@ -188,6 +217,44 @@ export default function ContactoPage() {
                   )}
                 </div>
 
+                                <div className="mb-6">
+                                    <label
+                                        htmlFor="mensaje"
+                                        className="block text-sm font-medium text-gray-700 mb-2"
+                                    >
+                                        Mensaje
+                                    </label>
+                                    <textarea
+                                        id="mensaje"
+                                        name="mensaje"
+                                        value={formData.mensaje}
+                                        onChange={handleChange}
+                                        required
+                                        rows={5}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Cuéntanos cómo podemos ayudarte..."
+                                    />
+                                </div>
+                                {error && (
+                                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                                        {error}
+                                    </div>
+                                )}
+                                {success && (
+                                    <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
+                                        ¡Gracias! Tu mensaje fue enviado exitosamente. Nos contactaremos pronto.
+                                    </div>
+                                )}
+                                <button
+                                    type="submit"
+                                    disabled={enviando}
+                                    className="w-full bg-blue-600 text-white py-3 rounded-md font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+                                >
+                                    {enviando ? "Enviando..." : "Enviar Mensaje"}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 <div className="mb-6">
                   <label htmlFor="empresa" className="block text-sm font-medium text-gray-700 mb-2">
                     Empresa

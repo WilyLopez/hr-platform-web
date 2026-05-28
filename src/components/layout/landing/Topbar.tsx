@@ -7,9 +7,6 @@ export function LandingTopbar() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <img src="/logo.svg" alt="NexusRH" className="h-10 w-auto" />
-          <span className="text-base font-bold text-neutral-900">
-              NexusRH
-          </span>
         </Link>
         <nav className="hidden items-center gap-7 md:flex">
           <Link href="/#modulos" className="text-sm text-slate-600 hover:text-blue-700">

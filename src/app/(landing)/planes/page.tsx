@@ -1,5 +1,12 @@
 "use client";
 
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Button } from "@/components/ui";
+import { CheckCircle, X } from "lucide-react";
+import { usePlanes } from "@/hooks/usePlanes";
+
+export const metadata: Metadata = { title: "Planes y precios" };
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui";
@@ -21,6 +28,14 @@ function FeatureValue({ value }: { value: boolean | string }) {
 }
 
 export default function PlanesPage() {
+  const { data: planes, isLoading } = usePlanes();
+  
+  if (isLoading) {
+    return <div className="max-w-4xl mx-auto px-4 py-16 text-center">Cargando planes...</div>;
+  }
+
+  if (!planes || planes.length === 0) {
+    return <div className="max-w-4xl mx-auto px-4 py-16 text-center">No hay planes disponibles</div>;
   const [planes, setPlanes] = useState<Plan[]>([]);
   const [features, setFeatures] = useState<FeatureComparison[]>([]);
   const [cargando, setCargando] = useState(true);
@@ -93,6 +108,12 @@ export default function PlanesPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-4">
+        {planes.map((plan, index) => (
+          <div
+            key={plan.id}
+            className={`card p-6 text-center ${index === planes.length - 1 ? "ring-2 ring-brand" : ""}`}
+          >
+            {index === planes.length - 1 && (
         {planes.map((plan) => (
           <div
             key={plan.id}
@@ -103,6 +124,9 @@ export default function PlanesPage() {
                 Más popular
               </span>
             )}
+            <h2 className="text-lg font-bold text-neutral-900">{plan.nombre}</h2>
+            <div className="mt-2">
+              <span className="text-3xl font-bold">S/ {plan.precio}</span>
             <h2 className="text-lg font-bold text-neutral-900">
               {plan.nombre === "BASICO" ? "Básico" : "Pro"}
             </h2>

@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Loader
 } from "lucide-react";
+import { usePlanes } from "@/hooks/usePlanes";
 import { suscripcionService } from "@/services/suscripcion.service";
 import type { Plan } from "@/types/suscripcion.types";
 
@@ -86,6 +87,19 @@ export default function LandingPage() {
   const [errorPlanes, setErrorPlanes] = useState<string | null>(null);
 
   const slide = slides[activeSlide];
+  const { data: planesData, isLoading: loadingPlanes } = usePlanes();
+  
+  const plans = planesData?.slice(0, 2).map((plan: any, index: number) => ({
+    name: plan.nombre,
+    price: `S/ ${plan.precio}`,
+    features: [
+      `Hasta ${plan.usuarios_maximos} usuarios activos`,
+      `${plan.almacenamiento_gb} GB de almacenamiento`,
+      "Soporte incluido",
+      "Cambio de plan desde panel"
+    ],
+    highlight: index === 1
+  })) || [];
 
   useEffect(() => {
     const cargarPlanes = async () => {
@@ -308,6 +322,32 @@ export default function LandingPage() {
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-800">Suscripción</span>
               <h2 className="mt-3 text-3xl font-bold text-slate-950">Planes simples con prueba gratuita</h2>
             </div>
+            <div className="grid gap-6 md:grid-cols-2">
+              {loadingPlanes ? (
+                <div className="col-span-2 text-center py-8">Cargando planes...</div>
+              ) : plans.length === 0 ? (
+                <div className="col-span-2 text-center py-8">No hay planes disponibles</div>
+              ) : (
+                plans.map((plan) => (
+                <article 
+                  key={plan.name} 
+                  className={`rounded-xl border bg-white p-6 shadow-sm ${
+                    plan.highlight ? "border-blue-700 ring-1 ring-blue-700" : "border-slate-200"
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-xl font-bold text-slate-950">{plan.name}</h3>
+                    {plan.highlight && (
+                      <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded">MÁS POPULAR</span>
+                    )}
+                  </div>
+                  <p className="mt-4 text-4xl font-bold text-slate-950">
+                    {plan.price}
+                    <span className="text-sm font-normal text-slate-500"> / mes</span>
+                  </p>
+                  <ul className="mt-6 space-y-3 text-sm text-slate-700">
+                    {plan.features.map((feature) => (
+                      <li key={feature} className="flex items-center gap-2">
             
             {cargandoPlanes && (
               <div className="flex justify-center items-center py-12">
