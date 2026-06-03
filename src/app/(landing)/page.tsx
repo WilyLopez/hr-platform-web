@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui";
 import { 
   CheckCircle, 
@@ -14,7 +14,6 @@ import {
   Loader
 } from "lucide-react";
 import { usePlanes } from "@/hooks/usePlanes";
-import { suscripcionService } from "@/services/suscripcion.service";
 import type { Plan } from "@/types/suscripcion.types";
 
 const stats = [
@@ -82,42 +81,20 @@ const slides = [
 
 export default function LandingPage() {
   const [activeSlide, setActiveSlide] = useState(0);
-  const [planes, setPlanes] = useState<Plan[]>([]);
-  const [cargandoPlanes, setCargandoPlanes] = useState(true);
-  const [errorPlanes, setErrorPlanes] = useState<string | null>(null);
-
   const slide = slides[activeSlide];
   const { data: planesData, isLoading: loadingPlanes } = usePlanes();
   
-  const plans = planesData?.slice(0, 2).map((plan: any, index: number) => ({
-    name: plan.nombre,
-    price: `S/ ${plan.precio}`,
+  const plans = planesData?.slice(0, 2).map((plan: Plan, index: number) => ({
+    name: plan.nombre === "PRO" ? "Pro" : "Básico",
+    price: `S/ ${plan.precio_mensual.toFixed(2)}`,
     features: [
-      `Hasta ${plan.usuarios_maximos} usuarios activos`,
+      `Hasta ${plan.limite_usuarios} usuarios activos`,
       `${plan.almacenamiento_gb} GB de almacenamiento`,
       "Soporte incluido",
       "Cambio de plan desde panel"
     ],
-    highlight: index === 1
+    highlight: plan.nombre === "PRO"
   })) || [];
-
-  useEffect(() => {
-    const cargarPlanes = async () => {
-      try {
-        setCargandoPlanes(true);
-        const planesData = await suscripcionService.listarPlanes();
-        setPlanes(planesData);
-        setErrorPlanes(null);
-      } catch (error) {
-        console.error("Error al cargar planes:", error);
-        setErrorPlanes("No se pudieron cargar los planes. Intenta más tarde.");
-      } finally {
-        setCargandoPlanes(false);
-      }
-    };
-
-    cargarPlanes();
-  }, []);
 
   return (
     <div className="min-h-screen bg-white text-slate-950">
@@ -322,93 +299,49 @@ export default function LandingPage() {
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-800">Suscripción</span>
               <h2 className="mt-3 text-3xl font-bold text-slate-950">Planes simples con prueba gratuita</h2>
             </div>
+            
             <div className="grid gap-6 md:grid-cols-2">
               {loadingPlanes ? (
-                <div className="col-span-2 text-center py-8">Cargando planes...</div>
+                <div className="col-span-2 flex justify-center items-center py-12">
+                  <Loader className="animate-spin text-blue-800" size={32} />
+                </div>
               ) : plans.length === 0 ? (
                 <div className="col-span-2 text-center py-8">No hay planes disponibles</div>
               ) : (
                 plans.map((plan) => (
-                <article 
-                  key={plan.name} 
-                  className={`rounded-xl border bg-white p-6 shadow-sm ${
-                    plan.highlight ? "border-blue-700 ring-1 ring-blue-700" : "border-slate-200"
-                  }`}
-                >
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-xl font-bold text-slate-950">{plan.name}</h3>
-                    {plan.highlight && (
-                      <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded">MÁS POPULAR</span>
-                    )}
-                  </div>
-                  <p className="mt-4 text-4xl font-bold text-slate-950">
-                    {plan.price}
-                    <span className="text-sm font-normal text-slate-500"> / mes</span>
-                  </p>
-                  <ul className="mt-6 space-y-3 text-sm text-slate-700">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2">
-            
-            {cargandoPlanes && (
-              <div className="flex justify-center items-center py-12">
-                <Loader className="animate-spin text-blue-800" size={32} />
-              </div>
-            )}
-            
-            {errorPlanes && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800 text-center">
-                {errorPlanes}
-              </div>
-            )}
-            
-            {!cargandoPlanes && !errorPlanes && planes.length > 0 && (
-              <div className="grid gap-6 md:grid-cols-2">
-                {planes.map((plan) => (
                   <article 
-                    key={plan.id} 
+                    key={plan.name} 
                     className={`rounded-xl border bg-white p-6 shadow-sm ${
-                      plan.nombre === "PRO" ? "border-blue-700 ring-1 ring-blue-700" : "border-slate-200"
+                      plan.highlight ? "border-blue-700 ring-1 ring-blue-700" : "border-slate-200"
                     }`}
                   >
                     <div className="flex justify-between items-start">
-                      <h3 className="text-xl font-bold text-slate-950">
-                        {plan.nombre === "BASICO" ? "Básico" : "Pro"}
-                      </h3>
-                      {plan.nombre === "PRO" && (
+                      <h3 className="text-xl font-bold text-slate-950">{plan.name}</h3>
+                      {plan.highlight && (
                         <span className="bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1 rounded">MÁS POPULAR</span>
                       )}
                     </div>
                     <p className="mt-4 text-4xl font-bold text-slate-950">
-                      S/ {plan.precio_mensual.toFixed(2)}
+                      {plan.price}
                       <span className="text-sm font-normal text-slate-500"> / mes</span>
                     </p>
                     <ul className="mt-6 space-y-3 text-sm text-slate-700">
-                      <li className="flex items-center gap-2">
-                        <CheckCircle size={16} className="text-green-600" />
-                        Hasta {plan.limite_usuarios} usuarios activos
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle size={16} className="text-green-600" />
-                        {plan.almacenamiento_gb} GB de almacenamiento
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle size={16} className="text-green-600" />
-                        Soporte incluido
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <CheckCircle size={16} className="text-green-600" />
-                        Cambio de plan desde panel
-                      </li>
+                      {plan.features.map((feature) => (
+                        <li key={feature} className="flex items-center gap-2">
+                          <CheckCircle size={16} className="text-green-600" />
+                          {feature}
+                        </li>
+                      ))}
                     </ul>
                     <Link href="/registro" className="mt-6 block">
-                      <Button fullWidth variant={plan.nombre === "PRO" ? "primary" : "outline"}>
+                      <Button fullWidth variant={plan.highlight ? "primary" : "outline"}>
                         Empezar prueba gratuita
                       </Button>
                     </Link>
                   </article>
-                ))}
-              </div>
-            )}
+                ))
+              )}
+            </div>
           </div>
         </section>
 
