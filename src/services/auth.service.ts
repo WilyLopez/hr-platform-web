@@ -11,6 +11,7 @@ export const authService = {
     const token = response.data;
     sessionStorage.setItem("access_token", token.access);
     Cookies.set("refresh_token", token.refresh, { expires: 7, sameSite: "strict" });
+    Cookies.set("user_rol", token.rol, { expires: 7, sameSite: "strict" });
     return token;
   },
 
@@ -18,6 +19,7 @@ export const authService = {
     await apiClient.post("auth/logout/", { refresh: refreshToken });
     sessionStorage.removeItem("access_token");
     Cookies.remove("refresh_token");
+    Cookies.remove("user_rol");
   },
 
   async refreshToken(refresh: string): Promise<{ access: string }> {
@@ -44,9 +46,9 @@ export const authService = {
   isAuthenticated(): boolean {
     return !!this.getAccessToken();
   },
-
+  
   clearSession(): void {
     sessionStorage.removeItem("access_token");
-    Cookies.remove("refresh_token");
+    Cookies.remove("user_rol");
   },
 };
