@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PageHeader } from "@/components/layout/shared/PageHeader";
 import { Card, CardBody, Button } from "@/components/ui";
 import { empleadoService } from "@/services/empleado.service";
 import { useToast } from "@/hooks/useToast";
 import type { TipoDocumento, RegistrarEmpleadoInput } from "@/types/empleado.types";
+import { apiClient } from "@/lib/axios";
 import { 
   ArrowLeft, 
   Save, 
@@ -35,11 +36,33 @@ export default function NuevoEmpleadoPage() {
   const [sedeId, setSedeId] = useState('');
   const [fechaIngreso, setFechaIngreso] = useState(new Date().toISOString().split('T')[0]);
 
+  // Estados para hacer el select de sedes dinámico
+  const [sedesDisponibles, setSedesDisponibles] = useState<{id: number, nombre: string}[]>([]);
+  const [cargandoSedes, setCargandoSedes] = useState(true);
+
+  // Cargar sedes al montar el componente
+  useEffect(() => {
+    const cargarSedes = async () => {
+      try {
+        // Aquí pusimos la ruta correcta con el ID de la empresa
+        const res = await apiClient.get('empresas/1/sedes/'); 
+        const lista = res.data.results || res.data;
+        setSedesDisponibles(lista);
+      } catch (error) {
+        // Usamos console.log temporalmente para no saturar con Toasts si algo falla
+        console.error("Error cargando sedes:", error);
+      } finally {
+        setCargandoSedes(false);
+      }
+    };
+    cargarSedes();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validaciones básicas antes del envío
-    if (!numeroDocumento.trim() || !correo.trim()) {
+    if (!numeroDocumento.trim() || !correo.trim() || !sedeId) {
       toast.error("Por favor, completa los campos obligatorios.");
       return;
     }
@@ -54,7 +77,7 @@ export default function NuevoEmpleadoPage() {
       correo: correo.trim(),
       cargo: cargo.trim(),
       area: area.trim(),
-      sede_id: Number(sedeId) || 1, // Asigna una sede por defecto si está vacía
+      sede_id: Number(sedeId), 
       fecha_ingreso: fechaIngreso
     };
 
@@ -249,14 +272,20 @@ export default function NuevoEmpleadoPage() {
                     <select
                       id="sede_id"
                       required
-                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none bg-white focus:ring-2 focus:ring-brand"
+                      disabled={cargandoSedes}
+                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none bg-white focus:ring-2 focus:ring-brand disabled:opacity-50"
                       value={sedeId}
                       onChange={(e) => setSedeId(e.target.value)}
                     >
-                      <option value="">Selecciona una sede...</option>
-                      <option value="1">Sede Principal - Lima</option>
-                      <option value="2">Sede Chiclayo</option>
-                      <option value="3">Sede Trujillo</option>
+                      <option value="">
+                        {cargandoSedes ? "Cargando sedes..." : "Selecciona una sede..."}
+                      </option>
+                      
+                      {sedesDisponibles.map((sede) => (
+                        <option key={sede.id} value={sede.id}>
+                          {sede.nombre}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>

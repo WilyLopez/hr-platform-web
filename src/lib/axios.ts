@@ -12,7 +12,7 @@ export const apiClient = axios.create({
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     if (typeof window !== "undefined") {
-      const token = sessionStorage.getItem("access_token");
+      const token = localStorage.getItem("token"); 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -39,11 +39,13 @@ apiClient.interceptors.response.use(
             refresh: refreshToken,
           });
           const newAccess: string = data.access;
-          sessionStorage.setItem("access_token", newAccess);
+         
+          localStorage.setItem("token", newAccess); 
           originalRequest.headers.Authorization = `Bearer ${newAccess}`;
+          
           return apiClient(originalRequest);
         } catch {
-          sessionStorage.removeItem("access_token");
+          localStorage.removeItem("token");
           Cookies.remove("refresh_token");
           window.location.href = "/";
         }

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { PageHeader } from "@/components/layout/shared/PageHeader";
 import { Card, CardBody, Button, Spinner } from "@/components/ui";
 import { empleadoService } from "@/services/empleado.service";
+import { apiClient } from "@/lib/axios"; // Importamos el cliente de axios
 import { useToast } from "@/hooks/useToast";
 import type { Empleado, EstadoEmpleado } from "@/types/empleado.types";
 import { 
@@ -36,6 +37,28 @@ export default function EmpleadosPage() {
   const [estado, setEstado] = useState<EstadoEmpleado | ''>('');
   const [area, setArea] = useState('');
   const [sedeId, setSedeId] = useState('');
+
+  // Estados para hacer el filtro de sedes dinámico
+  const [sedesDisponibles, setSedesDisponibles] = useState<{id: number, nombre: string}[]>([]);
+  const [cargandoSedes, setCargandoSedes] = useState(true);
+
+  // Cargar sedes al montar el componente para el filtro
+  useEffect(() => {
+    const cargarSedes = async () => {
+      try {
+        // Aquí pusimos la ruta correcta con el ID de la empresa
+        const res = await apiClient.get('empresas/1/sedes/'); 
+        const lista = res.data.results || res.data;
+        setSedesDisponibles(lista);
+      } catch (error) {
+        // Usamos console.log temporalmente para no saturar con Toasts si algo falla
+        console.error("Error cargando sedes:", error);
+      } finally {
+        setCargandoSedes(false);
+      }
+    };
+    cargarSedes();
+  }, []);
 
   const cargarEmpleados = async () => {
     setLoading(true);
@@ -140,18 +163,24 @@ export default function EmpleadosPage() {
               </select>
             </div>
 
-            {/* Filtro por Sede */}
+            {/* Filtro por Sede (Dinámico) */}
             <div>
               <label className="block text-xs font-semibold text-neutral-700 mb-1">Sede</label>
               <select
-                className="w-full px-3 py-2 border rounded-lg text-sm text-neutral-800 outline-none bg-white focus:ring-2 focus:ring-brand"
+                className="w-full px-3 py-2 border rounded-lg text-sm text-neutral-800 outline-none bg-white focus:ring-2 focus:ring-brand disabled:opacity-50"
                 value={sedeId}
                 onChange={(e) => setSedeId(e.target.value)}
+                disabled={cargandoSedes}
               >
-                <option value="">Todas las sedes</option>
-                <option value="1">Lima</option>
-                <option value="2">Chiclayo</option>
-                <option value="3">Trujillo</option>
+                <option value="">
+                  {cargandoSedes ? "Cargando sedes..." : "Todas las sedes"}
+                </option>
+                
+                {sedesDisponibles.map((sede) => (
+                  <option key={sede.id} value={sede.id}>
+                    {sede.nombre}
+                  </option>
+                ))}
               </select>
             </div>
 
