@@ -41,10 +41,31 @@ export default function AsistenciaPage() {
     cargarAsistencia();
   }, [filtroFecha]);
 
-  // Filtrado local por nombre de empleado
-  // *Nota: Asumo que tu tipo RegistroAsistencia tiene 'empleado_nombre'. Si es un objeto anidado (ej. item.empleado.nombre), ajusta esta línea.
-  const asistenciasFiltradas = asistencias.filter(item => {
-    const nombre = (item as any).empleado_nombre || '';
+  // Filtrado y Agrupado local por nombre de empleado
+  const asistenciasAgrupadas = Object.values(asistencias.reduce((acc, curr) => {
+    if (!acc[curr.empleado_id]) {
+      acc[curr.empleado_id] = {
+        id: curr.empleado_id, // Usamos empleado_id como key temporal
+        empleado_nombre: curr.empleado_nombre,
+        sede_nombre: curr.sede_nombre,
+        hora_entrada: undefined,
+        hora_salida: undefined,
+        estado: 'puntual'
+      };
+    }
+    
+    if (curr.tipo === 'ENTRADA') {
+      acc[curr.empleado_id].hora_entrada = curr.timestamp;
+      if (curr.es_tardanza) acc[curr.empleado_id].estado = 'tardanza';
+    } else if (curr.tipo === 'SALIDA') {
+      acc[curr.empleado_id].hora_salida = curr.timestamp;
+    }
+    
+    return acc;
+  }, {} as Record<number, any>));
+
+  const asistenciasFiltradas = asistenciasAgrupadas.filter(item => {
+    const nombre = item.empleado_nombre || '';
     return nombre.toLowerCase().includes(busqueda.toLowerCase());
   });
 

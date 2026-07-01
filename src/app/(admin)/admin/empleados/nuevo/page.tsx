@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PageHeader } from "@/components/layout/shared/PageHeader";
-import { Card, CardBody, Button } from "@/components/ui";
+import { Card, CardBody, Button, Modal } from "@/components/ui";
 import { empleadoService } from "@/services/empleado.service";
 import { useToast } from "@/hooks/useToast";
+import { useAuth } from "@/hooks/useAuth";
 import type { TipoDocumento, RegistrarEmpleadoInput } from "@/types/empleado.types";
 import { apiClient } from "@/lib/axios";
 import { 
@@ -16,14 +17,21 @@ import {
   Briefcase, 
   CreditCard, 
   MapPin, 
-  Calendar 
+  Calendar,
+  ChevronRight,
+  Plus
 } from "lucide-react";
 import Link from 'next/link';
+import { StepIndicator } from "@/components/forms/StepIndicator";
 
 export default function NuevoEmpleadoPage() {
   const router = useRouter();
   const toast = useToast();
+  const { usuario } = useAuth();
+  const empresaId = usuario?.empresa_id;
+  
   const [loading, setLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
   // Estados individuales para cada campo del formulario
   const [nombres, setNombres] = useState('');
@@ -40,12 +48,17 @@ export default function NuevoEmpleadoPage() {
   const [sedesDisponibles, setSedesDisponibles] = useState<{id: number, nombre: string}[]>([]);
   const [cargandoSedes, setCargandoSedes] = useState(true);
 
+  // Estados para modal de nueva sede
+  const [showSedeModal, setShowSedeModal] = useState(false);
+  const [creandoSede, setCreandoSede] = useState(false);
+  const [nuevaSede, setNuevaSede] = useState({ nombre: '', direccion: '' });
+
   // Cargar sedes al montar el componente
   useEffect(() => {
     const cargarSedes = async () => {
+      if (!empresaId) return;
       try {
-        // Aquí pusimos la ruta correcta con el ID de la empresa
-        const res = await apiClient.get('empresas/1/sedes/'); 
+        const res = await apiClient.get(`empresas/${empresaId}/sedes/`); 
         const lista = res.data.results || res.data;
         setSedesDisponibles(lista);
       } catch (error) {
@@ -56,7 +69,41 @@ export default function NuevoEmpleadoPage() {
       }
     };
     cargarSedes();
-  }, []);
+  }, [empresaId]);
+
+  const handleCrearSede = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nuevaSede.nombre || !nuevaSede.direccion) return;
+    setCreandoSede(true);
+    try {
+      const payload = {
+        nombre: nuevaSede.nombre,
+        direccion: nuevaSede.direccion,
+        latitud: -12.046374, // default
+        longitud: -77.042793, // default
+        radio_metros: 100
+      };
+      
+      if (!empresaId) {
+        toast.error("No se pudo identificar tu empresa.");
+        setCreandoSede(false);
+        return;
+      }
+      
+      const res = await apiClient.post(`empresas/${empresaId}/sedes/`, payload);
+      setSedesDisponibles([...sedesDisponibles, res.data]);
+      setSedeId(res.data.id.toString());
+      setShowSedeModal(false);
+      setNuevaSede({ nombre: '', direccion: '' });
+      toast.success("Sede creada exitosamente");
+    } catch (error: any) {
+      const errorMsg = error.response?.data ? JSON.stringify(error.response.data) : "Error al crear la sede";
+      toast.error(`Error: ${errorMsg}`);
+      console.error(error.response?.data || error);
+    } finally {
+      setCreandoSede(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,10 +158,17 @@ export default function NuevoEmpleadoPage() {
 
       <Card>
         <CardBody>
+          <div className="mb-8 flex justify-center">
+            <StepIndicator
+              steps={[{ label: "Personal" }, { label: "Laboral" }]}
+              current={currentStep}
+            />
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
             
             {/* Sección: Información Personal */}
-            <div>
+            <div className={currentStep === 0 ? "block" : "hidden"}>
               <h3 className="text-sm font-bold text-neutral-800 mb-4 border-b pb-2">
                 Información Personal
               </h3>
@@ -199,7 +253,7 @@ export default function NuevoEmpleadoPage() {
             </div>
 
             {/* Sección: Información Laboral y de Contacto */}
-            <div>
+            <div className={currentStep === 1 ? "block animate-fade-in" : "hidden"}>
               <h3 className="text-sm font-bold text-neutral-800 mb-4 border-b pb-2 pt-2">
                 Información Laboral y de Contacto
               </h3>
@@ -264,9 +318,19 @@ export default function NuevoEmpleadoPage() {
 
                 {/* Sede */}
                 <div>
-                  <label htmlFor="sede_id" className="block text-xs font-semibold text-neutral-700 mb-1">
-                    Sede Asignada
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label htmlFor="sede_id" className="block text-xs font-semibold text-neutral-700">
+                      Sede Asignada
+                    </label>
+                    <button 
+                      type="button" 
+                      onClick={() => setShowSedeModal(true)}
+                      className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
+                    >
+                      <Plus size={12} />
+                      Nueva Sede
+                    </button>
+                  </div>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
                     <select
@@ -311,20 +375,90 @@ export default function NuevoEmpleadoPage() {
             </div>
 
             {/* Acciones */}
-            <div className="flex justify-end gap-3 pt-4 border-t border-neutral-100">
-              <Link href="/admin/empleados">
-                <Button type="button" variant="outline" disabled={loading}>
-                  Cancelar
-                </Button>
-              </Link>
-              <Button type="submit" variant="brand" loading={loading} leftIcon={<Save size={16} />}>
-                Registrar Colaborador
-              </Button>
+            <div className="flex justify-between gap-3 pt-6 border-t border-border mt-6">
+              {currentStep === 0 ? (
+                <>
+                  <Link href="/admin/empleados">
+                    <Button type="button" variant="outline" disabled={loading}>
+                      Cancelar
+                    </Button>
+                  </Link>
+                  <Button 
+                    type="button" 
+                    variant="primary" 
+                    onClick={() => {
+                      if (!nombres || !apellidos || !numeroDocumento) {
+                        toast.error("Completa los datos personales básicos primero.");
+                        return;
+                      }
+                      setCurrentStep(1);
+                    }}
+                    rightIcon={<ChevronRight size={16} />}
+                  >
+                    Siguiente Paso
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => setCurrentStep(0)} 
+                    disabled={loading}
+                    leftIcon={<ArrowLeft size={16} />}
+                  >
+                    Atrás
+                  </Button>
+                  <Button type="submit" variant="primary" loading={loading} leftIcon={<Save size={16} />}>
+                    Registrar Colaborador
+                  </Button>
+                </>
+              )}
             </div>
 
           </form>
         </CardBody>
       </Card>
+
+      {/* Modal para crear Sede rápida */}
+      <Modal 
+        open={showSedeModal} 
+        onClose={() => setShowSedeModal(false)}
+        title="Añadir Nueva Sede"
+      >
+        <form onSubmit={handleCrearSede} className="space-y-4 pt-4">
+          <div>
+            <label className="form-label">Nombre de la Sede</label>
+            <input 
+              required
+              type="text" 
+              className="form-input" 
+              placeholder="Ej: Sede Central" 
+              value={nuevaSede.nombre}
+              onChange={e => setNuevaSede({...nuevaSede, nombre: e.target.value})}
+            />
+          </div>
+          <div>
+            <label className="form-label">Dirección</label>
+            <input 
+              required
+              type="text" 
+              className="form-input" 
+              placeholder="Ej: Av. Principal 123" 
+              value={nuevaSede.direccion}
+              onChange={e => setNuevaSede({...nuevaSede, direccion: e.target.value})}
+            />
+          </div>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={() => setShowSedeModal(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" variant="primary" loading={creandoSede}>
+              Guardar Sede
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

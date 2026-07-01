@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { PageHeader } from "@/components/layout/shared/PageHeader";
 import { Card, CardBody, Button } from "@/components/ui";
 import { asistenciaService } from "@/services/asistencia.service";
+import { empleadoService } from "@/services/empleado.service";
 import { useToast } from "@/hooks/useToast";
 import type { TipoMarcaje, RegistrarManualInput } from "@/types/asistencia.types";
 import { 
@@ -21,6 +22,20 @@ export default function RegistroManualPage() {
   const router = useRouter();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
+  const [empleados, setEmpleados] = useState<{id: number, nombres: string, apellidos: string}[]>([]);
+  const [busquedaEmpleado, setBusquedaEmpleado] = useState('');
+
+  useEffect(() => {
+    const cargarEmpleados = async () => {
+      try {
+        const data = await empleadoService.listar({ page_size: 100 });
+        setEmpleados(data.results);
+      } catch (error) {
+        toast.error("Error al cargar la lista de empleados.");
+      }
+    };
+    cargarEmpleados();
+  }, []);
 
   // Valores iniciales por defecto (Fecha y Hora actuales)
   const ahora = new Date();
@@ -90,26 +105,42 @@ export default function RegistroManualPage() {
         <CardBody>
           <form onSubmit={handleSubmit} className="space-y-6">
             
-            {/* ID Empleado */}
+            {/* Buscador de Empleado */}
             <div>
-              <label htmlFor="empleado_id" className="block text-sm font-medium text-neutral-700 mb-1">
-                ID del Empleado
+              <label htmlFor="buscar_empleado" className="block text-sm font-medium text-neutral-700 mb-1">
+                Empleado
               </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
+              
+              <div className="space-y-2">
                 <input
-                  id="empleado_id"
-                  type="number"
-                  required
-                  placeholder="Ej: 1045"
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand outline-none text-neutral-800"
-                  value={empleadoId}
-                  onChange={(e) => setEmpleadoId(e.target.value)}
+                  id="buscar_empleado"
+                  type="text"
+                  placeholder="Escribe para filtrar empleados..."
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand outline-none text-neutral-800 bg-neutral-50 mb-2"
+                  value={busquedaEmpleado}
+                  onChange={(e) => setBusquedaEmpleado(e.target.value)}
                 />
+                
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
+                  <select
+                    id="empleado_id"
+                    required
+                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand outline-none text-neutral-800 bg-white"
+                    value={empleadoId}
+                    onChange={(e) => setEmpleadoId(e.target.value)}
+                  >
+                    <option value="" disabled>Seleccione un empleado...</option>
+                    {empleados
+                      .filter(emp => `${emp.nombres} ${emp.apellidos}`.toLowerCase().includes(busquedaEmpleado.toLowerCase()))
+                      .map(emp => (
+                        <option key={emp.id} value={emp.id}>
+                          {emp.nombres} {emp.apellidos}
+                        </option>
+                      ))}
+                  </select>
+                </div>
               </div>
-              <p className="mt-1 text-xs text-neutral-400">
-                Asegúrate de ingresar el identificador numérico único del empleado.
-              </p>
             </div>
 
             {/* Fila Tipo y Fecha */}

@@ -50,12 +50,12 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             ))}
           </select>
           <ChevronDown
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
             size={16}
           />
         </div>
         {error && <p className="form-error">{error}</p>}
-        {hint && !error && <p className="text-xs text-neutral-400 mt-1">{hint}</p>}
+        {hint && !error && <p className="text-xs text-muted-foreground mt-1">{hint}</p>}
       </div>
     );
   }

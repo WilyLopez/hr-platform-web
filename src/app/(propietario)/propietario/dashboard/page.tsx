@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { PageHeader } from "@/components/layout/shared/PageHeader";
 import { StatCard } from "@/components/charts/StatCard";
-import { Card, CardHeader, CardBody, Badge, Button, Divider } from "@/components/ui";
+import { Card, CardHeader, CardBody, Badge, Button, Alert, Divider } from "@/components/ui";
 import { suscripcionService } from "@/services/suscripcion.service";
 import { empresaService } from "@/services/empresa.service";
 import { ESTADOS_SUSCRIPCION } from "@/utils/constants";
@@ -76,28 +76,24 @@ export default function PropietarioDashboardPage() {
             </div>
 
             {suscripcion?.estado === "TRIAL" && (
-                <div className={`flex items-start gap-4 p-4 border rounded-xl transition-all ${
-                    diasRestantes <= 7 
-                        ? "bg-danger-light/20 border-danger/20 text-danger-dark" 
-                        : "bg-brand-light/20 border-brand/20 text-brand-dark"
-                }`}>
-                    <div className={`p-2 rounded-lg ${diasRestantes <= 7 ? "bg-danger/10" : "bg-brand/10"}`}>
-                        <AlertTriangle size={20} className={diasRestantes <= 7 ? "text-danger" : "text-brand"} />
-                    </div>
+                <Alert 
+                    variant={diasRestantes <= 7 ? "danger" : "warning"}
+                    title={diasRestantes <= 7 
+                        ? `Tu periodo de prueba vence en ${diasRestantes} día${diasRestantes !== 1 ? "s" : ""}`
+                        : `Estás en periodo de prueba: quedan ${diasRestantes} días`
+                    }
+                    dismissible
+                    className="flex flex-col sm:flex-row sm:items-center justify-between"
+                >
                     <div className="flex-1">
-                        <p className="text-sm font-bold">
-                            {diasRestantes <= 7 
-                                ? `Tu periodo de prueba vence en ${diasRestantes} día${diasRestantes !== 1 ? "s" : ""}`
-                                : `Estás en periodo de prueba: quedan ${diasRestantes} días`}
-                        </p>
-                        <p className="text-xs opacity-80 mt-1">
-                            Asegúrate de configurar tu método de pago para evitar interrupciones en el servicio al finalizar el trial.
-                        </p>
+                        Asegúrate de configurar tu método de pago para evitar interrupciones en el servicio al finalizar el trial.
                     </div>
-                    <Button size="sm" variant={diasRestantes <= 7 ? "danger" : "brand"} className="hidden sm:flex">
-                        Activar ahora
-                    </Button>
-                </div>
+                    <div className="mt-3 sm:mt-0 flex-shrink-0">
+                        <Button size="sm" variant={diasRestantes <= 7 ? "danger" : "outline"}>
+                            Activar ahora
+                        </Button>
+                    </div>
+                </Alert>
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -106,7 +102,7 @@ export default function PropietarioDashboardPage() {
                     value={suscripcion?.plan_nombre ?? "—"}
                     icon={ShieldCheck}
                     isLoading={isGlobalLoading}
-                    iconColor="text-brand"
+                    variant="brand"
                     className="border-none shadow-sm bg-gradient-to-br from-white to-neutral-50"
                 />
                 <StatCard
@@ -114,7 +110,7 @@ export default function PropietarioDashboardPage() {
                     value={suscripcion ? `${suscripcion.usuarios_activos} / ${suscripcion.limite_usuarios}` : "—"}
                     icon={Users}
                     isLoading={isGlobalLoading}
-                    iconColor="text-blue-500"
+                    variant="brand"
                     trend={suscripcion ? { 
                         value: Math.round((suscripcion.usuarios_activos / suscripcion.limite_usuarios) * 100), 
                         label: "capacidad usada" 
@@ -126,7 +122,7 @@ export default function PropietarioDashboardPage() {
                     value={sedes?.length ?? "0"}
                     icon={MapPin}
                     isLoading={isGlobalLoading}
-                    iconColor="text-orange-500"
+                    variant="warning"
                     className="border-none shadow-sm bg-gradient-to-br from-white to-neutral-50"
                 />
                 <StatCard
@@ -134,7 +130,7 @@ export default function PropietarioDashboardPage() {
                     value={estadoSusc?.label ?? "—"}
                     icon={CreditCard}
                     isLoading={isGlobalLoading}
-                    iconColor={estadoSusc?.variant === "success" ? "text-success" : "text-warning"}
+                    variant={estadoSusc?.variant === "success" ? "success" : "warning"}
                     className="border-none shadow-sm bg-gradient-to-br from-white to-neutral-50"
                 />
             </div>

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import React, { useState, useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAuth } from "@/hooks/useAuth";
@@ -117,6 +117,8 @@ export default function EmpresaPage() {
     const toast = useToast();
     const queryClient = useQueryClient();
     const [isEditing, setIsEditing] = useState(false);
+    
+    const logoFileRef = React.useRef<HTMLInputElement>(null);
 
     const empresaId = usuario?.empresa_id ?? 0;
 
@@ -131,9 +133,27 @@ export default function EmpresaPage() {
         enabled: isReady && !!empresaId,
     });
 
-    const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm<EmpresaFormData>({
+    const { register, handleSubmit, reset, control, setValue, formState: { errors, isDirty } } = useForm<EmpresaFormData>({
         resolver: zodResolver(empresaSchema),
     });
+
+    const currentLogo = useWatch({ control, name: "logo_url" });
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error("La imagen no puede pesar más de 2MB");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setValue("logo_url", reader.result as string, { shouldDirty: true });
+        };
+        reader.readAsDataURL(file);
+    };
 
     useEffect(() => {
         if (empresa) {
@@ -254,16 +274,37 @@ export default function EmpresaPage() {
                             {/* Avatar con botón de cámara */}
                             <div className="relative inline-block group mb-3">
                                 <div className="w-20 h-20 rounded-2xl ring-4 ring-white shadow-md overflow-hidden bg-white flex items-center justify-center">
-                                    <Avatar
-                                        name={empresa.razon_social}
-                                        size="xl"
-                                        className="w-full h-full text-xl rounded-none"
-                                    />
+                                    {currentLogo || empresa.logo_url ? (
+                                        <img 
+                                            src={currentLogo || empresa.logo_url || ""} 
+                                            alt="Logo" 
+                                            className="w-full h-full object-cover" 
+                                        />
+                                    ) : (
+                                        <Avatar
+                                            name={empresa.razon_social}
+                                            size="lg"
+                                            className="w-full h-full text-xl rounded-none"
+                                        />
+                                    )}
                                 </div>
                                 {isEditing && (
-                                    <button className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer">
-                                        <Camera size={18} className="text-white" />
-                                    </button>
+                                    <>
+                                        <input 
+                                            type="file" 
+                                            accept="image/*" 
+                                            className="hidden" 
+                                            ref={logoFileRef}
+                                            onChange={handleFileChange}
+                                        />
+                                        <button 
+                                            type="button"
+                                            onClick={() => logoFileRef.current?.click()}
+                                            className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer"
+                                        >
+                                            <Camera size={18} className="text-white" />
+                                        </button>
+                                    </>
                                 )}
                             </div>
 

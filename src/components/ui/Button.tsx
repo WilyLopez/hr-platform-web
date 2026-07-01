@@ -17,13 +17,13 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary:   "bg-brand text-white hover:bg-brand-dark active:bg-brand-dark border-transparent",
-  secondary: "bg-neutral-100 text-neutral-700 hover:bg-neutral-200 border-transparent",
+  primary:   "bg-primary text-primary-foreground hover:opacity-90 active:opacity-100 border-transparent",
+  secondary: "bg-muted text-foreground hover:bg-muted-foreground/20 border-transparent",
   danger:    "bg-danger text-white hover:bg-danger-dark border-transparent",
-  ghost:     "bg-transparent text-neutral-600 hover:bg-neutral-100 border-transparent",
-  outline:   "bg-white text-brand border-brand hover:bg-brand-pale",
-  brand:     "bg-brand text-white hover:bg-brand-dark active:bg-brand-dark border-transparent",
-  link:      "bg-transparent text-brand hover:underline p-0 h-auto border-transparent font-normal",
+  ghost:     "bg-transparent text-foreground hover:bg-muted border-transparent",
+  outline:   "bg-background text-primary border-primary hover:bg-muted",
+  brand:     "bg-primary text-primary-foreground hover:opacity-90 active:opacity-100 border-transparent",
+  link:      "bg-transparent text-primary hover:underline p-0 h-auto border-transparent font-normal",
 };
 
 const sizes: Record<Size, string> = {

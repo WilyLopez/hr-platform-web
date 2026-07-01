@@ -19,9 +19,18 @@ interface CardBodyProps {
   className?: string;
 }
 
-export function Card({ children, className, padding = false, overflowHidden = false }: CardProps) {
+export function Card({ children, className, padding = false, overflowHidden = false, interactive = false }: CardProps & { interactive?: boolean }) {
   return (
-    <div className={cn("card", padding && "p-6", overflowHidden && "overflow-hidden", className)}>
+    <div 
+      className={cn(
+        "card", 
+        padding && "p-6", 
+        overflowHidden && "overflow-hidden", 
+        interactive && "transition-all duration-200 hover:border-brand/40 hover:shadow-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40",
+        className
+      )}
+      tabIndex={interactive ? 0 : undefined}
+    >
       {children}
     </div>
   );

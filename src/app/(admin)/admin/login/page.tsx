@@ -58,6 +58,11 @@ export default function AdminLoginPage() {
                         <Button type="submit" fullWidth loading={isLoading}>
                             Ingresar
                         </Button>
+                        <div className="text-center mt-4">
+                            <Link href="/recuperar-contrasena" className="text-sm text-brand hover:underline">
+                                ¿Olvidaste tu contraseña?
+                            </Link>
+                        </div>
                     </form>
                 </Card>
 

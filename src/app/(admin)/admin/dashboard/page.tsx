@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { PageHeader } from "@/components/layout/shared/PageHeader";
-import { Card, CardBody, Button, Spinner } from "@/components/ui";
+import { Card, CardBody, Button, Skeleton } from "@/components/ui";
+import { StatCard } from "@/components/charts/StatCard";
+import { TableEmptyState } from "@/components/tables/TableEmptyState";
 import { empleadoService } from "@/services/empleado.service";
 import { solicitudService } from "@/services/solicitud.service";
-import { Users, Clock, FileText, AlertTriangle, ArrowRight } from "lucide-react";
+import { asistenciaService } from "@/services/asistencia.service";
+import { Users, Clock, FileText, AlertTriangle, ArrowRight, CheckCircle2, Circle, Calendar, PartyPopper, Megaphone } from "lucide-react";
 import Link from "next/link";
 import type { Empleado } from "@/types/empleado.types";
 import type { Solicitud } from "@/types/solicitud.types";
@@ -28,25 +31,18 @@ export default function AdminDashboardPage() {
     const cargarDashboard = async () => {
       setLoading(true);
       try {
-        // Obtenemos la fecha local exacta para evitar saltos por UTC
         const hoy = new Date();
         const year = hoy.getFullYear();
         const month = String(hoy.getMonth() + 1).padStart(2, "0");
         const day = String(hoy.getDate()).padStart(2, "0");
         const fechaFormateada = `${year}-${month}-${day}`;
 
-        // Ejecutamos las tres peticiones en paralelo para mayor velocidad
         const [empleadosRes, solicitudesRes, asistenciaRes] = await Promise.all([
           empleadoService.listar({ estado: "ACTIVO", page: 1, page_size: 5 }),
           solicitudService.listar({ estado: "PENDIENTE", page: 1 }),
-          fetch(`/api/v1/asistencia/?fecha=${fechaFormateada}`, {
-            headers: {
-              "Authorization": `Bearer ${localStorage.getItem("token") || ""}`
-            }
-          }).then(res => res.ok ? res.json() : [])
+          asistenciaService.listar({ fecha: fechaFormateada }).catch(() => [])
         ]);
 
-        // Adaptación para PaginatedResponse (Empleados y Solicitudes)
         const empData = (empleadosRes as any).results || (empleadosRes as any).data || empleadosRes;
         const solData = (solicitudesRes as any).results || (solicitudesRes as any).data || solicitudesRes;
 
@@ -56,7 +52,6 @@ export default function AdminDashboardPage() {
         setSolicitudesRecientes(Array.isArray(solData) ? solData.slice(0, 5) : []);
         setSolicitudesPendientes((solicitudesRes as any).count || (Array.isArray(solData) ? solData.length : 0));
 
-        // Adaptación para Asistencias
         const asisData = (asistenciaRes as any).results || (asistenciaRes as any).data || asistenciaRes;
         const arrAsistencias = Array.isArray(asisData) ? asisData : [];
         
@@ -73,7 +68,6 @@ export default function AdminDashboardPage() {
     cargarDashboard();
   }, []);
 
-  // Helper local para formatear fechas
   const formatearFecha = (fechaString: string) => {
     return new Date(fechaString).toLocaleDateString();
   };
@@ -85,171 +79,235 @@ export default function AdminDashboardPage() {
         description="Resumen operativo y métricas de Recursos Humanos" 
       />
 
-      {/* Tarjetas de Métricas (StatCards integradas) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
-        {/* Card: Empleados Activos */}
-        <Card>
-          <CardBody className="flex items-center gap-4 p-4">
-            <div className="p-3 bg-brand/10 text-brand rounded-xl">
-              <Users size={24} />
+      {/* Onboarding View para Nuevas Empresas */}
+      {!loading && empleadosActivos === 0 ? (
+        <Card className="p-12 text-center flex flex-col items-center animate-fade-in">
+          <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
+            <Users size={32} />
+          </div>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Bienvenido a NexusRH</h2>
+          <p className="text-muted-foreground mb-8 max-w-md">
+            Tu espacio de trabajo está listo. Para comenzar a aprovechar la plataforma, te sugerimos seguir estos pasos:
+          </p>
+          
+          <div className="flex flex-col gap-3 text-left w-full max-w-sm">
+            <div className="flex items-center gap-3 p-3 bg-muted rounded-md text-foreground">
+              <CheckCircle2 size={18} className="text-success" /> 
+              <span className="font-medium line-through text-muted-foreground">Registrar empresa</span>
             </div>
-            <div>
-              <p className="text-sm text-neutral-500 font-medium">Empleados activos</p>
-              <h4 className="text-2xl font-bold text-neutral-800">
-                {loading ? <Spinner size="sm" /> : empleadosActivos}
-              </h4>
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Card: Solicitudes Pendientes */}
-        <Card>
-          <CardBody className="flex items-center gap-4 p-4">
-            <div className="p-3 bg-amber-100 text-amber-600 rounded-xl">
-              <AlertTriangle size={24} />
-            </div>
-            <div>
-              <p className="text-sm text-neutral-500 font-medium">Permisos pendientes</p>
-              <h4 className="text-2xl font-bold text-neutral-800">
-                {loading ? <Spinner size="sm" /> : solicitudesPendientes}
-              </h4>
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Card: Marcajes Hoy */}
-        <Card>
-          <CardBody className="flex items-center gap-4 p-4">
-            <div className="p-3 bg-green-100 text-green-600 rounded-xl">
-              <Clock size={24} />
-            </div>
-            <div>
-              <p className="text-sm text-neutral-500 font-medium">Marcajes hoy</p>
-              <h4 className="text-2xl font-bold text-neutral-800">
-                {loading ? <Spinner size="sm" /> : marcajesHoy}
-              </h4>
-            </div>
-          </CardBody>
-        </Card>
-
-        {/* Card: Tardanzas Hoy */}
-        <Card>
-          <CardBody className="flex items-center gap-4 p-4">
-            <div className={`p-3 rounded-xl ${tardanzasHoy > 0 ? 'bg-red-100 text-red-600' : 'bg-neutral-100 text-neutral-600'}`}>
-              <FileText size={24} />
-            </div>
-            <div>
-              <p className="text-sm text-neutral-500 font-medium">Tardanzas hoy</p>
-              <h4 className={`text-2xl font-bold ${tardanzasHoy > 0 ? 'text-red-600' : 'text-neutral-800'}`}>
-                {loading ? <Spinner size="sm" /> : tardanzasHoy}
-              </h4>
-            </div>
-          </CardBody>
-        </Card>
-
-      </div>
-
-      {/* Tablas de Resumen */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        
-        {/* Panel: Solicitudes Pendientes */}
-        <Card className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-5 border-b border-neutral-100">
-            <h3 className="font-bold text-neutral-800">Solicitudes por revisar</h3>
-            <Link href="/admin/solicitudes">
-              <Button variant="outline" size="sm" rightIcon={<ArrowRight size={14} />}>
-                Ver todas
-              </Button>
+            <Link href="/admin/empleados/nuevo" className="flex items-center gap-3 p-3 border border-primary/30 bg-primary/5 rounded-md hover:border-primary/60 transition-colors cursor-pointer group">
+              <Circle size={18} className="text-primary group-hover:fill-primary/20" /> 
+              <span className="font-medium text-primary">Agregar tu primer empleado</span>
             </Link>
-          </div>
-          <div className="overflow-x-auto flex-1">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-neutral-50 text-xs text-neutral-500 border-b">
-                  <th className="p-3 font-semibold">Empleado</th>
-                  <th className="p-3 font-semibold">Tipo</th>
-                  <th className="p-3 font-semibold">Desde</th>
-                  <th className="p-3 font-semibold text-center">Días</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100">
-                {loading ? (
-                  <tr>
-                    <td colSpan={4} className="p-8 text-center"><Spinner size="md" className="mx-auto" /></td>
-                  </tr>
-                ) : solicitudesRecientes.length > 0 ? (
-                  solicitudesRecientes.map((sol) => (
-                    <tr key={sol.id} className="hover:bg-neutral-50 transition-colors">
-                      <td className="p-3 text-sm font-medium text-neutral-800">{sol.empleado_nombre}</td>
-                      <td className="p-3 text-sm text-neutral-600">{sol.tipo_permiso_nombre}</td>
-                      <td className="p-3 text-sm text-neutral-600">{formatearFecha(sol.fecha_inicio)}</td>
-                      <td className="p-3 text-sm font-bold text-neutral-700 text-center">{sol.dias_solicitados}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="p-8 text-center text-sm text-neutral-500">
-                      No hay solicitudes pendientes de revisión.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+            <div className="flex items-center gap-3 p-3 border border-border rounded-md opacity-60">
+              <Circle size={18} className="text-muted-foreground" /> 
+              <span className="text-muted-foreground">Configurar horarios</span>
+            </div>
+            <div className="flex items-center gap-3 p-3 border border-border rounded-md opacity-60">
+              <Circle size={18} className="text-muted-foreground" /> 
+              <span className="text-muted-foreground">Crear tipos de permiso</span>
+            </div>
           </div>
         </Card>
-
-        {/* Panel: Empleados Recientes */}
-        <Card className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-5 border-b border-neutral-100">
-            <h3 className="font-bold text-neutral-800">Últimas incorporaciones</h3>
-            <Link href="/admin/empleados">
-              <Button variant="outline" size="sm" rightIcon={<ArrowRight size={14} />}>
-                Ver directorio
-              </Button>
-            </Link>
+      ) : (
+        <>
+          {/* Tarjetas de Métricas (StatCards) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard
+              title="Empleados activos"
+              value={empleadosActivos}
+              icon={Users}
+              variant="brand"
+              isLoading={loading}
+              trend={{ value: 12, label: "nuevos este mes" }}
+            />
+            <StatCard
+              title="Permisos pendientes"
+              value={solicitudesPendientes}
+              icon={AlertTriangle}
+              variant="warning"
+              isLoading={loading}
+              trend={{ value: 5, label: "vs semana pasada" }}
+            />
+            <StatCard
+              title="Marcajes hoy"
+              value={marcajesHoy}
+              icon={Clock}
+              variant="success"
+              isLoading={loading}
+            />
+            <StatCard
+              title="Tardanzas hoy"
+              value={tardanzasHoy}
+              icon={FileText}
+              variant={tardanzasHoy > 0 ? "danger" : "neutral"}
+              isLoading={loading}
+            />
           </div>
-          <div className="overflow-x-auto flex-1">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-neutral-50 text-xs text-neutral-500 border-b">
-                  <th className="p-3 font-semibold">Nombre</th>
-                  <th className="p-3 font-semibold">Cargo</th>
-                  <th className="p-3 font-semibold text-right">Ingreso</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-100">
-                {loading ? (
-                  <tr>
-                    <td colSpan={3} className="p-8 text-center"><Spinner size="md" className="mx-auto" /></td>
-                  </tr>
-                ) : empleadosRecientes.length > 0 ? (
-                  empleadosRecientes.map((emp) => (
-                    <tr key={emp.id} className="hover:bg-neutral-50 transition-colors">
-                      <td className="p-3">
-                        <div className="text-sm font-medium text-neutral-800">
-                          {emp.nombres} {emp.apellidos}
-                        </div>
-                      </td>
-                      <td className="p-3 text-sm text-neutral-600">{emp.cargo}</td>
-                      <td className="p-3 text-sm text-neutral-500 text-right">
-                        {formatearFecha(emp.fecha_ingreso)}
-                      </td>
+
+          {/* Grilla Principal */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            {/* Panel: Solicitudes Pendientes */}
+            <Card className="flex flex-col h-full">
+              <div className="flex items-center justify-between p-5 border-b border-border">
+                <h3 className="font-bold text-foreground">Solicitudes por revisar</h3>
+                <Link href="/admin/solicitudes">
+                  <Button variant="outline" size="md" rightIcon={<ArrowRight size={14} />}>
+                    Ver todas
+                  </Button>
+                </Link>
+              </div>
+              <div className="overflow-x-auto flex-1">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-muted/50 text-xs text-muted-foreground border-b border-border">
+                      <th className="p-3 font-semibold">Empleado</th>
+                      <th className="p-3 font-semibold">Tipo</th>
+                      <th className="p-3 font-semibold">Desde</th>
+                      <th className="p-3 font-semibold text-center">Días</th>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={3} className="p-8 text-center text-sm text-neutral-500">
-                      No hay empleados registrados recientemente.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {loading ? (
+                      Array.from({ length: 3 }).map((_, i) => (
+                        <tr key={i}>
+                          <td className="p-3"><Skeleton className="h-5 w-32" /></td>
+                          <td className="p-3"><Skeleton className="h-5 w-24" /></td>
+                          <td className="p-3"><Skeleton className="h-5 w-20" /></td>
+                          <td className="p-3"><Skeleton className="h-5 w-8 mx-auto" /></td>
+                        </tr>
+                      ))
+                    ) : solicitudesRecientes.length > 0 ? (
+                      solicitudesRecientes.map((sol) => (
+                        <tr key={sol.id} className="hover:bg-muted/50 transition-colors">
+                          <td className="p-3 text-sm font-medium text-foreground">{sol.empleado_nombre}</td>
+                          <td className="p-3 text-sm text-muted-foreground">{sol.tipo_permiso_nombre}</td>
+                          <td className="p-3 text-sm text-muted-foreground">{formatearFecha(sol.fecha_inicio)}</td>
+                          <td className="p-3 text-sm font-bold text-foreground text-center">{sol.dias_solicitados}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <TableEmptyState 
+                        colSpan={4} 
+                        icon={FileText}
+                        title="No existen solicitudes pendientes"
+                        description="Cuando los colaboradores envíen solicitudes aparecerán aquí."
+                      />
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
 
-      </div>
+            {/* Panel: Empleados Recientes */}
+            <Card className="flex flex-col h-full">
+              <div className="flex items-center justify-between p-5 border-b border-border">
+                <h3 className="font-bold text-foreground">Últimas incorporaciones</h3>
+                <Link href="/admin/empleados">
+                  <Button variant="outline" size="md" rightIcon={<ArrowRight size={14} />}>
+                    Ver directorio
+                  </Button>
+                </Link>
+              </div>
+              <div className="overflow-x-auto flex-1">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-muted/50 text-xs text-muted-foreground border-b border-border">
+                      <th className="p-3 font-semibold">Nombre</th>
+                      <th className="p-3 font-semibold">Cargo</th>
+                      <th className="p-3 font-semibold text-right">Ingreso</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {loading ? (
+                      Array.from({ length: 3 }).map((_, i) => (
+                        <tr key={i}>
+                          <td className="p-3"><Skeleton className="h-5 w-40" /></td>
+                          <td className="p-3"><Skeleton className="h-5 w-24" /></td>
+                          <td className="p-3"><Skeleton className="h-5 w-20 ml-auto" /></td>
+                        </tr>
+                      ))
+                    ) : empleadosRecientes.length > 0 ? (
+                      empleadosRecientes.map((emp) => (
+                        <tr key={emp.id} className="hover:bg-muted/50 transition-colors">
+                          <td className="p-3">
+                            <div className="text-sm font-medium text-foreground">
+                              {emp.nombres} {emp.apellidos}
+                            </div>
+                          </td>
+                          <td className="p-3 text-sm text-muted-foreground">{emp.cargo}</td>
+                          <td className="p-3 text-sm text-muted-foreground text-right">
+                            {formatearFecha(emp.fecha_ingreso)}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <TableEmptyState 
+                        colSpan={3} 
+                        icon={Users}
+                        title="Sin incorporaciones recientes"
+                        description="Cuando agregues nuevos colaboradores aparecerán aquí."
+                      />
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+
+          </div>
+
+          {/* Fila de Próximos Eventos */}
+          <Card>
+            <div className="p-5 border-b border-border flex items-center gap-2">
+              <Calendar size={18} className="text-muted-foreground" />
+              <h3 className="font-bold text-foreground">Próximos Eventos</h3>
+            </div>
+            <div className="p-5">
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Cumpleaños simulado */}
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
+                      <PartyPopper size={18} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Andrea Gómez</p>
+                      <p className="text-xs text-muted-foreground">Cumpleaños • Mañana</p>
+                    </div>
+                  </div>
+                  {/* Vacaciones simuladas */}
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-600">
+                      <Calendar size={18} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Luis Mendoza</p>
+                      <p className="text-xs text-muted-foreground">Inicia vacaciones • En 3 días</p>
+                    </div>
+                  </div>
+                  {/* Avisos simulados */}
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0 text-purple-600">
+                      <Megaphone size={18} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Política de Asistencia</p>
+                      <p className="text-xs text-muted-foreground">Aviso interno • Hace 2 días</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </Card>
+        </>
+      )}
     </div>
   );
 }

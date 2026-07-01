@@ -50,17 +50,17 @@ export function Modal({ open, onClose, title, children, size = "md", className }
         role="dialog"
         aria-modal="true"
         className={cn(
-          "relative w-full bg-white rounded-xl shadow-modal animate-fade-in",
+          "relative w-full bg-card rounded-xl shadow-modal animate-modal-in",
           sizes[size],
           className
         )}
       >
         {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
-            <h2 className="text-base font-semibold text-neutral-900">{title}</h2>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+            <h2 className="text-base font-semibold text-foreground">{title}</h2>
             <button
               onClick={onClose}
-              className="text-neutral-400 hover:text-neutral-600 transition-colors rounded-md p-1 hover:bg-neutral-100"
+              className="text-muted-foreground hover:text-foreground transition-colors rounded-md p-1 hover:bg-muted"
             >
               <X size={18} />
             </button>
