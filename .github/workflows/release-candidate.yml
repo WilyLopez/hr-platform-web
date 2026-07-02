@@ -1,0 +1,23 @@
+name: Generate Release Candidate
+
+on:
+  push:
+    tags:
+      - 'v*-[rR][cC]*' # Se activa cuando creas un tag como v1.0.0-rc1
+
+jobs:
+  build-rc:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Copiar codigo del repositorio
+      uses: actions/checkout@v4
+
+    - name: Crear Release Candidate en GitHub
+      uses: softprops/action-gh-release@v2
+      with:
+        name: Release Candidate ${{ github.ref_name }}
+        tag_name: ${{ github.ref }}
+        draft: false
+        prerelease: true # Esto le dice a GitHub que es una version beta/RC
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
