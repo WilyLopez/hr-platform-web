@@ -24,7 +24,7 @@ export default function SedesPage() {
                 description="Gestiona las ubicaciones de tu empresa"
                 action={
                     <Link href="/propietario/sedes/nueva">
-                        <Button size="sm" leftIcon={<Plus size={14} />}>
+                        <Button size="sm" className="bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100" leftIcon={<Plus size={14} />}>
                             Nueva sede
                         </Button>
                     </Link>
@@ -34,15 +34,15 @@ export default function SedesPage() {
             {isLoading ? (
                 <SkeletonTable rows={4} />
             ) : !sedes || sedes.length === 0 ? (
-                <Card>
+                <Card className="dark:border-slate-800 dark:bg-slate-900">
                     <CardBody>
                         <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
-                            <MapPin size={32} className="text-neutral-300" />
-                            <p className="text-sm text-neutral-500">
+                            <MapPin size={32} className="text-slate-300 dark:text-slate-600" />
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
                                 Aún no has registrado ninguna sede.
                             </p>
                             <Link href="/propietario/sedes/nueva">
-                                <Button size="sm" variant="outline">
+                                <Button size="sm" variant="outline" className="dark:border-slate-700">
                                     Agregar primera sede
                                 </Button>
                             </Link>
@@ -50,18 +50,18 @@ export default function SedesPage() {
                     </CardBody>
                 </Card>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {sedes.map((sede) => (
-                        <Card key={sede.id}>
+                        <Card key={sede.id} className="dark:border-slate-800 dark:bg-slate-900">
                             <CardBody>
                                 <div className="flex items-start justify-between gap-2">
                                     <div className="flex items-start gap-3 min-w-0">
-                                        <MapPin size={16} className="text-brand mt-0.5 flex-shrink-0" />
+                                        <MapPin size={18} className="text-slate-400 mt-0.5 flex-shrink-0" />
                                         <div className="min-w-0">
-                                            <p className="text-sm font-semibold text-neutral-900 truncate">
+                                            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">
                                                 {sede.nombre}
                                             </p>
-                                            <p className="text-xs text-neutral-500 mt-0.5 line-clamp-2">
+                                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
                                                 {sede.direccion}
                                             </p>
                                         </div>
@@ -71,14 +71,14 @@ export default function SedesPage() {
                                     </Badge>
                                 </div>
 
-                                <div className="mt-4 flex items-center gap-1.5 text-xs text-neutral-500">
+                                <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
                                     <Radio size={12} />
                                     <span>Radio: {sede.radio_metros} m</span>
                                 </div>
 
                                 <div className="mt-4 flex justify-end">
                                     <Link href={`/propietario/sedes/${sede.id}/editar`}>
-                                        <Button size="sm" variant="ghost" leftIcon={<Pencil size={13} />}>
+                                        <Button size="sm" variant="ghost" className="text-slate-600 dark:text-slate-400" leftIcon={<Pencil size={13} />}>
                                             Editar
                                         </Button>
                                     </Link>

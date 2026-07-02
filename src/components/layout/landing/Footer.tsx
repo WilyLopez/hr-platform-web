@@ -1,54 +1,48 @@
 import Link from "next/link";
+import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 
 export function LandingFooter() {
-    return (
-        <footer className="border-t border-neutral-200 bg-white">
-            <div className="max-w-6xl mx-auto px-4 py-10">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-md bg-brand flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">
-                                S
-                            </span>
-                        </div>
-                        <span className="text-sm font-bold text-neutral-800">
-                            NexusRH
-                        </span>
-                    </div>
-
-                    <nav className="flex items-center gap-6">
-                        <Link
-                            href="/planes"
-                            className="text-xs text-neutral-500 hover:text-brand transition-colors"
-                        >
-                            Planes
-                        </Link>
-                        <Link
-                            href="/contacto"
-                            className="text-xs text-neutral-500 hover:text-brand transition-colors"
-                        >
-                            Contacto
-                        </Link>
-                        <Link
-                            href="/terminos"
-                            className="text-xs text-neutral-500 hover:text-brand transition-colors"
-                        >
-                            Términos
-                        </Link>
-                        <Link
-                            href="/privacidad"
-                            className="text-xs text-neutral-500 hover:text-brand transition-colors"
-                        >
-                            Privacidad
-                        </Link>
-                    </nav>
-
-                    <p className="text-xs text-neutral-400">
-                        © {new Date().getFullYear()} NexusRH. Todos los derechos
-                        reservados.
-                    </p>
-                </div>
+  return (
+    <footer className="border-t border-slate-100 bg-slate-950 text-slate-300 pt-16 pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-12 mb-16">
+          <div className="col-span-2 md:col-span-2">
+            <span className="text-xl font-bold text-white">NexusRH</span>
+            <p className="mt-4 text-sm text-slate-400 max-w-xs">
+              Digitalizando la gestión de RRHH para empresas modernas. Eficiencia, control y trazabilidad en un solo lugar.
+            </p>
+            <div className="flex gap-4 mt-6">
+              {[Facebook, Twitter, Linkedin, Instagram].map((Icon, i) => (
+                <a key={i} href="#" className="hover:text-white transition-colors">
+                  <Icon size={20} />
+                </a>
+              ))}
             </div>
-        </footer>
-    );
+          </div>
+          
+          {[
+            { title: "Producto", links: [{ label: "Planes", href: "/planes" }, { label: "Contacto", href: "/contacto" }] },
+            { title: "Empresa", links: [{ label: "Nosotros", href: "#" }, { label: "Blog", href: "#" }] },
+            { title: "Legal", links: [{ label: "Términos", href: "/terminos" }, { label: "Privacidad", href: "/privacidad" }] },
+          ].map(section => (
+            <div key={section.title}>
+              <h4 className="font-semibold text-white mb-4">{section.title}</h4>
+              <ul className="space-y-2">
+                {section.links.map(link => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-sm hover:text-white transition-colors">{link.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        
+        <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+          <p>© {new Date().getFullYear()} NexusRH. Todos los derechos reservados.</p>
+          <p>Hecho con pasión para empresas modernas.</p>
+        </div>
+      </div>
+    </footer>
+  );
 }

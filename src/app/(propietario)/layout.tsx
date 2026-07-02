@@ -18,7 +18,7 @@ const ITEMS = [
 
 export default function PropietarioLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isLoginPage = pathname === "/propietario/login";
+  const isLoginPage = pathname === "/login";
 
   if (isLoginPage) {
     return (

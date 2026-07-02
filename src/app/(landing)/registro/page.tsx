@@ -94,7 +94,7 @@ export default function RegistroPage() {
 
       <p className="text-center text-xs text-neutral-400">
         ¿Ya tienes cuenta?{" "}
-        <a href="/admin/login" className="text-brand font-medium">
+        <a href="/login" className="text-brand font-medium">
           Ingresar
         </a>
       </p>
