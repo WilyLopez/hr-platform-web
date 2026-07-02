@@ -88,7 +88,6 @@ export default function SuperadminAuditoriaPage() {
                         placeholder="Tipo de Evento..." 
                         value={tipoEvento} 
                         onChange={(e) => setTipoEvento(e.target.value)} 
-                        icon={Filter}
                     />
                     <Input 
                         type="date"
