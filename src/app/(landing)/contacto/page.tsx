@@ -1,273 +1,141 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { contactoService } from "@/services/contacto.service";
+import { useToast } from "@/hooks/useToast";
+import { Mail, Phone, MapPin, Clock, Loader2, AlertCircle } from "lucide-react";
+
+const contactoSchema = z.object({
+  nombre: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
+  email: z.string().email("Correo electrónico no válido"),
+  empresa: z.string().optional(),
+  telefono: z.string().optional(),
+  mensaje: z.string().min(10, "El mensaje debe tener al menos 10 caracteres"),
+});
+
+type ContactoFormData = z.infer<typeof contactoSchema>;
+
+const CONTACT_INFO = {
+  emails: [
+    { label: "Ventas", email: "ventas@nexusrh.pe" },
+    { label: "Soporte", email: "soporte@nexusrh.pe" },
+  ],
+  phone: "+51 999 999 999",
+  location: "Lima, Perú",
+  hours: {
+    weekday: "Lunes a Viernes: 9:00 AM - 6:00 PM",
+    saturday: "Sábado: 9:00 AM - 1:00 PM",
+  },
+};
 
 export default function ContactoPage() {
-    const [formData, setFormData] = useState({
-        nombre: "",
-        email: "",
-        empresa: "",
-        telefono: "",
-        mensaje: "",
-    });
+  const toast = useToast();
+  const [enviando, setEnviando] = useState(false);
 
-    const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    ) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, touchedFields },
+    reset,
+  } = useForm<ContactoFormData>({
+    resolver: zodResolver(contactoSchema),
+    mode: "onBlur",
+  });
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Aquí iría la lógica de envío del formulario
-        console.log("Formulario enviado:", formData);
-        alert("¡Gracias! Nos contactaremos pronto.");
-        setFormData({
-            nombre: "",
-            email: "",
-            empresa: "",
-            telefono: "",
-            mensaje: "",
-        });
-    };
+  const onSubmit = async (data: ContactoFormData) => {
+    setEnviando(true);
+    try {
+      await contactoService.enviarContacto({
+        ...data,
+        empresa: data.empresa ?? "",
+        telefono: data.telefono ?? "",
+      });
+      toast.success("Mensaje enviado correctamente.");
+      reset();
+    } catch {
+      toast.error("Error al enviar el mensaje. Intente más tarde.");
+    } finally {
+      setEnviando(false);
+    }
+  };
 
-    return (
-        <div className="w-full bg-white">
-            {/* Header */}
-            <header className="border-b border-gray-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-16">
-                        <Link href="/" className="flex items-center space-x-2">
-                            <div className="bg-blue-500 rounded-lg p-2 w-10 h-10 flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">
-                                    ⌂
-                                </span>
-                            </div>
-                            <span className="text-xl font-bold text-gray-900">
-                                NexusRH
-                            </span>
-                        </Link>
-                        <div className="flex items-center space-x-4">
-                            <Link
-                                href="/"
-                                className="text-blue-600 hover:text-blue-700 font-medium"
-                            >
-                                Volver
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </header>
+  const inputClasses = (hasError: boolean | undefined) => 
+    `w-full px-4 py-3 rounded-lg border bg-white text-slate-900 transition-all outline-none focus:ring-2 ${
+      hasError 
+        ? "border-red-300 focus:ring-red-200" 
+        : "border-slate-200 focus:ring-slate-200 focus:border-slate-400"
+    }`;
 
-            {/* Hero */}
-            <section className="py-12 lg:py-16 bg-gradient-to-br from-blue-50 to-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
-                        <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                            Ponte en Contacto
-                        </h1>
-                        <p className="text-xl text-gray-600">
-                            ¿Preguntas sobre NexusRH? Estamos aquí para
-                            ayudarte.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            {/* Contact Section */}
-            <section className="py-16 lg:py-24">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        {/* Contact Info */}
-                        <div>
-                            <h2 className="text-3xl font-bold text-gray-900 mb-8">
-                                Información de Contacto
-                            </h2>
-
-                            <div className="space-y-8">
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                        Correo Electrónico
-                                    </h3>
-                                    <p className="text-gray-600">
-                                        <a
-                                            href="mailto:ventas@NexusRH.pe"
-                                            className="text-blue-600 hover:text-blue-700"
-                                        >
-                                            ventas@NexusRH.pe
-                                        </a>
-                                    </p>
-                                    <p className="text-gray-600">
-                                        <a
-                                            href="mailto:soporte@NexusRH.pe"
-                                            className="text-blue-600 hover:text-blue-700"
-                                        >
-                                            soporte@NexusRH.pe
-                                        </a>
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                        Teléfono
-                                    </h3>
-                                    <p className="text-gray-600">
-                                        <a
-                                            href="tel:+51123456789"
-                                            className="text-blue-600 hover:text-blue-700"
-                                        >
-                                            +51 (1) 2345-6789
-                                        </a>
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                        Ubicación
-                                    </h3>
-                                    <p className="text-gray-600">Lima, Perú</p>
-                                </div>
-
-                                <div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                        Horario de Atención
-                                    </h3>
-                                    <p className="text-gray-600">
-                                        Lunes a Viernes: 9:00 AM - 6:00 PM
-                                    </p>
-                                    <p className="text-gray-600">
-                                        Sábado: 9:00 AM - 1:00 PM
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Contact Form */}
-                        <div>
-                            <form
-                                onSubmit={handleSubmit}
-                                className="bg-gray-50 rounded-lg p-8"
-                            >
-                                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                                    Envíanos un Mensaje
-                                </h2>
-
-                                <div className="mb-6">
-                                    <label
-                                        htmlFor="nombre"
-                                        className="block text-sm font-medium text-gray-700 mb-2"
-                                    >
-                                        Nombre
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="nombre"
-                                        name="nombre"
-                                        value={formData.nombre}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="Tu nombre"
-                                    />
-                                </div>
-
-                                <div className="mb-6">
-                                    <label
-                                        htmlFor="email"
-                                        className="block text-sm font-medium text-gray-700 mb-2"
-                                    >
-                                        Correo Electrónico
-                                    </label>
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="tu@email.com"
-                                    />
-                                </div>
-
-                                <div className="mb-6">
-                                    <label
-                                        htmlFor="empresa"
-                                        className="block text-sm font-medium text-gray-700 mb-2"
-                                    >
-                                        Empresa
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="empresa"
-                                        name="empresa"
-                                        value={formData.empresa}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="Nombre de tu empresa"
-                                    />
-                                </div>
-
-                                <div className="mb-6">
-                                    <label
-                                        htmlFor="telefono"
-                                        className="block text-sm font-medium text-gray-700 mb-2"
-                                    >
-                                        Teléfono
-                                    </label>
-                                    <input
-                                        type="tel"
-                                        id="telefono"
-                                        name="telefono"
-                                        value={formData.telefono}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="+51 1234567890"
-                                    />
-                                </div>
-
-                                <div className="mb-6">
-                                    <label
-                                        htmlFor="mensaje"
-                                        className="block text-sm font-medium text-gray-700 mb-2"
-                                    >
-                                        Mensaje
-                                    </label>
-                                    <textarea
-                                        id="mensaje"
-                                        name="mensaje"
-                                        value={formData.mensaje}
-                                        onChange={handleChange}
-                                        required
-                                        rows={5}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="Cuéntanos cómo podemos ayudarte..."
-                                    />
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-medium"
-                                >
-                                    Enviar Mensaje
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Footer */}
-            <footer className="bg-gray-900 text-white py-12">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400 text-sm">
-                    <p>© 2026 NexusRH. Todos los derechos reservados.</p>
-                </div>
-            </footer>
+  return (
+    <div className="w-full bg-slate-50 min-h-screen py-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-extrabold text-slate-900 mb-4">Ponte en contacto</h1>
+          <p className="text-lg text-slate-600">Estamos aquí para resolver tus dudas sobre NexusRH.</p>
         </div>
-    );
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
+          <div className="lg:col-span-2 space-y-8">
+            <div className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
+              <h2 className="text-xl font-semibold text-slate-900 mb-6">Información</h2>
+              <div className="space-y-6">
+                {[
+                  { icon: Mail, title: "Correo", content: CONTACT_INFO.emails },
+                  { icon: Phone, title: "Teléfono", content: CONTACT_INFO.phone },
+                  { icon: MapPin, title: "Ubicación", content: CONTACT_INFO.location },
+                  { icon: Clock, title: "Horario", content: [CONTACT_INFO.hours.weekday, CONTACT_INFO.hours.saturday] },
+                ].map((item, idx) => (
+                  <div key={idx} className="flex gap-4">
+                    <item.icon className="w-6 h-6 text-slate-400 mt-1" />
+                    <div>
+                      <h3 className="font-medium text-slate-900">{item.title}</h3>
+                      {typeof item.content === 'string' ? (
+                        <p className="text-slate-600">{item.content}</p>
+                      ) : Array.isArray(item.content) ? (
+                        item.content.map((c: any, i: number) => (
+                          <p key={i} className="text-slate-600">{c.email ? `${c.label}: ${c.email}` : c}</p>
+                        ))
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="lg:col-span-3 bg-white p-8 rounded-2xl border border-slate-100 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900 mb-6">Envía un mensaje</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-700 mb-1">Nombre</label>
+                <input {...register("nombre")} className={inputClasses(!!errors.nombre)} />
+                {errors.nombre && <p className="text-red-600 text-xs mt-1 flex items-center gap-1"><AlertCircle size={12}/>{errors.nombre.message}</p>}
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-700 mb-1">Correo electrónico</label>
+                <input {...register("email")} className={inputClasses(!!errors.email)} />
+                {errors.email && <p className="text-red-600 text-xs mt-1 flex items-center gap-1"><AlertCircle size={12}/>{errors.email.message}</p>}
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-slate-700 mb-1">Mensaje</label>
+                <textarea {...register("mensaje")} rows={4} className={inputClasses(!!errors.mensaje)} />
+                {errors.mensaje && <p className="text-red-600 text-xs mt-1 flex items-center gap-1"><AlertCircle size={12}/>{errors.mensaje.message}</p>}
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={enviando}
+              className="mt-6 w-full bg-slate-900 text-white py-3 rounded-lg hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 font-medium"
+            >
+              {enviando && <Loader2 className="w-5 h-5 animate-spin" />}
+              {enviando ? "Enviando..." : "Enviar mensaje"}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 }

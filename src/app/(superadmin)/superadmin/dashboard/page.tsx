@@ -36,9 +36,14 @@ const columns: Column<EmpresaListItem>[] = [
 ];
 
 export default function SuperadminDashboardPage() {
-    const { data, isLoading } = useQuery({
+    const { data: listData, isLoading: isLoadingList } = useQuery({
         queryKey: ["empresas-lista"],
         queryFn: () => empresaService.listar({ page: 1 }),
+    });
+
+    const { data: dashboardData, isLoading: isLoadingDashboard } = useQuery({
+        queryKey: ["superadmin-dashboard"],
+        queryFn: () => empresaService.obtenerDashboardSuperadmin(),
     });
 
     return (
@@ -50,50 +55,64 @@ export default function SuperadminDashboardPage() {
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
-                    title="Empresas activas"
-                    value={data?.count ?? "—"}
+                    title="Empresas totales"
+                    value={dashboardData?.total_empresas ?? "—"}
                     icon={Building2}
-                    iconColor="text-brand"
-                    isLoading={isLoading}
+                    variant="brand"
+                    isLoading={isLoadingDashboard}
                 />
                 <StatCard
-                    title="En periodo de prueba"
-                    value="—"
-                    icon={TrendingUp}
-                    iconColor="text-warning"
-                    isLoading={isLoading}
-                />
-                <StatCard
-                    title="Usuarios totales"
-                    value="—"
+                    title="Usuarios activos"
+                    value={dashboardData?.total_usuarios ?? "—"}
                     icon={Users}
-                    iconColor="text-success"
-                    isLoading={isLoading}
+                    variant="success"
+                    isLoading={isLoadingDashboard}
                 />
                 <StatCard
-                    title="Ingresos del mes"
-                    value="—"
+                    title="Facturación mensual est."
+                    value={dashboardData ? `$${dashboardData.mrr_estimado.toFixed(2)}` : "—"}
                     icon={CreditCard}
-                    iconColor="text-brand"
-                    isLoading={isLoading}
+                    variant="brand"
+                    isLoading={isLoadingDashboard}
+                />
+                <StatCard
+                    title="Pruebas activas"
+                    value={dashboardData?.pruebas_activas ?? "—"}
+                    icon={TrendingUp}
+                    variant="warning"
+                    isLoading={isLoadingDashboard}
                 />
             </div>
 
-            <Card>
-                <CardHeader
-                    title="Empresas registradas"
-                    description="Últimas empresas en el sistema"
-                />
-                <CardBody className="p-0">
-                    <DataTable
-                        columns={columns}
-                        data={data?.results ?? []}
-                        keyField="id"
-                        isLoading={isLoading}
-                        emptyTitle="Sin empresas registradas"
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                    <CardHeader
+                        title="Actividad Reciente"
+                        description="Últimas empresas registradas"
                     />
-                </CardBody>
-            </Card>
+                    <CardBody className="p-0">
+                        <DataTable
+                            columns={columns}
+                            data={listData?.results?.slice(0, 5) ?? []}
+                            keyField="id"
+                            isLoading={isLoadingList}
+                            emptyTitle="Sin empresas registradas"
+                        />
+                    </CardBody>
+                </Card>
+
+                <Card>
+                    <CardHeader
+                        title="Alertas de Sistema"
+                        description="Monitor de operaciones críticas"
+                    />
+                    <CardBody>
+                        <div className="text-center py-10 text-gray-500 text-sm">
+                            No hay alertas críticas en el sistema
+                        </div>
+                    </CardBody>
+                </Card>
+            </div>
         </div>
     );
 }

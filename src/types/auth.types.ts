@@ -25,3 +25,19 @@ export interface LoginInput {
 export interface RecuperarContrasenaInput {
   correo: string;
 }
+
+export interface PerfilOutput {
+  id: number;
+  empresa_id: number | null;
+  codigo_unico: string;
+  correo: string;
+  rol: Rol;
+  estado: string;
+  ultimo_acceso: string | null;
+  fecha_creacion: string;
+}
+
+export interface CambiarContrasenaInput {
+  contrasena_actual: string;
+  contrasena_nueva: string;
+}

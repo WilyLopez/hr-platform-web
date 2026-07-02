@@ -57,7 +57,7 @@ export default function RegistroConfirmacionPage() {
             <Button
               fullWidth
               rightIcon={<ArrowRight size={15} />}
-              onClick={() => router.push("/propietario/login")}
+              onClick={() => router.push("/login")}
             >
               Ir al portal del propietario
             </Button>

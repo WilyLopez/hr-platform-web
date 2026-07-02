@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import React, { useState, useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useAuth } from "@/hooks/useAuth";
@@ -37,11 +37,11 @@ import {
     AlertCircle
 } from "lucide-react";
 
-const ESTADOS: Record<string, { label: string; variant: "success" | "warning" | "danger" | "neutral" }> = {
+const ESTADOS: Record<string, { label: string; variant: "success" | "warning" | "danger" | "slate" }> = {
     ACTIVA:     { label: "Activa",      variant: "success" },
     EN_PRUEBA:  { label: "En prueba",   variant: "warning" },
     SUSPENDIDA: { label: "Suspendida",  variant: "danger"  },
-    ELIMINADA:  { label: "Eliminada",   variant: "neutral" },
+    ELIMINADA:  { label: "Eliminada",   variant: "slate" },
 };
 
 const empresaSchema = z.object({
@@ -54,20 +54,20 @@ const empresaSchema = z.object({
 type EmpresaFormData = z.infer<typeof empresaSchema>;
 
 // Componente auxiliar para filas de info
-function InfoRow({ icon: Icon, label, value, iconClass = "text-neutral-400" }: {
+function InfoRow({ icon: Icon, label, value, iconClass = "text-slate-400" }: {
     icon: React.ElementType;
     label: string;
     value: string;
     iconClass?: string;
 }) {
     return (
-        <div className="flex items-center gap-3 py-3 border-b border-neutral-100 last:border-0">
-            <div className={`w-8 h-8 rounded-lg bg-neutral-50 border border-neutral-100 flex items-center justify-center flex-shrink-0`}>
+        <div className="flex items-center gap-3 py-3 border-b border-slate-100 last:border-0">
+            <div className={`w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 flex items-center justify-center flex-shrink-0`}>
                 <Icon size={15} className={iconClass} />
             </div>
             <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">{label}</p>
-                <p className="text-sm font-semibold text-neutral-900 truncate">{value || "No definido"}</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{value || "No definido"}</p>
             </div>
         </div>
     );
@@ -79,31 +79,31 @@ function EmpresaPageSkeleton() {
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div className="space-y-2">
-                    <div className="h-6 w-40 bg-neutral-100 animate-pulse rounded-lg" />
-                    <div className="h-3 w-64 bg-neutral-100 animate-pulse rounded-lg" />
+                    <div className="h-6 w-40 bg-slate-100 animate-pulse rounded-lg" />
+                    <div className="h-3 w-64 bg-slate-100 animate-pulse rounded-lg" />
                 </div>
-                <div className="h-8 w-28 bg-neutral-100 animate-pulse rounded-lg" />
+                <div className="h-8 w-28 bg-slate-100 animate-pulse rounded-lg" />
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm p-6 flex flex-col items-center gap-4">
-                    <div className="w-24 h-24 rounded-full bg-neutral-100 animate-pulse" />
-                    <div className="w-36 h-4 bg-neutral-100 animate-pulse rounded-lg" />
-                    <div className="w-24 h-3 bg-neutral-100 animate-pulse rounded-lg" />
-                    <div className="w-16 h-5 bg-neutral-100 animate-pulse rounded-full" />
-                    <div className="w-full h-px bg-neutral-100 my-2" />
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col items-center gap-4">
+                    <div className="w-24 h-24 rounded-full bg-slate-100 animate-pulse" />
+                    <div className="w-36 h-4 bg-slate-100 animate-pulse rounded-lg" />
+                    <div className="w-24 h-3 bg-slate-100 animate-pulse rounded-lg" />
+                    <div className="w-16 h-5 bg-slate-100 animate-pulse rounded-full" />
+                    <div className="w-full h-px bg-slate-100 my-2" />
                     <div className="w-full space-y-4">
                         {[1,2].map(i => (
                             <div key={i} className="flex gap-3 items-center">
-                                <div className="w-8 h-8 bg-neutral-100 animate-pulse rounded-lg" />
+                                <div className="w-8 h-8 bg-slate-100 animate-pulse rounded-lg" />
                                 <div className="flex-1 space-y-1.5">
-                                    <div className="h-2 w-16 bg-neutral-100 animate-pulse rounded" />
-                                    <div className="h-3 w-28 bg-neutral-100 animate-pulse rounded" />
+                                    <div className="h-2 w-16 bg-slate-100 animate-pulse rounded" />
+                                    <div className="h-3 w-28 bg-slate-100 animate-pulse rounded" />
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
-                <div className="lg:col-span-2 bg-white rounded-2xl border border-neutral-100 shadow-sm p-6 space-y-6">
+                <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-6">
                     <SkeletonText lines={8} />
                 </div>
             </div>
@@ -117,6 +117,8 @@ export default function EmpresaPage() {
     const toast = useToast();
     const queryClient = useQueryClient();
     const [isEditing, setIsEditing] = useState(false);
+    
+    const logoFileRef = React.useRef<HTMLInputElement>(null);
 
     const empresaId = usuario?.empresa_id ?? 0;
 
@@ -131,9 +133,27 @@ export default function EmpresaPage() {
         enabled: isReady && !!empresaId,
     });
 
-    const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm<EmpresaFormData>({
+    const { register, handleSubmit, reset, control, setValue, formState: { errors, isDirty } } = useForm<EmpresaFormData>({
         resolver: zodResolver(empresaSchema),
     });
+
+    const currentLogo = useWatch({ control, name: "logo_url" });
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        
+        if (file.size > 2 * 1024 * 1024) {
+            toast.error("La imagen no puede pesar más de 2MB");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setValue("logo_url", reader.result as string, { shouldDirty: true });
+        };
+        reader.readAsDataURL(file);
+    };
 
     useEffect(() => {
         if (empresa) {
@@ -168,7 +188,7 @@ export default function EmpresaPage() {
     };
 
     const estado = empresa
-        ? (ESTADOS[empresa.estado] ?? { label: empresa.estado, variant: "neutral" as const })
+        ? (ESTADOS[empresa.estado] ?? { label: empresa.estado, variant: "slate" as const })
         : null;
 
     // ✅ FIX: Eliminado !isReady del loading
@@ -179,12 +199,12 @@ export default function EmpresaPage() {
     if (!empresa) {
         return (
             <div className="flex flex-col items-center justify-center py-24 text-center space-y-4">
-                <div className="w-16 h-16 rounded-2xl bg-neutral-50 border border-neutral-100 flex items-center justify-center">
-                    <AlertCircle size={28} className="text-neutral-300" />
+                <div className="w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center">
+                    <AlertCircle size={28} className="text-slate-300" />
                 </div>
                 <div>
-                    <p className="font-semibold text-neutral-700">No se pudo cargar la empresa</p>
-                    <p className="text-sm text-neutral-400 mt-1">Verifica tu conexión e intenta de nuevo.</p>
+                    <p className="font-semibold text-slate-700">No se pudo cargar la empresa</p>
+                    <p className="text-sm text-slate-400 mt-1">Verifica tu conexión e intenta de nuevo.</p>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
                     Reintentar
@@ -254,23 +274,44 @@ export default function EmpresaPage() {
                             {/* Avatar con botón de cámara */}
                             <div className="relative inline-block group mb-3">
                                 <div className="w-20 h-20 rounded-2xl ring-4 ring-white shadow-md overflow-hidden bg-white flex items-center justify-center">
-                                    <Avatar
-                                        name={empresa.razon_social}
-                                        size="xl"
-                                        className="w-full h-full text-xl rounded-none"
-                                    />
+                                    {currentLogo || empresa.logo_url ? (
+                                        <img 
+                                            src={currentLogo || empresa.logo_url || ""} 
+                                            alt="Logo" 
+                                            className="w-full h-full object-cover" 
+                                        />
+                                    ) : (
+                                        <Avatar
+                                            name={empresa.razon_social}
+                                            size="lg"
+                                            className="w-full h-full text-xl rounded-none"
+                                        />
+                                    )}
                                 </div>
                                 {isEditing && (
-                                    <button className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer">
-                                        <Camera size={18} className="text-white" />
-                                    </button>
+                                    <>
+                                        <input 
+                                            type="file" 
+                                            accept="image/*" 
+                                            className="hidden" 
+                                            ref={logoFileRef}
+                                            onChange={handleFileChange}
+                                        />
+                                        <button 
+                                            type="button"
+                                            onClick={() => logoFileRef.current?.click()}
+                                            className="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer"
+                                        >
+                                            <Camera size={18} className="text-white" />
+                                        </button>
+                                    </>
                                 )}
                             </div>
 
-                            <h3 className="text-base font-bold text-neutral-900 truncate leading-tight">
+                            <h3 className="text-base font-bold text-slate-900 truncate leading-tight">
                                 {empresa.nombre_comercial || empresa.razon_social}
                             </h3>
-                            <p className="text-xs text-neutral-400 truncate mt-0.5 mb-3">{empresa.razon_social}</p>
+                            <p className="text-xs text-slate-400 truncate mt-0.5 mb-3">{empresa.razon_social}</p>
 
                             {estado && (
                                 <Badge variant={estado.variant} dot>
@@ -286,7 +327,7 @@ export default function EmpresaPage() {
                                     icon={Hash}
                                     label="RUC"
                                     value={empresa.ruc}
-                                    iconClass="text-neutral-400"
+                                    iconClass="text-slate-400"
                                 />
                                 <InfoRow
                                     icon={Mail}
@@ -301,7 +342,7 @@ export default function EmpresaPage() {
                     {/* Tarjeta de auditoría */}
                     <Card className="border-none shadow-sm">
                         <CardBody className="p-4 space-y-1">
-                            <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-3">Auditoría</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Auditoría</p>
                             <InfoRow
                                 icon={CalendarDays}
                                 label="Fecha de Registro"
@@ -314,7 +355,7 @@ export default function EmpresaPage() {
                                 icon={Fingerprint}
                                 label="ID de Organización"
                                 value={`#${empresa.id.toString().padStart(5, "0")}`}
-                                iconClass="text-neutral-400"
+                                iconClass="text-slate-400"
                             />
                         </CardBody>
                     </Card>
@@ -326,7 +367,7 @@ export default function EmpresaPage() {
                         {isEditing ? (
                             <div className="space-y-6">
                                 <div>
-                                    <p className="text-xs font-bold text-neutral-400 uppercase tracking-widest mb-4">
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">
                                         Información Editable
                                     </p>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -370,7 +411,7 @@ export default function EmpresaPage() {
                             <div className="space-y-8">
                                 {/* Sección operativa */}
                                 <div>
-                                    <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-4">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
                                         Información Operativa
                                     </p>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
@@ -393,7 +434,7 @@ export default function EmpresaPage() {
 
                                 {/* Dirección */}
                                 <div>
-                                    <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-4">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
                                         Sede Fiscal
                                     </p>
                                     <div className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100">
@@ -401,10 +442,10 @@ export default function EmpresaPage() {
                                             <MapPin size={18} className="text-orange-500" />
                                         </div>
                                         <div>
-                                            <p className="text-sm font-semibold text-neutral-900">
+                                            <p className="text-sm font-semibold text-slate-900">
                                                 {empresa.direccion || "Sin dirección registrada"}
                                             </p>
-                                            <p className="text-xs text-neutral-400 mt-1">
+                                            <p className="text-xs text-slate-400 mt-1">
                                                 Dirección oficial para facturación y reportes legales.
                                             </p>
                                         </div>
@@ -415,22 +456,22 @@ export default function EmpresaPage() {
 
                                 {/* Verificación SUNAT */}
                                 <div>
-                                    <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-4">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">
                                         Datos Verificados
                                     </p>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="flex items-center gap-3 p-3 rounded-xl bg-neutral-50 border border-neutral-100">
+                                        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
                                             <CheckCircle2 size={16} className="text-success flex-shrink-0" />
                                             <div>
-                                                <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">RUC Verificado</p>
-                                                <p className="text-sm font-mono font-semibold text-neutral-900">{empresa.ruc}</p>
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">RUC Verificado</p>
+                                                <p className="text-sm font-mono font-semibold text-slate-900">{empresa.ruc}</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3 p-3 rounded-xl bg-neutral-50 border border-neutral-100">
+                                        <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
                                             <CheckCircle2 size={16} className="text-success flex-shrink-0" />
                                             <div>
-                                                <p className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider">Razón Social</p>
-                                                <p className="text-sm font-semibold text-neutral-900 truncate">{empresa.razon_social}</p>
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Razón Social</p>
+                                                <p className="text-sm font-semibold text-slate-900 truncate">{empresa.razon_social}</p>
                                             </div>
                                         </div>
                                     </div>

@@ -1,45 +1,50 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui";
+import { Menu, X } from "lucide-react";
 
 export function LandingTopbar() {
-    return (
-        <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-neutral-200">
-            <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center">
-                        <span className="text-white text-sm font-bold">S</span>
-                    </div>
-                    <span className="text-base font-bold text-neutral-900">
-                        NexusRH
-                    </span>
-                </Link>
+  const [isOpen, setIsOpen] = useState(false);
 
-                <nav className="hidden md:flex items-center gap-6">
-                    <Link
-                        href="/planes"
-                        className="text-sm text-neutral-600 hover:text-brand transition-colors"
-                    >
-                        Planes
-                    </Link>
-                    <Link
-                        href="/contacto"
-                        className="text-sm text-neutral-600 hover:text-brand transition-colors"
-                    >
-                        Contacto
-                    </Link>
-                </nav>
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white/95 backdrop-blur">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center gap-2">
+          <img src="/logo.svg" alt="NexusRH" className="h-8 w-auto" />
+          <span className="text-xl font-bold text-slate-900">NexusRH</span>
+        </Link>
+        
+        <nav className="hidden md:flex items-center gap-8">
+          <Link href="/#modulos" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Módulos</Link>
+          <Link href="/planes" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Planes</Link>
+          <Link href="/contacto" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Contacto</Link>
+        </nav>
+        
+        <div className="hidden md:flex items-center gap-4">
+          <Link href="/admin/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Ingresar</Link>
+          <Link href="/registro" className="bg-slate-900 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-slate-800 transition-colors text-sm">Comenzar gratis</Link>
+        </div>
 
-                <div className="flex items-center gap-3">
-                    <Link href="/admin/login">
-                        <Button variant="ghost" size="sm">
-                            Ingresar
-                        </Button>
-                    </Link>
-                    <Link href="/registro">
-                        <Button size="sm">Comenzar gratis</Button>
-                    </Link>
-                </div>
-            </div>
-        </header>
-    );
+        <button
+          className="md:hidden p-2 text-slate-600 hover:text-slate-900"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {isOpen && (
+        <div className="md:hidden border-t border-slate-100 bg-white p-4 space-y-4">
+          <Link href="/#modulos" className="block text-sm font-medium text-slate-600" onClick={() => setIsOpen(false)}>Módulos</Link>
+          <Link href="/planes" className="block text-sm font-medium text-slate-600" onClick={() => setIsOpen(false)}>Planes</Link>
+          <Link href="/contacto" className="block text-sm font-medium text-slate-600" onClick={() => setIsOpen(false)}>Contacto</Link>
+          <hr />
+          <Link href="/admin/login" className="block text-sm font-medium text-slate-600" onClick={() => setIsOpen(false)}>Ingresar</Link>
+          <Link href="/registro" className="block bg-slate-900 text-white text-center py-2 rounded-lg font-semibold" onClick={() => setIsOpen(false)}>Comenzar gratis</Link>
+        </div>
+      )}
+    </header>
+  );
 }

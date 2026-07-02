@@ -3,8 +3,6 @@ import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/dashboard/Sidebar";
 import { Topbar }  from "@/components/layout/dashboard/Topbar";
 import { ToastProvider } from "@/components/feedback/ToastProvider";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
 import {
   LayoutDashboard, Users, Clock, FileText, Settings, ClipboardList, Bell,
 } from "lucide-react";
@@ -21,31 +19,27 @@ const ITEMS = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isLoginPage = pathname === "/admin/login";
+  const isLoginPage = pathname === "/login";
 
   if (isLoginPage) {
     return (
-      <QueryClientProvider client={queryClient}>
-        <ToastProvider>
-          {children}
-        </ToastProvider>
-      </QueryClientProvider>
+      <ToastProvider>
+        {children}
+      </ToastProvider>
     );
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <div className="sidebar-layout">
-          <Sidebar items={ITEMS} portalName="Admin RRHH" />
-          <div className="sidebar-content">
-            <Topbar />
-            <main className="main-content">
-              <div className="page-container">{children}</div>
-            </main>
-          </div>
+    <ToastProvider>
+      <div className="sidebar-layout">
+        <Sidebar items={ITEMS} portalName="Admin RRHH" />
+        <div className="sidebar-content">
+          <Topbar />
+          <main className="main-content">
+            <div className="page-container">{children}</div>
+          </main>
         </div>
-      </ToastProvider>
-    </QueryClientProvider>
+      </div>
+    </ToastProvider>
   );
 }

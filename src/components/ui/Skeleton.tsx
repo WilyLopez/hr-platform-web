@@ -9,7 +9,13 @@ export function Skeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "animate-pulse bg-neutral-200 rounded-md",
+        "rounded-md",
+        // Base fallback color for reduced motion
+        "bg-neutral-200 dark:bg-neutral-800",
+        // Shimmer effect (only runs if motion is safe)
+        "motion-safe:bg-gradient-to-r motion-safe:from-neutral-200 motion-safe:via-neutral-100 motion-safe:to-neutral-200",
+        "dark:motion-safe:from-neutral-800 dark:motion-safe:via-neutral-700 dark:motion-safe:to-neutral-800",
+        "motion-safe:bg-[length:1000px_100%] motion-safe:animate-shimmer",
         className
       )}
     />
@@ -44,6 +50,20 @@ export function SkeletonTable({ rows = 5 }: { rows?: number }) {
       <Skeleton className="h-10 w-full" />
       {Array.from({ length: rows }).map((_, i) => (
         <Skeleton key={i} className="h-12 w-full" />
+      ))}
+    </div>
+  );
+}
+
+export function SkeletonAvatar({ className }: { className?: string }) {
+  return <Skeleton className={cn("rounded-full w-10 h-10", className)} />;
+}
+
+export function SkeletonChart({ className }: { className?: string }) {
+  return (
+    <div className={cn("w-full h-64 flex items-end gap-2", className)}>
+      {Array.from({ length: 7 }).map((_, i) => (
+        <Skeleton key={i} className="w-full" style={{ height: `${Math.max(20, Math.random() * 100)}%` }} />
       ))}
     </div>
   );

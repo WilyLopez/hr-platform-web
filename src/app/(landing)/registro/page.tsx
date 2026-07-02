@@ -33,8 +33,25 @@ export default function RegistroPage() {
       const result = await empresaService.validarRuc(data.ruc);
       sessionStorage.setItem("ruc_data", JSON.stringify(result.data));
       router.push("/registro/datos");
-    } catch {
-      toast.error("No se pudo validar el RUC. Verifica que sea correcto y esté activo en SUNAT.");
+    } catch (error: any) {
+      console.error(error.response?.data || error);
+      
+      // Bypass para testing local si el backend no tiene la API de SUNAT lista
+      if (data.ruc === "20100070970" || data.ruc === "20000000000") {
+        const mockData = {
+          ruc: data.ruc,
+          razon_social: "Empresa de Pruebas S.A.C.",
+          nombre_comercial: "Empresa Prueba",
+          direccion: "Av. Principal 123",
+          estado: "ACTIVO"
+        };
+        sessionStorage.setItem("ruc_data", JSON.stringify(mockData));
+        toast.success("Modo Desarrollo: RUC aceptado (Mock).");
+        router.push("/registro/datos");
+      } else {
+        const errorMsg = error.response?.data?.message || error.response?.data?.detail || "Verifica que el RUC sea correcto y esté activo en SUNAT.";
+        toast.error(`Error: ${errorMsg}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -77,7 +94,7 @@ export default function RegistroPage() {
 
       <p className="text-center text-xs text-neutral-400">
         ¿Ya tienes cuenta?{" "}
-        <a href="/admin/login" className="text-brand font-medium">
+        <a href="/login" className="text-brand font-medium">
           Ingresar
         </a>
       </p>
