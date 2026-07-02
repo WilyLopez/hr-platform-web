@@ -1,0 +1,27 @@
+name: Frontend Integration (CI)
+
+on:
+  push:
+    branches: [ main, master, dev ]
+  pull_request:
+    branches: [ main, master, dev ]
+
+jobs:
+  frontend-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Copiar el codigo del repositorio
+      uses: actions/checkout@v4
+
+    - name: Configurar entorno de Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Instalar dependencias del proyecto
+      run: npm ci
+
+    - name: Validar construccion (Build) de Next.js
+      run: npm run build --if-present
