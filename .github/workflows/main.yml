@@ -1,0 +1,23 @@
+name: Frontend Integration (CI)
+
+on:
+  push:
+    branches: [ main, principal, dev, WilyLopez-patch-1 ]
+  pull_request:
+    branches: [ main, principal, dev, WilyLopez-patch-1 ]
+
+jobs:
+  frontend-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Copiar el codigo del repositorio
+      uses: actions/checkout@v4
+
+    - name: Configurar entorno de Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Instalar dependencias del proyecto
+      run: npm install
