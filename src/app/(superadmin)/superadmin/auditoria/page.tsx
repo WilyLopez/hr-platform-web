@@ -83,7 +83,6 @@ export default function SuperadminAuditoriaPage() {
                         placeholder="ID Empresa..." 
                         value={empresaId} 
                         onChange={(e) => setEmpresaId(e.target.value)} 
-                        icon={Search}
                     />
                     <Input 
                         placeholder="Tipo de Evento..." 
