@@ -17,7 +17,7 @@ const ITEMS = [
 
 export default function SuperadminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isLoginPage = pathname === "/superadmin/login";
+  const isLoginPage = pathname === "/login";
 
   if (isLoginPage) {
     return (
