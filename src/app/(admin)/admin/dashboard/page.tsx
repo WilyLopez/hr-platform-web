@@ -40,7 +40,7 @@ export default function AdminDashboardPage() {
         const [empleadosRes, solicitudesRes, asistenciaRes] = await Promise.all([
           empleadoService.listar({ estado: "ACTIVO", page: 1, page_size: 5 }),
           solicitudService.listar({ estado: "PENDIENTE", page: 1 }),
-          asistenciaService.listar({ fecha: fechaFormateada }).catch(() => [])
+          asistenciaService.listar({ fecha_desde: fechaFormateada, fecha_hasta: fechaFormateada }).catch(() => [])
         ]);
 
         const empData = (empleadosRes as any).results || (empleadosRes as any).data || empleadosRes;
