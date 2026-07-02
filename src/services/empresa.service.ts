@@ -21,8 +21,31 @@ export const empresaService = {
     return r.data;
   },
 
+  async obtenerDashboardSuperadmin(): Promise<{
+    total_empresas: number;
+    total_usuarios: number;
+    pruebas_activas: number;
+    mrr_estimado: number;
+  }> {
+    const r = await apiClient.get("/empresas/dashboard-superadmin/");
+    return r.data;
+  },
+
   async obtener(id: number): Promise<Empresa> {
     const r = await apiClient.get<Empresa>(`/empresas/${id}/`);
+    return r.data;
+  },
+
+  async obtenerMetricas(id: number): Promise<{
+    empleados: number;
+    usuarios: number;
+    marcajes_hoy: number;
+    solicitudes_mes: number;
+    espacio_gb: number;
+    limite_usuarios: number;
+    limite_espacio: number;
+  }> {
+    const r = await apiClient.get(`/empresas/${id}/metricas/`);
     return r.data;
   },
 
@@ -33,6 +56,10 @@ export const empresaService = {
 
   async suspender(id: number, razon: string): Promise<void> {
     await apiClient.post(`/empresas/${id}/suspender/`, { razon });
+  },
+
+  async reactivar(id: number): Promise<void> {
+    await apiClient.post(`/empresas/${id}/reactivar/`);
   },
 
   async listarSedes(empresaId: number): Promise<Sede[]> {

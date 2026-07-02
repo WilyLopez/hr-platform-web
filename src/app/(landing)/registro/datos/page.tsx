@@ -59,10 +59,15 @@ export default function RegistroDatosPage() {
     router.push("/registro/propietario");
   }
 
-  const planOptions = (planes ?? []).map((p) => ({
+  const baseOptions = (planes ?? []).map((p) => ({
     value: p.id,
     label: `${p.nombre === "BASICO" ? "Básico" : "Pro"} — S/ ${p.precio_mensual}/mes`,
   }));
+
+  const planOptions = baseOptions.length > 0 ? baseOptions : [
+    { value: 1, label: "Modo Dev: Plan Básico (ID: 1)" },
+    { value: 2, label: "Modo Dev: Plan Pro (ID: 2)" }
+  ];
 
   return (
     <div className="space-y-6">

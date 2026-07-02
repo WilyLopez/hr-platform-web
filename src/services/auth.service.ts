@@ -32,6 +32,15 @@ export const authService = {
     await apiClient.post("auth/recuperar-contrasena/", { correo });
   },
 
+  async obtenerPerfil(): Promise<import("@/types/auth.types").PerfilOutput> {
+    const response = await apiClient.get("auth/perfil/");
+    return response.data;
+  },
+
+  async cambiarContrasena(data: import("@/types/auth.types").CambiarContrasenaInput): Promise<void> {
+    await apiClient.put("auth/perfil/cambiar-contrasena/", data);
+  },
+
   getAccessToken(): string | null {
     if (typeof window === "undefined") return null;
     return sessionStorage.getItem("access_token");

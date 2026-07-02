@@ -3,8 +3,6 @@ import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/dashboard/Sidebar";
 import { Topbar }  from "@/components/layout/dashboard/Topbar";
 import { ToastProvider } from "@/components/feedback/ToastProvider";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
 import {
   LayoutDashboard, Building2, MapPin, Users, CreditCard, ClipboardList,
 } from "lucide-react";
@@ -24,27 +22,23 @@ export default function PropietarioLayout({ children }: { children: React.ReactN
 
   if (isLoginPage) {
     return (
-      <QueryClientProvider client={queryClient}>
-        <ToastProvider>
-          {children}
-        </ToastProvider>
-      </QueryClientProvider>
+      <ToastProvider>
+        {children}
+      </ToastProvider>
     );
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        <div className="sidebar-layout">
-          <Sidebar items={ITEMS} portalName="Propietario" />
-          <div className="sidebar-content">
-            <Topbar />
-            <main className="main-content">
-              <div className="page-container">{children}</div>
-            </main>
-          </div>
+    <ToastProvider>
+      <div className="sidebar-layout">
+        <Sidebar items={ITEMS} portalName="Propietario" />
+        <div className="sidebar-content">
+          <Topbar />
+          <main className="main-content">
+            <div className="page-container">{children}</div>
+          </main>
         </div>
-      </ToastProvider>
-    </QueryClientProvider>
+      </div>
+    </ToastProvider>
   );
 }

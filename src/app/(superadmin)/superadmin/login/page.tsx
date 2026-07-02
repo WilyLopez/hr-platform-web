@@ -58,6 +58,11 @@ export default function SuperadminLoginPage() {
                         <Button type="submit" fullWidth loading={isLoading}>
                             Ingresar
                         </Button>
+                        <div className="text-center mt-4">
+                            <a href="/recuperar-contrasena" className="text-sm text-brand hover:underline">
+                                ¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
                     </form>
                 </Card>
             </div>

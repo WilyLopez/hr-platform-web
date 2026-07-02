@@ -46,6 +46,12 @@ export const ESTADOS_EMPLEADO: Record<
     INACTIVO: { label: "Inactivo", variant: "neutral" },
 };
 
+export const ESTADOS_USUARIO: Record<string, string> = {
+    ACTIVO: "Activo",
+    INACTIVO: "Inactivo",
+    BLOQUEADO: "Bloqueado",
+};
+
 export const ESTADOS_SOLICITUD: Record<
     EstadoSolicitud,
     { label: string; variant: string }

@@ -69,8 +69,9 @@ export default function RegistroPropietarioPage() {
       
       router.push("/registro/confirmacion");
     } catch (error: any) {
-      const msg = error.response?.data?.message || "No se pudo completar el registro.";
-      toast.error(msg);
+      const msg = error.response?.data ? JSON.stringify(error.response.data) : "No se pudo completar el registro.";
+      toast.error(`Error: ${msg}`);
+      console.error(error.response?.data || error);
     } finally {
       setLoading(false);
     }

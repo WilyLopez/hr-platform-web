@@ -158,31 +158,31 @@ export default function SuscripcionPage() {
             {/* Banner Trial */}
             {isTrial && (
                 <div className={`flex items-start gap-4 p-4 rounded-xl border transition-all ${
-                    suscripcion.dias_restantes_trial <= 7
+                    (suscripcion.dias_restantes_trial ?? 0) <= 7
                         ? "bg-danger-light/20 border-danger/20"
                         : "bg-brand-light/20 border-brand/20"
                 }`}>
                     <div className={`p-2 rounded-lg flex-shrink-0 ${
-                        suscripcion.dias_restantes_trial <= 7 ? "bg-danger/10" : "bg-brand/10"
+                        (suscripcion.dias_restantes_trial ?? 0) <= 7 ? "bg-danger/10" : "bg-brand/10"
                     }`}>
-                        <Zap size={18} className={suscripcion.dias_restantes_trial <= 7 ? "text-danger" : "text-brand"} />
+                        <Zap size={18} className={(suscripcion.dias_restantes_trial ?? 0) <= 7 ? "text-danger" : "text-brand"} />
                     </div>
                     <div className="flex-1 min-w-0">
                         <p className={`text-sm font-bold ${
-                            suscripcion.dias_restantes_trial <= 7 ? "text-danger-dark" : "text-brand-dark"
+                            (suscripcion.dias_restantes_trial ?? 0) <= 7 ? "text-danger-dark" : "text-brand-dark"
                         }`}>
-                            {suscripcion.dias_restantes_trial <= 7
-                                ? `⚠️ Tu trial vence en ${suscripcion.dias_restantes_trial} día${suscripcion.dias_restantes_trial !== 1 ? "s" : ""}`
-                                : `Estás en periodo de prueba — quedan ${suscripcion.dias_restantes_trial} días`}
+                            {(suscripcion.dias_restantes_trial ?? 0) <= 7
+                                ? `⚠️ Tu trial vence en ${suscripcion.dias_restantes_trial ?? 0} día${(suscripcion.dias_restantes_trial ?? 0) !== 1 ? "s" : ""}`
+                                : `Estás en periodo de prueba — quedan ${suscripcion.dias_restantes_trial ?? 0} días`}
                         </p>
                         <p className={`text-xs mt-1 opacity-80 ${
-                            suscripcion.dias_restantes_trial <= 7 ? "text-danger-dark" : "text-brand-dark"
+                            (suscripcion.dias_restantes_trial ?? 0) <= 7 ? "text-danger-dark" : "text-brand-dark"
                         }`}>
                             Vence el <strong>{formatDate(suscripcion.fecha_fin_trial!)}</strong>. Activa tu plan para no interrumpir el servicio.
                         </p>
                     </div>
                     <Link href="/propietario/suscripcion/cambiar-plan" className="hidden sm:block flex-shrink-0">
-                        <Button size="sm" variant={suscripcion.dias_restantes_trial <= 7 ? "danger" : "brand"}>
+                        <Button size="sm" variant={(suscripcion.dias_restantes_trial ?? 0) <= 7 ? "danger" : "brand"}>
                             Activar Ahora
                         </Button>
                     </Link>

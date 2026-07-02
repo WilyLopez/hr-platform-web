@@ -13,7 +13,7 @@ const variants: Record<Variant, string> = {
   success: "bg-success-light text-success-dark",
   warning: "bg-warning-light text-warning-dark",
   danger:  "bg-danger-light  text-danger-dark",
-  neutral: "bg-neutral-100   text-neutral-600",
+  neutral: "bg-muted         text-muted-foreground",
   brand:   "bg-brand-pale    text-brand-dark",
   info:    "bg-blue-50       text-blue-700",
 };
@@ -22,7 +22,7 @@ const dots: Record<Variant, string> = {
   success: "bg-success",
   warning: "bg-warning",
   danger:  "bg-danger",
-  neutral: "bg-neutral-400",
+  neutral: "bg-muted-foreground",
   brand:   "bg-brand",
   info:    "bg-blue-500",
 };
