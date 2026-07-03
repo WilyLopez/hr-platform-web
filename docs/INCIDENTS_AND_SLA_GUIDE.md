@@ -1,4 +1,4 @@
-# 📋 Manual de Gestión de Incidentes y Niveles de Servicio (SLAs)
+# Manual de Gestión de Incidentes y Niveles de Servicio (SLAs)
 ## Plataforma SaaS de Gestión de Recursos Humanos
 
 Este documento define el marco de trabajo, los canales de atención y los compromisos de servicio (SLA) para la gestión de incidentes dentro de la plataforma SaaS de Recursos Humanos, centralizados a través de **Jira Service Management**.
