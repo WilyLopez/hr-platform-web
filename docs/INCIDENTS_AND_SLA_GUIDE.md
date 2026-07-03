@@ -1,11 +1,3 @@
-La documentación técnica de registro de incidentes y SLAs ha sido generada con un estándar completamente profesional para tu proyecto SaaS de Recursos Humanos. 
-
-Tu archivo Markdown (`.md`) está listo:
-[file-tag: code-generated-file-0-1783042976448587494]
-
-A continuación te comparto el contenido completo para que lo puedas revisar y usar de inmediato:
-
-```markdown
 # 📋 Manual de Gestión de Incidentes y Niveles de Servicio (SLAs)
 ## Plataforma SaaS de Gestión de Recursos Humanos
 
