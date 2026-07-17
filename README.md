@@ -1,18 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NexusRH — Web Frontend (Next.js)
 
-## Getting Started
+Plataforma SaaS para la Gestión de Recursos Humanos (Control de asistencia, empleados, solicitudes y planes).
+
+## 🔄 Actualizar el Proyecto (Para Compañeros de Equipo)
+
+Si otro miembro del equipo ha hecho cambios (por ejemplo, nuevas interfaces, componentes o dependencias), debes sincronizar tu entorno local:
+
+```bash
+# 1. Traer los nuevos cambios de la rama principal
+git pull origin develop
+
+# 2. Instalar nuevas dependencias (si las hubiera)
+npm install
+```
+
+---
+
+## 🚀 Getting Started
 
 First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
