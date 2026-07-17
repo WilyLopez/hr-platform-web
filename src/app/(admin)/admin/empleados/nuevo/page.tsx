@@ -61,9 +61,8 @@ export default function NuevoEmpleadoPage() {
         const res = await apiClient.get(`empresas/${empresaId}/sedes/`); 
         const lista = res.data.results || res.data;
         setSedesDisponibles(lista);
-      } catch (error) {
-        // Usamos console.log temporalmente para no saturar con Toasts si algo falla
-        console.error("Error cargando sedes:", error);
+      } catch {
+        // Silencioso — no saturar con toasts por un filtro secundario
       } finally {
         setCargandoSedes(false);
       }
@@ -99,7 +98,6 @@ export default function NuevoEmpleadoPage() {
     } catch (error: any) {
       const errorMsg = error.response?.data ? JSON.stringify(error.response.data) : "Error al crear la sede";
       toast.error(`Error: ${errorMsg}`);
-      console.error(error.response?.data || error);
     } finally {
       setCreandoSede(false);
     }

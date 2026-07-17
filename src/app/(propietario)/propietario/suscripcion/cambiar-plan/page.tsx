@@ -67,9 +67,14 @@ export default function CambiarPlanPage() {
     });
 
     const handleCambiarPlan = (planId: number, planNombre: string) => {
-        if (suscripcion?.plan_id === planId) return;
+        if (suscripcion?.plan_id === planId && suscripcion?.estado !== "TRIAL") return;
         
-        if (window.confirm(`¿Estás seguro de que deseas cambiar al plan ${planNombre}?`)) {
+        const isActivation = suscripcion?.plan_id === planId;
+        const msg = isActivation 
+            ? `¿Estás seguro de que deseas activar definitivamente el plan ${planNombre}?`
+            : `¿Estás seguro de que deseas cambiar al plan ${planNombre}?`;
+
+        if (window.confirm(msg)) {
             mutation.mutate(planId);
         }
     };
@@ -103,6 +108,7 @@ export default function CambiarPlanPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto pt-4">
                 {planes?.map((plan) => {
                     const isCurrent = suscripcion?.plan_id === plan.id;
+                    const isTrial = suscripcion?.estado === "TRIAL";
                     const isPro = plan.nombre === "PRO";
 
                     return (
@@ -175,12 +181,14 @@ export default function CambiarPlanPage() {
                                     <div className="w-full pt-8">
                                         <Button 
                                             fullWidth 
-                                            variant={isCurrent ? "outline" : "brand"}
-                                            disabled={isCurrent || mutation.isPending}
+                                            variant={isCurrent && !isTrial ? "outline" : "brand"}
+                                            disabled={(isCurrent && !isTrial) || mutation.isPending}
                                             loading={mutation.isPending && mutation.variables === plan.id}
                                             onClick={() => handleCambiarPlan(plan.id, plan.nombre)}
                                         >
-                                            {isCurrent ? "Ya tienes este plan" : "Seleccionar Plan"}
+                                            {isCurrent 
+                                                ? (isTrial ? "Activar Plan" : "Ya tienes este plan") 
+                                                : "Seleccionar Plan"}
                                         </Button>
                                     </div>
                                 </div>

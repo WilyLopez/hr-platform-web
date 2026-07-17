@@ -206,9 +206,9 @@ export default function ReporteAsistenciaPage() {
                     <th className="p-4 font-semibold text-neutral-700">Fecha</th>
                     <th className="p-4 font-semibold text-neutral-700">Hora</th>
                     <th className="p-4 font-semibold text-neutral-700">Tipo</th>
-                    <th className="p-4 font-semibold text-neutral-700">Método</th>
+                    <th className="p-4 font-semibold text-neutral-700">Origen</th>
                     <th className="p-4 font-semibold text-neutral-700">Sede</th>
-                    <th className="p-4 font-semibold text-neutral-700">Observación</th>
+                    <th className="p-4 font-semibold text-neutral-700">Resultado</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-100">
@@ -226,14 +226,20 @@ export default function ReporteAsistenciaPage() {
                               {registro.tipo}
                             </span>
                           </td>
-                          <td className="p-4 text-neutral-600 text-sm">
-                            {registro.metodo} {registro.es_manual && '(Manual)'}
+                          <td className="p-4 text-neutral-600 text-sm flex items-center gap-2">
+                            {registro.origen} 
+                            {registro.origen === 'MANUAL' && <span className="text-xs bg-slate-100 px-2 py-0.5 rounded text-slate-600">Manual</span>}
                           </td>
-                          <td className="p-4 text-neutral-600 text-sm">{registro.sede_nombre || 'N/A'}</td>
+                          <td className="p-4 text-neutral-600 text-sm">{registro.sede_nombre || 'Sede Principal'}</td>
                           <td className="p-4">
-                            {registro.es_tardanza && (
-                              <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded">
-                                Tardanza
+                            {registro.resultado && registro.resultado !== 'NORMAL' && (
+                              <span className={`text-xs font-medium px-2 py-1 rounded ${
+                                registro.resultado === 'TARDE' ? 'bg-amber-50 text-amber-600' :
+                                registro.resultado === 'EXTRA' ? 'bg-indigo-50 text-indigo-600' :
+                                registro.resultado === 'FUERA_HORARIO' ? 'bg-rose-50 text-rose-600' :
+                                'bg-slate-50 text-slate-600'
+                              }`}>
+                                {registro.resultado}
                               </span>
                             )}
                           </td>

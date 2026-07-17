@@ -204,6 +204,12 @@ export default function DetalleSolicitudPage({ params }: { params: { id: string 
                     <Calendar size={15} className="text-neutral-400" />
                     {formatearFecha(solicitud.fecha_inicio)} al {formatearFecha(solicitud.fecha_fin)}
                   </div>
+                  {solicitud.hora_inicio && solicitud.hora_fin && (
+                    <div className="text-sm font-medium text-indigo-600 flex items-center gap-2 mt-2">
+                      <Clock size={15} />
+                      {solicitud.hora_inicio.slice(0,5)} a {solicitud.hora_fin.slice(0,5)}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <span className="block text-xs font-semibold text-neutral-400 mb-1">Duración</span>

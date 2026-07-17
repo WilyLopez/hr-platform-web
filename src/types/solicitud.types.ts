@@ -23,6 +23,8 @@ export interface Solicitud {
   tipo_permiso_nombre: string;
   fecha_inicio: string;
   fecha_fin: string;
+  hora_inicio?: string | null;
+  hora_fin?: string | null;
   dias_solicitados: number;
   motivo: string;
   estado: EstadoSolicitud;
@@ -37,6 +39,8 @@ export interface CrearSolicitudInput {
   tipo_permiso_id: number;
   fecha_inicio: string;
   fecha_fin: string;
+  hora_inicio?: string | null;
+  hora_fin?: string | null;
   motivo: string;
   adjunto_url?: string | null;
 }
@@ -52,6 +56,7 @@ export interface FiltrosSolicitud {
   fecha_desde?: string;
   fecha_hasta?: string;
   page?: number;
+  page_size?: number;
 }
 
 export interface CrearTipoPermisoInput {

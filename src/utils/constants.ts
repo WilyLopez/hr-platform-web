@@ -18,14 +18,14 @@ export const ROLES_LOGIN_PATH: Record<Rol, string> = {
     SUPERADMIN: "/superadmin/login",
     PROPIETARIO: "/propietario/login",
     ADMIN: "/admin/login",
-    EMPLEADO: "/admin/login",
+    EMPLEADO: "/empleado/login",
 };
 
 export const ROLES_DASHBOARD_PATH: Record<Rol, string> = {
     SUPERADMIN: "/superadmin/dashboard",
     PROPIETARIO: "/propietario/dashboard",
     ADMIN: "/admin/dashboard",
-    EMPLEADO: "/admin/dashboard",
+    EMPLEADO: "/empleado/dashboard",
 };
 
 export const ESTADOS_EMPRESA: Record<

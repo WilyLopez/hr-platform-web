@@ -10,6 +10,7 @@ import {
 const ITEMS = [
   { label: "Dashboard",      href: "/admin/dashboard",     icon: LayoutDashboard },
   { label: "Empleados",      href: "/admin/empleados",     icon: Users           },
+  { label: "Horarios",       href: "/admin/horarios",      icon: Clock           },
   { label: "Asistencia",     href: "/admin/asistencia",    icon: Clock           },
   { label: "Solicitudes",    href: "/admin/solicitudes",   icon: FileText        },
   { label: "Tipos permiso",  href: "/admin/tipos-permiso", icon: Settings        },

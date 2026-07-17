@@ -1,5 +1,9 @@
 export type Rol = "SUPERADMIN" | "PROPIETARIO" | "ADMIN" | "EMPLEADO";
 
+export interface TokenSecurity {
+  must_change_password: boolean;
+}
+
 export interface TokenOutput {
   access: string;
   refresh: string;
@@ -7,6 +11,7 @@ export interface TokenOutput {
   codigo_unico: string;
   empresa_id: number | null;
   rol: Rol;
+  security: TokenSecurity;
 }
 
 export interface UsuarioAutenticado {
@@ -15,6 +20,7 @@ export interface UsuarioAutenticado {
   empresa_id: number | null;
   rol: Rol;
   correo?: string;
+  security: TokenSecurity;
 }
 
 export interface LoginInput {
@@ -35,6 +41,7 @@ export interface PerfilOutput {
   estado: string;
   ultimo_acceso: string | null;
   fecha_creacion: string;
+  nombre_completo?: string;
 }
 
 export interface CambiarContrasenaInput {

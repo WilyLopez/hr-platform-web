@@ -59,10 +59,14 @@ export default function RegistroDatosPage() {
     router.push("/registro/propietario");
   }
 
-  const baseOptions = (planes ?? []).map((p) => ({
-    value: p.id,
-    label: `${p.nombre === "BASICO" ? "Básico" : "Pro"} — S/ ${p.precio_mensual}/mes`,
-  }));
+  const sortedPlanes = [...(planes ?? [])].sort((a, b) => Number(a.precio_mensual) - Number(b.precio_mensual));
+  const baseOptions = sortedPlanes.map((p) => {
+    const formattedName = p.nombre.charAt(0).toUpperCase() + p.nombre.slice(1).toLowerCase();
+    return {
+      value: p.id,
+      label: `${formattedName} — S/ ${p.precio_mensual}/mes`,
+    };
+  });
 
   const planOptions = baseOptions.length > 0 ? baseOptions : [
     { value: 1, label: "Modo Dev: Plan Básico (ID: 1)" },

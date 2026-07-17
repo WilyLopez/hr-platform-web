@@ -1,12 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Required for Docker multi-stage build (copies only what's needed to run)
+  output: "standalone",
   images: {
-    domains: ["localhost", "127.0.0.1"],
+    domains: [
+      "localhost",
+      "127.0.0.1",
+      // Agrega aquí el dominio de producción de tu API cuando lo tengas
+      // "api.tudominio.com",
+    ],
   },
   async rewrites() {
     return [];
   },
 };
 
-module.exports = nextConfig;
+module.exports = nextConfig;

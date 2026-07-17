@@ -7,9 +7,30 @@ import { Card, CardHeader, CardBody, Button, Badge, Input, Select } from "@/comp
 import { DataTable } from "@/components/tables/DataTable";
 import { auditoriaService } from "@/services/auditoria.service";
 import { formatDate } from "@/utils/format";
-import { Search, Filter, X } from "lucide-react";
+import { Search, Filter, X, Activity, Clock, Building, User, FileJson } from "lucide-react";
 import type { Column } from "@/components/tables/DataTable";
 import type { RegistroAuditoria } from "@/types/auditoria.types";
+
+const EVENT_TYPES = [
+    { value: "", label: "Todos los eventos" },
+    { value: "INICIO_SESION", label: "Inicio de Sesión" },
+    { value: "CIERRE_SESION", label: "Cierre de Sesión" },
+    { value: "INTENTO_FALLIDO", label: "Intento Fallido" },
+    { value: "CREACION_USUARIO", label: "Creación de Usuario" },
+    { value: "MODIFICACION_USUARIO", label: "Modificación de Usuario" },
+    { value: "ELIMINACION_USUARIO", label: "Eliminación de Usuario" },
+    { value: "CREACION_EMPLEADO", label: "Creación de Empleado" },
+    { value: "MODIFICACION_EMPLEADO", label: "Modificación de Empleado" },
+    { value: "REGISTRO_ASISTENCIA", label: "Registro de Asistencia" },
+    { value: "REGISTRO_MANUAL", label: "Registro Manual" },
+    { value: "CREACION_SOLICITUD", label: "Creación de Solicitud" },
+    { value: "APROBACION_SOLICITUD", label: "Aprobación de Solicitud" },
+    { value: "RECHAZO_SOLICITUD", label: "Rechazo de Solicitud" },
+    { value: "SUSPENSION_EMPRESA", label: "Suspensión de Empresa" },
+    { value: "ELIMINACION_EMPRESA", label: "Eliminación de Empresa" },
+    { value: "REACTIVACION_EMPRESA", label: "Reactivación de Empresa" },
+    { value: "CAMBIO_PLAN", label: "Cambio de Plan" },
+];
 
 export default function SuperadminAuditoriaPage() {
     const searchParams = useSearchParams();
@@ -83,13 +104,13 @@ export default function SuperadminAuditoriaPage() {
                         placeholder="ID Empresa..." 
                         value={empresaId} 
                         onChange={(e) => setEmpresaId(e.target.value)} 
-                        icon={Search}
+                        {...({ icon: Search } as any)}
                     />
-                    <Input 
-                        placeholder="Tipo de Evento..." 
+                    <Select 
                         value={tipoEvento} 
                         onChange={(e) => setTipoEvento(e.target.value)} 
-                        icon={Filter}
+                        options={EVENT_TYPES}
+                        {...({ icon: Filter } as any)}
                     />
                     <Input 
                         type="date"
@@ -122,29 +143,78 @@ export default function SuperadminAuditoriaPage() {
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
-                        <div className="p-6 flex-1 overflow-y-auto space-y-6">
-                            <div>
-                                <h3 className="text-sm font-semibold text-gray-500 uppercase">Contexto</h3>
-                                <div className="mt-2 space-y-2">
-                                    <p><strong>Evento:</strong> {selectedLog.tipo_evento}</p>
-                                    <p><strong>Fecha:</strong> {formatDate(selectedLog.timestamp)}</p>
-                                    <p><strong>Empresa ID:</strong> {selectedLog.empresa_id || "N/A"}</p>
-                                    <p><strong>Usuario ID:</strong> {selectedLog.usuario_id || "N/A"}</p>
-                                    <p><strong>IP:</strong> {selectedLog.ip_address || "N/A"}</p>
+                        <div className="p-6 flex-1 overflow-y-auto space-y-8 bg-neutral-50/50 dark:bg-gray-900/50">
+                            {/* Header Section / Context */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-neutral-200 dark:border-gray-700 shadow-sm">
+                                    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-2">
+                                        <Activity size={14} /> Evento
+                                    </div>
+                                    <Badge variant="brand">{selectedLog.tipo_evento}</Badge>
+                                </div>
+                                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-neutral-200 dark:border-gray-700 shadow-sm">
+                                    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-2">
+                                        <Clock size={14} /> Fecha
+                                    </div>
+                                    <p className="font-medium text-neutral-900 dark:text-neutral-100">{formatDate(selectedLog.timestamp)}</p>
+                                </div>
+                                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-neutral-200 dark:border-gray-700 shadow-sm">
+                                    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-2">
+                                        <Building size={14} /> Empresa
+                                    </div>
+                                    <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                                        {selectedLog.empresa_id ? `ID: ${selectedLog.empresa_id}` : "Global / N/A"}
+                                    </p>
+                                </div>
+                                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-neutral-200 dark:border-gray-700 shadow-sm">
+                                    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-2">
+                                        <User size={14} /> Usuario (Autor)
+                                    </div>
+                                    <p className="font-medium text-neutral-900 dark:text-neutral-100">
+                                        {selectedLog.usuario_id ? `ID: ${selectedLog.usuario_id}` : "Sistema"}
+                                    </p>
                                 </div>
                             </div>
                             
+                            {/* Descripción */}
                             <div>
-                                <h3 className="text-sm font-semibold text-gray-500 uppercase">Descripción</h3>
-                                <p className="mt-2">{selectedLog.descripcion}</p>
+                                <h3 className="text-sm font-semibold text-neutral-900 dark:text-white mb-3">Descripción de la Acción</h3>
+                                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-neutral-200 dark:border-gray-700 shadow-sm">
+                                    <p className="text-sm text-neutral-700 dark:text-neutral-300">{selectedLog.descripcion}</p>
+                                </div>
                             </div>
 
-                            <div>
-                                <h3 className="text-sm font-semibold text-gray-500 uppercase">Payload (Valores)</h3>
-                                <pre className="mt-2 bg-gray-50 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto text-xs">
-                                    {JSON.stringify(selectedLog.detalles, null, 2)}
-                                </pre>
-                            </div>
+                            {/* Payload (Valores) */}
+                            {selectedLog.detalles && Object.keys(selectedLog.detalles).length > 0 && (
+                                <div>
+                                    <h3 className="text-sm font-semibold text-neutral-900 dark:text-white mb-3 flex items-center gap-2">
+                                        <FileJson size={16} className="text-brand" /> 
+                                        Valores Registrados
+                                    </h3>
+                                    <div className="bg-white dark:bg-gray-800 border border-neutral-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm">
+                                        <table className="w-full text-sm text-left">
+                                            <thead className="bg-neutral-50 dark:bg-gray-900/50 text-neutral-500 border-b border-neutral-200 dark:border-gray-700">
+                                                <tr>
+                                                    <th className="px-4 py-3 font-semibold w-1/3">Campo</th>
+                                                    <th className="px-4 py-3 font-semibold">Valor</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-neutral-100 dark:divide-gray-800">
+                                                {Object.entries(selectedLog.detalles).map(([key, value]) => (
+                                                    <tr key={key} className="hover:bg-neutral-50 dark:hover:bg-gray-800/50">
+                                                        <td className="px-4 py-3 font-medium text-neutral-700 dark:text-neutral-300 capitalize">
+                                                            {key.replace(/_/g, " ")}
+                                                        </td>
+                                                        <td className="px-4 py-3 font-mono text-neutral-600 dark:text-neutral-400">
+                                                            {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

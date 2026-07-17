@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/axios";
-import type { Plan, Suscripcion } from "@/types/suscripcion.types";
+import type { Plan, Suscripcion, SuscripcionSuperadmin } from "@/types/suscripcion.types";
 
 export const suscripcionService = {
   async listarPlanes(): Promise<Plan[]> {

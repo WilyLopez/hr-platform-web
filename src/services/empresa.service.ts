@@ -54,12 +54,12 @@ export const empresaService = {
     return r.data;
   },
 
-  async suspender(id: number, razon: string): Promise<void> {
-    await apiClient.post(`/empresas/${id}/suspender/`, { razon });
+  async suspender(id: number, motivo_categoria: string, comentario: string, propietario_email?: string): Promise<void> {
+    await apiClient.post(`/empresas/${id}/suspender/`, { motivo_categoria, comentario, propietario_email });
   },
 
-  async reactivar(id: number): Promise<void> {
-    await apiClient.post(`/empresas/${id}/reactivar/`);
+  async reactivar(id: number, motivo_categoria: string, comentario: string): Promise<void> {
+    await apiClient.post(`/empresas/${id}/reactivar/`, { motivo_categoria, comentario });
   },
 
   async listarSedes(empresaId: number): Promise<Sede[]> {

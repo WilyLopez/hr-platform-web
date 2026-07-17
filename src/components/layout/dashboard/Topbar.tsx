@@ -66,10 +66,14 @@ export function Topbar({ breadcrumb }: TopbarProps) {
                 label: "Mi perfil",
                 onClick: () => {
                   if (usuario) {
-                    const dashboardPath = import("@/utils/constants").then(c => {
-                      const base = c.ROLES_DASHBOARD_PATH[usuario.rol].replace("/dashboard", "");
-                      window.location.href = `${base}/perfil`;
-                    });
+                    const rolPaths: Record<string, string> = {
+                      SUPERADMIN: "/superadmin",
+                      PROPIETARIO: "/propietario",
+                      ADMIN: "/admin",
+                      EMPLEADO: "/empleado",
+                    };
+                    const base = rolPaths[usuario.rol] ?? "/admin";
+                    window.location.href = `${base}/perfil`;
                   }
                 },
               },
