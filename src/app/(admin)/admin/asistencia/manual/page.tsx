@@ -29,7 +29,7 @@ export default function RegistroManualPage() {
     const cargarEmpleados = async () => {
       try {
         const data = await empleadoService.listar({ page_size: 100 });
-        setEmpleados(data.results);
+        setEmpleados(Array.isArray(data) ? data : (data as any).results || []);
       } catch (error) {
         toast.error("Error al cargar la lista de empleados.");
       }

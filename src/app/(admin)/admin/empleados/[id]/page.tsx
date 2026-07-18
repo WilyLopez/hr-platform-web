@@ -22,6 +22,7 @@ import {
   Fingerprint
 } from "lucide-react";
 import Link from 'next/link';
+import { AsignacionesEmpleado } from "@/components/horarios/AsignacionesEmpleado";
 
 export default function DetalleEmpleadoPage({ params }: { params: { id: string } }) {
   // En Next 13/14 leemos directamente el objeto params de forma síncrona
@@ -240,6 +241,9 @@ export default function DetalleEmpleadoPage({ params }: { params: { id: string }
             </div>
           </CardBody>
         </Card>
+
+        {/* Card: Historial de Horarios */}
+        <AsignacionesEmpleado empleadoId={empleado.id} />
 
       </div>
     </div>

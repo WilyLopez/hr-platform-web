@@ -1,9 +1,3 @@
-import React from 'react';
-
-export default function AsistenciaManualPage() {
-  return (
-    <div>
-      <h1>Registro de Asistencia Manual</h1>
-    </div>
-  );
+export default function ExportarAuditoriaPage() {
+  return <div>Página de Exportación de Auditoría en Construcción</div>;
 }

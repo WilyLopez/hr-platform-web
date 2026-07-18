@@ -11,7 +11,16 @@ import { auditoriaService } from "@/services/auditoria.service";
 import { ESTADOS_EMPRESA } from "@/utils/constants";
 import { formatDate } from "@/utils/format";
 import { useToast } from "@/hooks/useToast";
-import { Building2, Users, Database, ShieldAlert, ArrowRightCircle } from "lucide-react";
+import { Building2, Users, Database, ShieldAlert, ArrowRightCircle, AlertTriangle } from "lucide-react";
+
+const MOTIVOS_SUSPENSION = [
+    { value: "FALTA_PAGO", label: "Falta de pago" },
+    { value: "SOLICITUD_CLIENTE", label: "Solicitud del cliente" },
+    { value: "INCUMPLIMIENTO_TERMINOS", label: "Incumplimiento de términos" },
+    { value: "FRAUDE", label: "Fraude" },
+    { value: "DUPLICADO", label: "Duplicado" },
+    { value: "OTRO", label: "Otro" }
+];
 
 export default function EmpresaDetailPage() {
     const toast = useToast();
@@ -22,7 +31,14 @@ export default function EmpresaDetailPage() {
 
     const [isSuspendModalOpen, setIsSuspendModalOpen] = useState(false);
     const [suspendConfirmText, setSuspendConfirmText] = useState("");
+    const [suspendMotivo, setSuspendMotivo] = useState("");
+    const [suspendComentario, setSuspendComentario] = useState("");
+    const [suspendError, setSuspendError] = useState<string | null>(null);
     
+    const [isReactivarModalOpen, setIsReactivarModalOpen] = useState(false);
+    const [reactivarMotivo, setReactivarMotivo] = useState("");
+    const [reactivarComentario, setReactivarComentario] = useState("");
+
     const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
     const [selectedPlanId, setSelectedPlanId] = useState("");
 
@@ -47,21 +63,33 @@ export default function EmpresaDetailPage() {
     });
 
     const suspendMutation = useMutation({
-        mutationFn: () => empresaService.suspender(empresaId, "Decisión del Superadmin"),
+        mutationFn: () => empresaService.suspender(
+            empresaId, 
+            suspendMotivo, 
+            suspendComentario, 
+            empresa?.correo
+        ),
         onSuccess: () => {
             toast.success("Empresa suspendida exitosamente");
             queryClient.invalidateQueries({ queryKey: ["empresa", empresaId] });
-            setIsSuspendModalOpen(false);
-            setSuspendConfirmText("");
+            closeSuspendModal();
         },
-        onError: () => toast.error("Error al suspender empresa"),
+        onError: (err: any) => {
+            const errorMsg = err.response?.data?.error || err.response?.data?.detail || "Error al suspender empresa";
+            setSuspendError(errorMsg);
+        },
     });
 
     const reactivarMutation = useMutation({
-        mutationFn: () => empresaService.reactivar(empresaId),
+        mutationFn: () => empresaService.reactivar(
+            empresaId, 
+            reactivarMotivo, 
+            reactivarComentario
+        ),
         onSuccess: () => {
             toast.success("Empresa reactivada exitosamente");
             queryClient.invalidateQueries({ queryKey: ["empresa", empresaId] });
+            closeReactivarModal();
         },
         onError: () => toast.error("Error al reactivar empresa"),
     });
@@ -77,12 +105,39 @@ export default function EmpresaDetailPage() {
         onError: () => toast.error("Error al cambiar de plan"),
     });
 
+    const closeSuspendModal = () => {
+        setIsSuspendModalOpen(false);
+        setSuspendConfirmText("");
+        setSuspendMotivo("");
+        setSuspendComentario("");
+        setSuspendError(null);
+    };
+
     const handleSuspend = () => {
+        setSuspendError(null);
         if (suspendConfirmText !== "SUSPENDER") {
-            toast.error("Debes escribir SUSPENDER para confirmar");
+            setSuspendError("Debes escribir SUSPENDER para confirmar");
+            return;
+        }
+        if (!suspendMotivo || !suspendComentario) {
+            setSuspendError("Debe seleccionar un motivo y proporcionar un comentario");
             return;
         }
         suspendMutation.mutate();
+    };
+
+    const closeReactivarModal = () => {
+        setIsReactivarModalOpen(false);
+        setReactivarMotivo("");
+        setReactivarComentario("");
+    };
+
+    const handleReactivar = () => {
+        if (!reactivarMotivo || !reactivarComentario) {
+            toast.error("Debe seleccionar un motivo y proporcionar un comentario");
+            return;
+        }
+        reactivarMutation.mutate();
     };
 
     if (isLoadingEmpresa || isLoadingMetricas) return <div>Cargando...</div>;
@@ -101,7 +156,7 @@ export default function EmpresaDetailPage() {
                 />
                 <div className="flex gap-2 items-center">
                     <Badge variant={eState.variant as "success"}>{eState.label}</Badge>
-                    <Badge variant="brand">{empresa.plan_nombre || "Sin Plan"}</Badge>
+                    <Badge variant="brand">{(empresa as any).plan_nombre || "Sin Plan"}</Badge>
                 </div>
             </div>
 
@@ -176,7 +231,7 @@ export default function EmpresaDetailPage() {
                             <ArrowRightCircle className="w-4 h-4" />
                         </Button>
                         <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800">
-                            {empresa.estado === "ACTIVO" ? (
+                            {["ACTIVA", "EN_PRUEBA"].includes(empresa.estado) ? (
                                 <Button 
                                     variant="danger" 
                                     className="w-full justify-between"
@@ -187,10 +242,9 @@ export default function EmpresaDetailPage() {
                                 </Button>
                             ) : (
                                 <Button 
-                                    variant="success" 
-                                    className="w-full justify-between"
-                                    onClick={() => reactivarMutation.mutate()}
-                                    loading={reactivarMutation.isPending}
+                                    variant={"outline" as any} 
+                                    className="w-full justify-between bg-green-500 text-white hover:bg-green-600 border-none"
+                                    onClick={() => setIsReactivarModalOpen(true)}
                                 >
                                     <span>Reactivar Empresa</span>
                                     <ShieldAlert className="w-4 h-4" />
@@ -231,47 +285,153 @@ export default function EmpresaDetailPage() {
 
             {/* Modal de Suspensión */}
             <Modal
-                isOpen={isSuspendModalOpen}
-                onClose={() => setIsSuspendModalOpen(false)}
+                open={isSuspendModalOpen}
+                onClose={closeSuspendModal}
                 title="Suspender Empresa"
-                description={`Estás a punto de suspender a ${empresa.razon_social}. La empresa perderá el acceso inmediatamente.`}
             >
                 <div className="space-y-4 py-4">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Para confirmar esta acción crítica, por favor escribe <strong>SUSPENDER</strong> en el siguiente campo:
-                    </p>
-                    <Input
-                        value={suspendConfirmText}
-                        onChange={(e) => setSuspendConfirmText(e.target.value)}
-                        placeholder="Escribe SUSPENDER"
-                    />
+                    <p className="text-sm text-gray-500">Estás a punto de suspender los servicios de {empresa.razon_social}.</p>
+                    <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-100 dark:border-red-800/30">
+                        <h4 className="font-semibold text-red-800 dark:text-red-300 text-sm mb-2">Resumen de Impacto:</h4>
+                        <ul className="list-disc list-inside text-sm text-red-700 dark:text-red-400 space-y-1">
+                            <li>Todas las sesiones activas de usuarios serán terminadas.</li>
+                            <li>Se bloqueará el acceso a la plataforma web y móvil.</li>
+                            <li>Se enviará un correo automático de notificación a {empresa.correo}.</li>
+                        </ul>
+                    </div>
+
+                    {suspendError && (
+                        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mt-4" role="alert">
+                            <div className="flex items-center mb-2">
+                                <AlertTriangle className="w-5 h-5 mr-2" />
+                                <span className="font-bold">Error de Políticas</span>
+                            </div>
+                            <p className="text-sm">{suspendError}</p>
+                            
+                            {(suspendError.includes("suscripción activa") || suspendError.includes("plan")) && (
+                                <Button 
+                                    variant="outline" 
+                                    className="mt-3 text-red-700 border-red-700 hover:bg-red-200"
+                                    onClick={() => {
+                                        closeSuspendModal();
+                                        setIsPlanModalOpen(true);
+                                    }}
+                                >
+                                    Ir a Suscripción o Cambiar Plan
+                                </Button>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="space-y-4">
+                        <Select
+                            label="Motivo (categoría)"
+                            placeholder="Seleccione un motivo..."
+                            value={suspendMotivo}
+                            onChange={(e) => setSuspendMotivo(e.target.value)}
+                            options={MOTIVOS_SUSPENSION}
+                        />
+                        
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Descripción (comentario)
+                            </label>
+                            <textarea
+                                className="w-full px-3 py-2 border rounded-md dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none h-24"
+                                placeholder="Especifique los detalles de la suspensión..."
+                                value={suspendComentario}
+                                onChange={(e) => setSuspendComentario(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="pt-2">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                Para confirmar esta acción crítica, por favor escribe <strong>SUSPENDER</strong>:
+                            </p>
+                            <Input
+                                value={suspendConfirmText}
+                                onChange={(e) => setSuspendConfirmText(e.target.value)}
+                                placeholder="Escribe SUSPENDER"
+                            />
+                        </div>
+                    </div>
                 </div>
                 <div className="flex justify-end gap-2">
-                    <Button variant="outline" onClick={() => setIsSuspendModalOpen(false)}>Cancelar</Button>
+                    <Button variant="outline" onClick={closeSuspendModal}>Cancelar</Button>
                     <Button 
                         variant="danger" 
                         onClick={handleSuspend}
                         loading={suspendMutation.isPending}
-                        disabled={suspendConfirmText !== "SUSPENDER"}
+                        disabled={suspendConfirmText !== "SUSPENDER" || !suspendMotivo || !suspendComentario}
                     >
-                        Suspender ahora
+                        Ejecutar Suspensión
+                    </Button>
+                </div>
+            </Modal>
+
+            {/* Modal de Reactivación */}
+            <Modal
+                open={isReactivarModalOpen}
+                onClose={closeReactivarModal}
+                title="Reactivar Empresa"
+            >
+                <div className="space-y-4 py-4">
+                    <p className="text-sm text-gray-500">Restaura el acceso a la plataforma para {empresa.razon_social}.</p>
+                    <Select
+                        label="Motivo (categoría)"
+                        placeholder="Seleccione un motivo..."
+                        value={reactivarMotivo}
+                        onChange={(e) => setReactivarMotivo(e.target.value)}
+                        options={[
+                            { value: "PAGO_RECIBIDO", label: "Pago recibido" },
+                            { value: "RESOLUCION_DISPUTA", label: "Resolución de disputa" },
+                            { value: "ERROR_SISTEMA", label: "Error de sistema previo" },
+                            { value: "OTRO", label: "Otro" }
+                        ]}
+                    />
+                    
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Descripción (comentario)
+                        </label>
+                        <textarea
+                            className="w-full px-3 py-2 border rounded-md dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none h-24"
+                            placeholder="Detalle la razón de la reactivación..."
+                            value={reactivarComentario}
+                            onChange={(e) => setReactivarComentario(e.target.value)}
+                        />
+                    </div>
+                </div>
+                <div className="flex justify-end gap-2">
+                    <Button variant="outline" onClick={closeReactivarModal}>Cancelar</Button>
+                    <Button 
+                        variant={"outline" as any} 
+                        className="bg-green-500 text-white hover:bg-green-600 border-none"
+                        onClick={handleReactivar}
+                        loading={reactivarMutation.isPending}
+                        disabled={!reactivarMotivo || !reactivarComentario}
+                    >
+                        Reactivar Empresa
                     </Button>
                 </div>
             </Modal>
 
             {/* Modal Cambiar Plan */}
             <Modal
-                isOpen={isPlanModalOpen}
+                open={isPlanModalOpen}
                 onClose={() => setIsPlanModalOpen(false)}
                 title="Cambiar Plan de Suscripción"
-                description={`Selecciona el nuevo plan para ${empresa.razon_social}. El cambio aplicará inmediatamente.`}
             >
                 <div className="space-y-4 py-4">
+                    <p className="text-sm text-gray-500">Selecciona el nuevo plan para {empresa.razon_social}. El cambio aplicará inmediatamente.</p>
                     <Select
                         label="Nuevo Plan"
+                        placeholder="Selecciona un plan..."
                         value={selectedPlanId}
                         onChange={(e) => setSelectedPlanId(e.target.value)}
-                        options={(planes ?? []).map((p) => ({
+                        options={[...(planes ?? [])]
+                            .sort((a, b) => Number(a.precio_mensual) - Number(b.precio_mensual))
+                            .map((p) => ({
                             value: p.id.toString(),
                             label: `${p.nombre} ($${p.precio_mensual}/mes)`
                         }))}

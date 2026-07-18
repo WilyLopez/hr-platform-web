@@ -33,6 +33,7 @@ export const useAuthStore = create<AuthState>()(
             codigo_unico: token.codigo_unico,
             empresa_id:   token.empresa_id,
             rol:          token.rol,
+            security:     token.security,
           },
         });
       },

@@ -69,9 +69,17 @@ export default function RegistroPropietarioPage() {
       
       router.push("/registro/confirmacion");
     } catch (error: any) {
-      const msg = error.response?.data ? JSON.stringify(error.response.data) : "No se pudo completar el registro.";
-      toast.error(`Error: ${msg}`);
-      console.error(error.response?.data || error);
+      const errorData = error.response?.data;
+      let msg = "No se pudo completar el registro. Verifica los datos ingresados.";
+      
+      if (errorData?.code === "already_exists" || error.response?.status === 409) {
+        msg = "Este correo ya se encuentra registrado. Si ya tienes una cuenta, por favor inicia sesión.";
+      } else if (errorData?.message || errorData?.detail) {
+        msg = errorData.message || errorData.detail;
+      }
+      
+      toast.error(msg);
+      console.error(errorData || error);
     } finally {
       setLoading(false);
     }

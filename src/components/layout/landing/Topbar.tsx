@@ -13,7 +13,7 @@ export function LandingTopbar() {
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2">
           <img src="/logo.svg" alt="NexusRH" className="h-8 w-auto" />
-          <span className="text-xl font-bold text-slate-900">NexusRH</span>
+          
         </Link>
         
         <nav className="hidden md:flex items-center gap-8">
@@ -23,8 +23,8 @@ export function LandingTopbar() {
         </nav>
         
         <div className="hidden md:flex items-center gap-4">
-          <Link href="/admin/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Ingresar</Link>
-          <Link href="/registro" className="bg-slate-900 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-slate-800 transition-colors text-sm">Comenzar gratis</Link>
+          <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Ingresar</Link>
+          <Link href="/registro" className="bg-slate-600 text-white px-5 py-2.5 rounded-lg font-semibold hover:bg-slate-800 transition-colors text-sm">Comenzar gratis</Link>
         </div>
 
         <button
@@ -41,8 +41,8 @@ export function LandingTopbar() {
           <Link href="/planes" className="block text-sm font-medium text-slate-600" onClick={() => setIsOpen(false)}>Planes</Link>
           <Link href="/contacto" className="block text-sm font-medium text-slate-600" onClick={() => setIsOpen(false)}>Contacto</Link>
           <hr />
-          <Link href="/admin/login" className="block text-sm font-medium text-slate-600" onClick={() => setIsOpen(false)}>Ingresar</Link>
-          <Link href="/registro" className="block bg-slate-900 text-white text-center py-2 rounded-lg font-semibold" onClick={() => setIsOpen(false)}>Comenzar gratis</Link>
+          <Link href="/login" className="block text-sm font-medium text-slate-600" onClick={() => setIsOpen(false)}>Ingresar</Link>
+          <Link href="/registro" className="block bg-slate-600 text-white text-center py-2 rounded-lg font-semibold" onClick={() => setIsOpen(false)}>Comenzar gratis</Link>
         </div>
       )}
     </header>

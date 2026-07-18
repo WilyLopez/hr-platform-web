@@ -212,13 +212,25 @@ export default function BandejaSolicitudesPage() {
 
                     {/* Período */}
                     <td className="p-4 text-xs text-neutral-600">
-                      <div className="flex items-center gap-1">
-                        <Clock size={12} className="text-neutral-400" />
-                        <span>{formatearFecha(sol.fecha_inicio)} al {formatearFecha(sol.fecha_fin)}</span>
+                      <div className="flex items-center gap-1 font-medium">
+                        <CalendarIcon size={12} className="text-neutral-400" />
+                        <span>{sol.fecha_inicio === sol.fecha_fin ? formatearFecha(sol.fecha_inicio) : `${formatearFecha(sol.fecha_inicio)} al ${formatearFecha(sol.fecha_fin)}`}</span>
                       </div>
-                      <div className="text-[10px] text-neutral-400 mt-1 truncate max-w-[180px]">
+                      {sol.hora_inicio && sol.hora_fin && (
+                        <div className="flex items-center gap-1 mt-1 text-indigo-600 font-medium">
+                          <Clock size={12} />
+                          <span>{sol.hora_inicio.slice(0,5)} - {sol.hora_fin.slice(0,5)}</span>
+                        </div>
+                      )}
+                      <div className="text-[10px] text-neutral-400 mt-1 truncate max-w-[180px]" title={sol.motivo}>
                         Motivo: {sol.motivo}
                       </div>
+                      {sol.adjunto_url && (
+                        <a href={sol.adjunto_url} target="_blank" rel="noreferrer" className="flex items-center gap-1 mt-1 text-xs text-brand-600 hover:underline">
+                          <FileText size={12} />
+                          Ver adjunto
+                        </a>
+                      )}
                     </td>
 
                     {/* Días */}

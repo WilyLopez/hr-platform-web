@@ -5,7 +5,7 @@ interface SkeletonProps {
   lines?:     number;
 }
 
-export function Skeleton({ className }: { className?: string }) {
+export function Skeleton({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <div
       className={cn(
@@ -18,6 +18,7 @@ export function Skeleton({ className }: { className?: string }) {
         "motion-safe:bg-[length:1000px_100%] motion-safe:animate-shimmer",
         className
       )}
+      style={style}
     />
   );
 }

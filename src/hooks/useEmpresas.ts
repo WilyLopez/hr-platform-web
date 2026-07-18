@@ -62,8 +62,8 @@ export function useSuspenderEmpresa() {
   const toast = useToast();
 
   return useMutation({
-    mutationFn: ({ id, razon }: { id: number; razon: string }) =>
-      empresaService.suspender(id, razon),
+    mutationFn: ({ id, motivo_categoria, comentario, correo }: { id: number; motivo_categoria: string; comentario: string; correo?: string }) =>
+      empresaService.suspender(id, motivo_categoria, comentario, correo),
     onSuccess() {
       qc.invalidateQueries({ queryKey: ["empresas"] });
       toast.success("Empresa suspendida.");

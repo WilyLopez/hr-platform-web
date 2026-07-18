@@ -92,6 +92,16 @@ apiClient.interceptors.response.use(
           window.location.href = getLoginPath();
         }
       }
+    } else if (error.response?.status === 403 && (error.response?.data as any)?.code === "COMPANY_SUSPENDED") {
+      // Si la empresa fue suspendida, limpiamos sesion inmediatamente
+      sessionStorage.removeItem("access_token");
+      Cookies.remove("refresh_token");
+      localStorage.removeItem("nexus-auth-storage");
+      if (typeof window !== "undefined") {
+        // Redirigir mostrando un alert o a una ruta de suspension
+        alert("El acceso a la plataforma ha sido suspendido para su empresa.");
+        window.location.href = getLoginPath();
+      }
     }
 
     return Promise.reject(error);

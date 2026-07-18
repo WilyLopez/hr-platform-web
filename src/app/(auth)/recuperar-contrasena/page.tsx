@@ -54,15 +54,33 @@ export default function RecuperarContrasenaPage() {
         <Card padding>
           {success ? (
             <div className="text-center space-y-4 py-4 animate-fade-in">
-              <div className="mx-auto w-12 h-12 bg-success/15 rounded-full flex items-center justify-center">
-                <MailCheck size={24} className="text-success-dark" />
+              <div className="mx-auto w-14 h-14 bg-success/15 rounded-full flex items-center justify-center">
+                <MailCheck size={28} className="text-success-dark" />
               </div>
-              <h3 className="text-base font-semibold text-neutral-800">Correo enviado</h3>
+              <h3 className="text-base font-semibold text-neutral-800">¡Correo enviado!</h3>
               <p className="text-sm text-neutral-500">
-                Si existe una cuenta asociada a este correo, recibirás un mensaje con instrucciones para restablecer tu contraseña.
+                Si el correo ingresado está registrado, recibirás un mensaje en breve con tu nueva contraseña temporal.
               </p>
+
+              {/* Pasos claros para el usuario */}
+              <div className="text-left bg-neutral-50 border border-neutral-200 rounded-xl p-4 space-y-3 mt-2">
+                <p className="text-xs font-bold text-neutral-600 uppercase tracking-wide">¿Qué hacer a continuación?</p>
+                <div className="flex gap-3 items-start">
+                  <span className="flex-shrink-0 w-5 h-5 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold">1</span>
+                  <p className="text-sm text-neutral-700">Revisa tu bandeja de entrada (y la carpeta de spam) y copia la <strong>contraseña temporal</strong> que te enviamos.</p>
+                </div>
+                <div className="flex gap-3 items-start">
+                  <span className="flex-shrink-0 w-5 h-5 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold">2</span>
+                  <p className="text-sm text-neutral-700">Vuelve a la pantalla de inicio de sesión e ingresa con tu <strong>código de usuario</strong> y esa contraseña temporal.</p>
+                </div>
+                <div className="flex gap-3 items-start">
+                  <span className="flex-shrink-0 w-5 h-5 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold">3</span>
+                  <p className="text-sm text-neutral-700">El sistema te pedirá que <strong>cambies la contraseña</strong> de inmediato por una de tu elección.</p>
+                </div>
+              </div>
+
               <Button fullWidth onClick={() => window.history.back()} variant="outline" className="mt-2">
-                Volver al inicio
+                Volver al inicio de sesión
               </Button>
             </div>
           ) : (

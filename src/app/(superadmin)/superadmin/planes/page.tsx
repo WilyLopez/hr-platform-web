@@ -25,7 +25,10 @@ export default function PlanesPage() {
 
     const { data: planes, isLoading } = useQuery({
         queryKey: ["planes"],
-        queryFn: () => suscripcionService.listarPlanes(),
+        queryFn: async () => {
+            const data = await suscripcionService.listarPlanes();
+            return data.sort((a, b) => Number(a.precio_mensual) - Number(b.precio_mensual));
+        },
     });
 
     const mutation = useMutation({

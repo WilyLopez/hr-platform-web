@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { PageHeader } from "@/components/layout/shared/PageHeader";
-import { Card, CardBody, Button, Spinner } from "@/components/ui";
+import { Card, CardBody, Button, Spinner, Skeleton } from "@/components/ui";
 import { empleadoService } from "@/services/empleado.service";
-import { apiClient } from "@/lib/axios"; // Importamos el cliente de axios
+import { apiClient } from "@/lib/axios";
 import { useToast } from "@/hooks/useToast";
+import { useAuth } from "@/hooks/useAuth";
 import type { Empleado, EstadoEmpleado } from "@/types/empleado.types";
 import { 
   Search, 
@@ -23,6 +24,8 @@ import Link from 'next/link';
 
 export default function EmpleadosPage() {
   const toast = useToast();
+  const { usuario } = useAuth();
+  const empresaId = usuario?.empresa_id;
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   
@@ -44,21 +47,20 @@ export default function EmpleadosPage() {
 
   // Cargar sedes al montar el componente para el filtro
   useEffect(() => {
+    if (!empresaId) return;
     const cargarSedes = async () => {
       try {
-        // Aquí pusimos la ruta correcta con el ID de la empresa
-        const res = await apiClient.get('empresas/1/sedes/'); 
+        const res = await apiClient.get(`empresas/${empresaId}/sedes/`);
         const lista = res.data.results || res.data;
         setSedesDisponibles(lista);
-      } catch (error) {
-        // Usamos console.log temporalmente para no saturar con Toasts si algo falla
-        console.error("Error cargando sedes:", error);
+      } catch {
+        // Silencioso — no saturar con toasts por un filtro secundario
       } finally {
         setCargandoSedes(false);
       }
     };
     cargarSedes();
-  }, []);
+  }, [empresaId]);
 
   const cargarEmpleados = async () => {
     setLoading(true);
@@ -209,12 +211,16 @@ export default function EmpleadosPage() {
             </thead>
             <tbody className="divide-y divide-neutral-100">
               {loading ? (
-                <tr>
-                  <td colSpan={6} className="p-12 text-center">
-                    <Spinner size="md" className="mx-auto" />
-                    <p className="mt-2 text-xs text-neutral-500">Cargando personal...</p>
-                  </td>
-                </tr>
+                Array.from({ length: 7 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="p-4"><Skeleton className="h-4 w-40" /><Skeleton className="h-3 w-56 mt-1.5" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-24" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-28" /><Skeleton className="h-3 w-20 mt-1.5" /></td>
+                    <td className="p-4"><Skeleton className="h-4 w-24" /></td>
+                    <td className="p-4 text-center"><Skeleton className="h-5 w-16 mx-auto rounded-full" /></td>
+                    <td className="p-4"><div className="flex justify-end gap-1.5"><Skeleton className="h-8 w-8 rounded-lg" /><Skeleton className="h-8 w-8 rounded-lg" /><Skeleton className="h-8 w-8 rounded-lg" /></div></td>
+                  </tr>
+                ))
               ) : empleados.length > 0 ? (
                 empleados.map((emp) => (
                   <tr key={emp.id} className="hover:bg-neutral-50/40 transition-colors">

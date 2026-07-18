@@ -25,6 +25,8 @@ export const metadata: Metadata = {
     robots: "index, follow",
 };
 
+import { Toaster } from "@/components/ui/Toaster";
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -35,7 +37,10 @@ export default function RootLayout({
             <body
                 className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
             >
-                <Providers>{children}</Providers>
+                <Providers>
+                    {children}
+                    <Toaster />
+                </Providers>
             </body>
         </html>
     );

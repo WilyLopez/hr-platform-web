@@ -13,6 +13,7 @@ import { Building2, ArrowRight } from "lucide-react";
 const STEPS = [
   { label: "Validar RUC" },
   { label: "Datos empresa" },
+  { label: "Datos propietario" },
   { label: "Confirmación" },
 ];
 
@@ -31,26 +32,23 @@ export default function RegistroPage() {
     setLoading(true);
     try {
       const result = await empresaService.validarRuc(data.ruc);
-      sessionStorage.setItem("ruc_data", JSON.stringify(result.data));
+      // El backend retorna { status: "ok", data: { ruc, razon_social, ... } }
+      const rucData = (result as any).data || result;
+      sessionStorage.setItem("ruc_data", JSON.stringify(rucData));
       router.push("/registro/datos");
     } catch (error: any) {
-      console.error(error.response?.data || error);
-      
-      // Bypass para testing local si el backend no tiene la API de SUNAT lista
-      if (data.ruc === "20100070970" || data.ruc === "20000000000") {
-        const mockData = {
-          ruc: data.ruc,
-          razon_social: "Empresa de Pruebas S.A.C.",
-          nombre_comercial: "Empresa Prueba",
-          direccion: "Av. Principal 123",
-          estado: "ACTIVO"
-        };
-        sessionStorage.setItem("ruc_data", JSON.stringify(mockData));
-        toast.success("Modo Desarrollo: RUC aceptado (Mock).");
-        router.push("/registro/datos");
+      const status = error.response?.status;
+      const errorData = error.response?.data;
+
+      if (status === 404 || errorData?.detail?.includes("no encontrado")) {
+        toast.error("RUC no encontrado en SUNAT. Verifica que sea un RUC válido y activo.");
+      } else if (status === 409) {
+        toast.error("Este RUC ya está registrado en NexusRH.");
+      } else if (status === 503 || errorData?.detail?.includes("SUNAT")) {
+        toast.error("El servicio de SUNAT no está disponible en este momento. Intenta en unos minutos.");
       } else {
-        const errorMsg = error.response?.data?.message || error.response?.data?.detail || "Verifica que el RUC sea correcto y esté activo en SUNAT.";
-        toast.error(`Error: ${errorMsg}`);
+        const errorMsg = errorData?.detail || errorData?.message || "Verifica que el RUC sea correcto y esté activo en SUNAT.";
+        toast.error(errorMsg);
       }
     } finally {
       setLoading(false);

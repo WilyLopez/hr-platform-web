@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { PageHeader } from "@/components/layout/shared/PageHeader";
 import { StatCard } from "@/components/charts/StatCard";
@@ -23,6 +24,7 @@ import {
 import { BarChart } from "@/components/charts/BarChart";
 
 export default function PropietarioDashboardPage() {
+    const router = useRouter();
     const { usuario } = useAuth();
     const [isReady, setIsReady] = useState(false);
     const empresaId = usuario?.empresa_id ?? 0;
@@ -37,6 +39,12 @@ export default function PropietarioDashboardPage() {
         enabled: isReady && !!empresaId,
     });
 
+    const { data: empresa, isLoading: loadingEmpresa } = useQuery({
+        queryKey: ["empresa", empresaId],
+        queryFn: () => empresaService.obtener(empresaId),
+        enabled: isReady && !!empresaId,
+    });
+
     const { data: sedes, isLoading: loadingSedes } = useQuery({
         queryKey: ["sedes", empresaId],
         queryFn: () => empresaService.listarSedes(empresaId),
@@ -46,32 +54,58 @@ export default function PropietarioDashboardPage() {
     const estadoSusc = suscripcion
         ? ESTADOS_SUSCRIPCION[suscripcion.estado]
         : null;
+    
+    const diasRestantes = suscripcion?.dias_restantes_trial ?? 0;
 
     const chartData = suscripcion ? [
         { name: "Activos", cantidad: suscripcion.usuarios_activos },
         { name: "Disponibles", cantidad: Math.max(0, suscripcion.limite_usuarios - suscripcion.usuarios_activos) }
     ] : [];
 
-    const isGlobalLoading = (loadingSusc && !suscripcion) || (loadingSedes && !sedes);
+    // ✅ Ya no bloquea con !isReady
+    const isGlobalLoading = (loadingSusc && !suscripcion) || (loadingSedes && !sedes) || (loadingEmpresa && !empresa);
+
+    const nombreMostrar = empresa?.nombre_comercial || empresa?.razon_social || usuario?.codigo_unico;
 
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <PageHeader 
-                    title={empresaId ? `Bienvenido, ${usuario?.codigo_unico}` : "Cargando..."} 
-                    description="Resumen del estado actual de tu empresa." 
+                    title={empresaId ? `Bienvenido, ${nombreMostrar}` : "Cargando..."} 
+                    description="Aquí tienes un resumen del estado actual de tu empresa y suscripción." 
                 />
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className="dark:border-slate-700">
+                    <Button variant="outline" size="sm" leftIcon={<Building2 size={14} />} onClick={() => router.push('/propietario/empresa')}>
                         Ver Empresa
                     </Button>
-                    <Button size="sm" className="bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100">
+                    <Button size="sm" leftIcon={<Zap size={14} />} className="bg-brand hover:bg-brand-dark" onClick={() => router.push('/propietario/suscripcion')}>
                         Mejorar Plan
                     </Button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {suscripcion?.estado === "TRIAL" && (
+                <Alert 
+                    variant={diasRestantes <= 7 ? "danger" : "warning"}
+                    title={diasRestantes <= 7 
+                        ? `Tu periodo de prueba vence en ${diasRestantes} día${diasRestantes !== 1 ? "s" : ""}`
+                        : `Estás en periodo de prueba: quedan ${diasRestantes} días`
+                    }
+                    dismissible
+                    className="flex flex-col sm:flex-row sm:items-center justify-between"
+                >
+                    <div className="flex-1">
+                        Asegúrate de configurar tu método de pago para evitar interrupciones en el servicio al finalizar el trial.
+                    </div>
+                    <div className="mt-3 sm:mt-0 flex-shrink-0">
+                        <Button size="sm" variant={diasRestantes <= 7 ? "danger" : "outline"} onClick={() => router.push('/propietario/suscripcion')}>
+                            Activar ahora
+                        </Button>
+                    </div>
+                </Alert>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
                     title="Plan Actual"
                     value={suscripcion?.plan_nombre ?? "—"}

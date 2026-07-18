@@ -34,4 +34,15 @@ export const solicitudService = {
   async cancelar(id: number): Promise<void> {
     await apiClient.post(`/solicitudes/${id}/cancelar/`);
   },
+
+  async uploadAdjunto(file: File): Promise<{ url: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    const r = await apiClient.post<{ url: string }>('/solicitudes/upload/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return r.data;
+  },
 };

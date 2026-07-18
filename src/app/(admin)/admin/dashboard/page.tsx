@@ -8,7 +8,7 @@ import { TableEmptyState } from "@/components/tables/TableEmptyState";
 import { empleadoService } from "@/services/empleado.service";
 import { solicitudService } from "@/services/solicitud.service";
 import { asistenciaService } from "@/services/asistencia.service";
-import { Users, Clock, FileText, AlertTriangle, ArrowRight, CheckCircle2, Circle, Calendar, PartyPopper, Megaphone } from "lucide-react";
+import { Users, Clock, FileText, AlertTriangle, ArrowRight, CheckCircle2, Circle, Calendar } from "lucide-react";
 import Link from "next/link";
 import type { Empleado } from "@/types/empleado.types";
 import type { Solicitud } from "@/types/solicitud.types";
@@ -22,6 +22,7 @@ export default function AdminDashboardPage() {
   
   const [solicitudesPendientes, setSolicitudesPendientes] = useState<number>(0);
   const [solicitudesRecientes, setSolicitudesRecientes] = useState<Solicitud[]>([]);
+  const [proximosEventos, setProximosEventos] = useState<Solicitud[]>([]);
 
   // Nuevos estados para asistencias
   const [marcajesHoy, setMarcajesHoy] = useState<number>(0);
@@ -37,14 +38,16 @@ export default function AdminDashboardPage() {
         const day = String(hoy.getDate()).padStart(2, "0");
         const fechaFormateada = `${year}-${month}-${day}`;
 
-        const [empleadosRes, solicitudesRes, asistenciaRes] = await Promise.all([
+        const [empleadosRes, solicitudesRes, asistenciaRes, eventosRes] = await Promise.all([
           empleadoService.listar({ estado: "ACTIVO", page: 1, page_size: 5 }),
           solicitudService.listar({ estado: "PENDIENTE", page: 1 }),
-          asistenciaService.listar({ fecha_desde: fechaFormateada, fecha_hasta: fechaFormateada }).catch(() => [])
+          asistenciaService.listar({ fecha_desde: fechaFormateada, fecha_hasta: fechaFormateada }).catch(() => []),
+          solicitudService.listar({ estado: "APROBADA", page: 1, page_size: 6 }).catch(() => ({ results: [] })),
         ]);
 
         const empData = (empleadosRes as any).results || (empleadosRes as any).data || empleadosRes;
         const solData = (solicitudesRes as any).results || (solicitudesRes as any).data || solicitudesRes;
+        const eventosData = (eventosRes as any).results || (eventosRes as any).data || [];
 
         setEmpleadosRecientes(Array.isArray(empData) ? empData.slice(0, 5) : []);
         setEmpleadosActivos((empleadosRes as any).count || (Array.isArray(empData) ? empData.length : 0));
@@ -52,11 +55,21 @@ export default function AdminDashboardPage() {
         setSolicitudesRecientes(Array.isArray(solData) ? solData.slice(0, 5) : []);
         setSolicitudesPendientes((solicitudesRes as any).count || (Array.isArray(solData) ? solData.length : 0));
 
+        // Filtrar solicitudes aprobadas con fecha futura (próximos eventos)
+        const hoyDate = new Date(fechaFormateada);
+        const eventos = Array.isArray(eventosData)
+          ? eventosData
+              .filter((s: Solicitud) => new Date(s.fecha_inicio) >= hoyDate)
+              .sort((a: Solicitud, b: Solicitud) => new Date(a.fecha_inicio).getTime() - new Date(b.fecha_inicio).getTime())
+              .slice(0, 3)
+          : [];
+        setProximosEventos(eventos);
+
         const asisData = (asistenciaRes as any).results || (asistenciaRes as any).data || asistenciaRes;
         const arrAsistencias = Array.isArray(asisData) ? asisData : [];
         
         setMarcajesHoy(arrAsistencias.length);
-        setTardanzasHoy(arrAsistencias.filter((a: any) => a.es_tardanza).length);
+        setTardanzasHoy(arrAsistencias.filter((a: any) => a.resultado === 'TARDE').length);
 
       } catch (error) {
         console.error("Error al cargar los datos del dashboard", error);
@@ -257,51 +270,49 @@ export default function AdminDashboardPage() {
 
           </div>
 
-          {/* Fila de Próximos Eventos */}
+          {/* Fila de Próximos Eventos — datos reales desde solicitudes aprobadas */}
           <Card>
             <div className="p-5 border-b border-border flex items-center gap-2">
               <Calendar size={18} className="text-muted-foreground" />
-              <h3 className="font-bold text-foreground">Próximos Eventos</h3>
+              <h3 className="font-bold text-foreground">Próximos Permisos y Vacaciones</h3>
             </div>
             <div className="p-5">
               {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Skeleton className="h-12 w-full" />
-                  <Skeleton className="h-12 w-full" />
-                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-14 w-full" />
+                  <Skeleton className="h-14 w-full" />
+                  <Skeleton className="h-14 w-full" />
                 </div>
+              ) : proximosEventos.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-6">
+                  No hay permisos o vacaciones aprobadas próximas.
+                </p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Cumpleaños simulado */}
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-primary">
-                      <PartyPopper size={18} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">Andrea Gómez</p>
-                      <p className="text-xs text-muted-foreground">Cumpleaños • Mañana</p>
-                    </div>
-                  </div>
-                  {/* Vacaciones simuladas */}
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-600">
-                      <Calendar size={18} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">Luis Mendoza</p>
-                      <p className="text-xs text-muted-foreground">Inicia vacaciones • En 3 días</p>
-                    </div>
-                  </div>
-                  {/* Avisos simulados */}
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0 text-purple-600">
-                      <Megaphone size={18} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">Política de Asistencia</p>
-                      <p className="text-xs text-muted-foreground">Aviso interno • Hace 2 días</p>
-                    </div>
-                  </div>
+                  {proximosEventos.map((evento) => {
+                    const diasDiferencia = Math.ceil(
+                      (new Date(evento.fecha_inicio).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+                    );
+                    const cuandoText =
+                      diasDiferencia === 0 ? "Hoy" :
+                      diasDiferencia === 1 ? "Mañana" :
+                      `En ${diasDiferencia} días`;
+                    return (
+                      <div key={evento.id} className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-600">
+                          <Calendar size={18} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {evento.empleado_nombre}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {evento.tipo_permiso_nombre} • {cuandoText}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
