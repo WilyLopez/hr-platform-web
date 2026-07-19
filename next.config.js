@@ -7,7 +7,7 @@ const nextConfig = {
     domains: [
       "localhost",
       "127.0.0.1",
-      "hr-platform-api.onrender.com",
+      "hr-platform-api-uj9c.onrender.com",
     ],
   },
   async rewrites() {
