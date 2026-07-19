@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Card } from "@/components/ui";
@@ -8,6 +9,14 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 export default function EmpleadoLoginPage() {
+    return (
+        <Suspense fallback={null}>
+            <EmpleadoLoginForm />
+        </Suspense>
+    );
+}
+
+function EmpleadoLoginForm() {
     const { login, isLoading } = useAuth();
     const searchParams = useSearchParams();
     const redirectUrl = searchParams.get("redirect") || "/empleado/dashboard";
