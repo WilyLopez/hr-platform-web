@@ -7,8 +7,7 @@ const nextConfig = {
     domains: [
       "localhost",
       "127.0.0.1",
-      // Agrega aquí el dominio de producción de tu API cuando lo tengas
-      // "api.tudominio.com",
+      "hr-platform-api.onrender.com",
     ],
   },
   async rewrites() {
