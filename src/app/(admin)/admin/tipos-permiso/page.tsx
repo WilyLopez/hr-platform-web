@@ -105,16 +105,16 @@ export default function TiposPermisoPage() {
       <Card>
         <CardBody className="flex items-center justify-between gap-4 py-4">
           <div className="relative w-full md:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
             <input
               type="text"
               placeholder="Buscar tipo o descripción..."
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand outline-none text-sm text-neutral-800"
+              className="form-input pl-10"
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
             />
           </div>
-          <div className="text-xs text-neutral-500 font-medium">
+          <div className="text-xs text-muted-foreground font-medium">
             Total: {tiposFiltrados.length} configurados
           </div>
         </CardBody>
@@ -125,48 +125,48 @@ export default function TiposPermisoPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-neutral-50 border-b border-neutral-200">
-                <th className="p-4 font-semibold text-neutral-700 text-sm">Nombre</th>
-                <th className="p-4 font-semibold text-neutral-700 text-sm">Descripción</th>
-                <th className="p-4 font-semibold text-neutral-700 text-sm text-center">Requiere Adjunto</th>
-                <th className="p-4 font-semibold text-neutral-700 text-sm text-center">Estado</th>
-                <th className="p-4 font-semibold text-neutral-700 text-sm text-right">Acciones</th>
+              <tr className="bg-neutral-50 dark:bg-slate-800/60 border-b border-neutral-200 dark:border-slate-800">
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-sm">Nombre</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-sm">Descripción</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-sm text-center">Requiere Adjunto</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-sm text-center">Estado</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-sm text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-neutral-100 dark:divide-slate-800">
               {loading ? (
                 <tr>
                   <td colSpan={5} className="p-10 text-center">
                     <Spinner size="md" className="mx-auto" />
-                    <p className="mt-2 text-xs text-neutral-500">Cargando categorías...</p>
+                    <p className="mt-2 text-xs text-muted-foreground">Cargando categorías...</p>
                   </td>
                 </tr>
               ) : tiposFiltrados.length > 0 ? (
                 tiposFiltrados.map((tipo) => (
-                  <tr key={tipo.id} className="hover:bg-neutral-50/50 transition-colors">
-                    <td className="p-4 font-semibold text-neutral-800 text-sm">{tipo.nombre}</td>
-                    <td className="p-4 text-neutral-600 text-sm max-w-xs truncate">{tipo.descripcion}</td>
+                  <tr key={tipo.id} className="hover:bg-neutral-50 dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="p-4 font-semibold text-foreground text-sm">{tipo.nombre}</td>
+                    <td className="p-4 text-neutral-600 dark:text-slate-300 text-sm max-w-xs truncate">{tipo.descripcion}</td>
                     <td className="p-4 text-center">
                       <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        tipo.requiere_adjunto 
-                          ? 'bg-amber-50 text-amber-700 border border-amber-200' 
-                          : 'bg-neutral-50 text-neutral-600 border border-neutral-200'
+                        tipo.requiere_adjunto
+                          ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800/40'
+                          : 'bg-neutral-50 dark:bg-slate-800 text-neutral-600 dark:text-slate-400 border border-neutral-200 dark:border-slate-700'
                       }`}>
                         {tipo.requiere_adjunto ? 'Sí' : 'No'}
                       </span>
                     </td>
                     <td className="p-4 text-center">
                       <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                        tipo.es_activo 
-                          ? 'bg-green-50 text-green-700 border border-green-200' 
-                          : 'bg-red-50 text-red-700 border border-red-200'
+                        tipo.es_activo
+                          ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/40'
+                          : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/40'
                       }`}>
                         {tipo.es_activo ? 'Activo' : 'Inactivo'}
                       </span>
                     </td>
                     <td className="p-4 text-right">
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={() => handleOpenEditModal(tipo)}
                         leftIcon={<Edit2 size={13} />}
@@ -178,7 +178,7 @@ export default function TiposPermisoPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="p-10 text-center text-sm text-neutral-500">
+                  <td colSpan={5} className="p-10 text-center text-sm text-muted-foreground">
                     No se encontraron tipos de permiso registrados.
                   </td>
                 </tr>
@@ -191,54 +191,54 @@ export default function TiposPermisoPage() {
       {/* Modal Quick Edit (Renderizado Condicional) */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-xl shadow-xl border w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 bg-neutral-50">
-              <h4 className="text-sm font-bold text-neutral-800">Modificar Tipo de Permiso</h4>
-              <button 
+          <div className="bg-card rounded-xl shadow-xl border border-border w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 dark:border-slate-800 bg-neutral-50 dark:bg-slate-800/60">
+              <h4 className="text-sm font-bold text-foreground">Modificar Tipo de Permiso</h4>
+              <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-neutral-400 hover:text-neutral-600 transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 <X size={18} />
               </button>
             </div>
-            
+
             <form onSubmit={handleUpdate} className="p-5 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-neutral-700 mb-1">Nombre</label>
+                <label className="form-label">Nombre</label>
                 <input
                   type="text"
                   required
-                  className="w-full px-3 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                  className="form-input"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-700 mb-1">Descripción</label>
+                <label className="form-label">Descripción</label>
                 <textarea
                   required
                   rows={3}
-                  className="w-full px-3 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand resize-none"
+                  className="form-input resize-none"
                   value={descripcion}
                   onChange={(e) => setDescripcion(e.target.value)}
                 />
               </div>
 
-              <div className="flex items-center gap-3 bg-neutral-50 p-3 rounded-lg border">
+              <div className="flex items-center gap-3 bg-neutral-50 dark:bg-slate-800/60 p-3 rounded-lg border border-border">
                 <input
                     id="modal_requiere_adjunto"
                     type="checkbox"
-                    className="h-4 w-4 rounded border-neutral-300 text-brand focus:ring-brand cursor-pointer"
+                    className="h-4 w-4 rounded border-neutral-300 dark:border-slate-600 text-brand focus:ring-brand cursor-pointer"
                     checked={requiereAdjunto}
                     onChange={(e) => setRequiereAdjunto(e.target.checked)} // <-- Cambiar aquí
                     />
-                <label htmlFor="modal_requiere_adjunto" className="text-xs font-medium text-neutral-700 cursor-pointer select-none">
+                <label htmlFor="modal_requiere_adjunto" className="text-xs font-medium text-foreground cursor-pointer select-none">
                   Obligar al empleado a subir un documento justificativo (adjunto)
                 </label>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-neutral-100">
+              <div className="flex justify-end gap-2 pt-2 border-t border-neutral-100 dark:border-slate-800">
                 <Button type="button" variant="outline" size="sm" onClick={() => setIsModalOpen(false)} disabled={submitting}>
                   Cancelar
                 </Button>

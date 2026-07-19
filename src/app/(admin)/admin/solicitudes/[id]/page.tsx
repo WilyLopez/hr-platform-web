@@ -96,7 +96,7 @@ export default function DetalleSolicitudPage({ params }: { params: { id: string 
     return (
       <div className="min-h-[400px] flex flex-col items-center justify-center">
         <Spinner size="lg" className="text-brand" />
-        <p className="mt-4 text-xs text-neutral-500 font-medium">Cargando expediente de la solicitud...</p>
+        <p className="mt-4 text-xs text-muted-foreground font-medium">Cargando expediente de la solicitud...</p>
       </div>
     );
   }
@@ -133,16 +133,16 @@ export default function DetalleSolicitudPage({ params }: { params: { id: string 
       }>
         <CardBody className="flex flex-col sm:flex-row items-center justify-between gap-6 py-6">
           <div>
-            <p className="text-xs text-neutral-500 font-semibold mb-1">ESTADO ACTUAL</p>
+            <p className="text-xs text-muted-foreground font-semibold mb-1">ESTADO ACTUAL</p>
             <h2 className={`text-2xl font-black tracking-tight ${
-              solicitud.estado === 'APROBADA' ? 'text-green-600' :
-              solicitud.estado === 'RECHAZADA' ? 'text-red-600' :
-              solicitud.estado === 'CANCELADA' ? 'text-neutral-500' :
-              'text-amber-600'
+              solicitud.estado === 'APROBADA' ? 'text-green-600 dark:text-green-400' :
+              solicitud.estado === 'RECHAZADA' ? 'text-red-600 dark:text-red-400' :
+              solicitud.estado === 'CANCELADA' ? 'text-muted-foreground' :
+              'text-amber-600 dark:text-amber-400'
             }`}>
               {solicitud.estado.replace('_', ' ')}
             </h2>
-            <p className="text-xs text-neutral-400 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Registrada el {formatearFechaHora(solicitud.fecha_creacion)}
             </p>
           </div>
@@ -150,17 +150,17 @@ export default function DetalleSolicitudPage({ params }: { params: { id: string 
           {/* Botonera de Decisión (Solo visible si está pendiente) */}
           {esPendiente && (
             <div className="flex gap-3 w-full sm:w-auto">
-              <Button 
-                variant="outline" 
-                className="w-full sm:w-auto hover:bg-red-50 hover:text-red-600 border-red-200 text-red-600"
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-600 dark:hover:text-red-400 border-red-200 dark:border-red-800/40 text-red-600 dark:text-red-400"
                 leftIcon={<XCircle size={18} />}
                 onClick={() => handleOpenEvaluation('RECHAZAR')}
               >
                 Rechazar
               </Button>
-              <Button 
-                variant="brand" 
-                className="w-full sm:w-auto bg-green-600 hover:bg-green-700 focus:ring-green-500"
+              <Button
+                variant="success"
+                className="w-full sm:w-auto"
                 leftIcon={<CheckCircle size={18} />}
                 onClick={() => handleOpenEvaluation('APROBAR')}
               >
@@ -177,31 +177,31 @@ export default function DetalleSolicitudPage({ params }: { params: { id: string 
         <div className="space-y-6">
           <Card>
             <CardBody className="space-y-5">
-              <h3 className="text-sm font-bold text-neutral-800 border-b pb-2 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground border-b border-border pb-2 flex items-center gap-2">
                 <FileText size={16} className="text-brand" />
                 Detalles del Requerimiento
               </h3>
               
               <div>
-                <span className="block text-xs font-semibold text-neutral-400 mb-1">Colaborador</span>
-                <div className="text-sm font-bold text-neutral-800 flex items-center gap-2">
-                  <User size={16} className="text-neutral-400" />
+                <span className="block text-xs font-semibold text-muted-foreground mb-1">Colaborador</span>
+                <div className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <User size={16} className="text-muted-foreground" />
                   {solicitud.empleado_nombre}
                 </div>
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-neutral-400 mb-1">Tipo de Ausencia</span>
-                <div className="text-sm font-medium text-neutral-700 bg-neutral-50 px-3 py-2 rounded-md border">
+                <span className="block text-xs font-semibold text-muted-foreground mb-1">Tipo de Ausencia</span>
+                <div className="text-sm font-medium text-neutral-700 dark:text-slate-300 bg-neutral-50 dark:bg-slate-800/60 px-3 py-2 rounded-md border border-border">
                   {solicitud.tipo_permiso_nombre}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="block text-xs font-semibold text-neutral-400 mb-1">Período</span>
-                  <div className="text-sm font-medium text-neutral-800 flex items-center gap-2">
-                    <Calendar size={15} className="text-neutral-400" />
+                  <span className="block text-xs font-semibold text-muted-foreground mb-1">Período</span>
+                  <div className="text-sm font-medium text-foreground flex items-center gap-2">
+                    <Calendar size={15} className="text-muted-foreground" />
                     {formatearFecha(solicitud.fecha_inicio)} al {formatearFecha(solicitud.fecha_fin)}
                   </div>
                   {solicitud.hora_inicio && solicitud.hora_fin && (
@@ -212,9 +212,9 @@ export default function DetalleSolicitudPage({ params }: { params: { id: string 
                   )}
                 </div>
                 <div>
-                  <span className="block text-xs font-semibold text-neutral-400 mb-1">Duración</span>
-                  <div className="text-sm font-bold text-neutral-800 flex items-center gap-2">
-                    <Clock size={15} className="text-neutral-400" />
+                  <span className="block text-xs font-semibold text-muted-foreground mb-1">Duración</span>
+                  <div className="text-sm font-bold text-foreground flex items-center gap-2">
+                    <Clock size={15} className="text-muted-foreground" />
                     {solicitud.dias_solicitados} día(s)
                   </div>
                 </div>
@@ -224,18 +224,18 @@ export default function DetalleSolicitudPage({ params }: { params: { id: string 
 
           {/* Tarjeta del Evaluador (Si ya fue evaluada) */}
           {!esPendiente && solicitud.estado !== 'CANCELADA' && (
-            <Card className="bg-neutral-50/50">
+            <Card className="bg-neutral-50/50 dark:bg-slate-800/30">
               <CardBody className="space-y-4">
-                <h3 className="text-sm font-bold text-neutral-800 border-b pb-2 flex items-center gap-2">
-                  <MessageSquare size={16} className="text-brand" />
+                <h3 className="text-sm font-bold text-foreground border-b border-border pb-2 flex items-center gap-2">
+                  <MessageSquare size={16} className="text-brand dark:text-brand-light" />
                   Resolución
                 </h3>
                 <div>
-                  <span className="block text-xs font-semibold text-neutral-400 mb-1">Evaluado por ID: {solicitud.evaluado_por_id}</span>
-                  <div className="text-xs text-neutral-500 mb-3">
+                  <span className="block text-xs font-semibold text-muted-foreground mb-1">Evaluado por ID: {solicitud.evaluado_por_id}</span>
+                  <div className="text-xs text-muted-foreground mb-3">
                     Fecha de decisión: {solicitud.fecha_evaluacion ? formatearFechaHora(solicitud.fecha_evaluacion) : 'N/A'}
                   </div>
-                  <div className="text-sm text-neutral-700 bg-white p-3 rounded border italic">
+                  <div className="text-sm text-neutral-700 dark:text-slate-300 bg-white dark:bg-slate-800 p-3 rounded border border-border italic">
                     {solicitud.comentario_evaluador || 'Sin comentarios adicionales por parte del evaluador.'}
                   </div>
                 </div>
@@ -248,42 +248,42 @@ export default function DetalleSolicitudPage({ params }: { params: { id: string 
         <div className="space-y-6">
           <Card className="h-full">
             <CardBody className="space-y-5">
-              <h3 className="text-sm font-bold text-neutral-800 border-b pb-2 flex items-center gap-2">
-                <AlertCircle size={16} className="text-brand" />
+              <h3 className="text-sm font-bold text-foreground border-b border-border pb-2 flex items-center gap-2">
+                <AlertCircle size={16} className="text-brand dark:text-brand-light" />
                 Sustento / Motivo
               </h3>
-              
+
               <div>
-                <p className="text-sm text-neutral-700 leading-relaxed whitespace-pre-wrap">
+                <p className="text-sm text-neutral-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
                   {solicitud.motivo}
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-neutral-100">
-                <span className="block text-xs font-semibold text-neutral-400 mb-3 flex items-center gap-2">
+              <div className="pt-4 border-t border-neutral-100 dark:border-slate-800">
+                <span className="block text-xs font-semibold text-muted-foreground mb-3 flex items-center gap-2">
                   <Paperclip size={14} />
                   Documentos Adjuntos
                 </span>
-                
+
                 {solicitud.adjunto_url ? (
-                  <a 
-                    href={solicitud.adjunto_url} 
-                    target="_blank" 
+                  <a
+                    href={solicitud.adjunto_url}
+                    target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-lg border border-neutral-200 hover:bg-brand-pale hover:border-brand-dark transition-colors group"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-neutral-200 dark:border-slate-700 hover:bg-brand-pale dark:hover:bg-brand/10 hover:border-brand-dark dark:hover:border-brand-light transition-colors group"
                   >
-                    <div className="p-2 bg-neutral-100 rounded text-neutral-500 group-hover:bg-white group-hover:text-brand">
+                    <div className="p-2 bg-neutral-100 dark:bg-slate-800 rounded text-neutral-500 dark:text-slate-400 group-hover:bg-white dark:group-hover:bg-slate-700 group-hover:text-brand dark:group-hover:text-brand-light">
                       <FileText size={20} />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-neutral-800 group-hover:text-brand">Ver documento adjunto</p>
-                      <p className="text-xs text-neutral-500">Abre en una nueva pestaña</p>
+                      <p className="text-sm font-bold text-foreground group-hover:text-brand dark:group-hover:text-brand-light">Ver documento adjunto</p>
+                      <p className="text-xs text-muted-foreground">Abre en una nueva pestaña</p>
                     </div>
                   </a>
                 ) : (
-                  <div className="flex flex-col items-center justify-center p-6 bg-neutral-50 rounded-lg border border-dashed border-neutral-200 text-center">
-                    <FileText size={24} className="text-neutral-300 mb-2" />
-                    <p className="text-sm text-neutral-500 font-medium">El colaborador no adjuntó archivos</p>
+                  <div className="flex flex-col items-center justify-center p-6 bg-neutral-50 dark:bg-slate-800/60 rounded-lg border border-dashed border-neutral-200 dark:border-slate-700 text-center">
+                    <FileText size={24} className="text-neutral-300 dark:text-slate-600 mb-2" />
+                    <p className="text-sm text-muted-foreground font-medium">El colaborador no adjuntó archivos</p>
                   </div>
                 )}
               </div>
@@ -296,29 +296,29 @@ export default function DetalleSolicitudPage({ params }: { params: { id: string 
       {/* MODAL DE EVALUACIÓN (Aprobar / Rechazar) */}
       {isModalOpen && actionType && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-xl shadow-2xl border w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 mx-4">
-            <div className={`flex items-center gap-3 px-5 py-4 border-b ${actionType === 'APROBAR' ? 'bg-green-50 border-green-100 text-green-800' : 'bg-red-50 border-red-100 text-red-800'}`}>
-              {actionType === 'APROBAR' ? <CheckCircle size={20} className="text-green-600" /> : <XCircle size={20} className="text-red-600" />}
+          <div className="bg-card rounded-xl shadow-2xl border border-border w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 mx-4">
+            <div className={`flex items-center gap-3 px-5 py-4 border-b ${actionType === 'APROBAR' ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800/40 text-green-800 dark:text-green-300' : 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800/40 text-red-800 dark:text-red-300'}`}>
+              {actionType === 'APROBAR' ? <CheckCircle size={20} className="text-green-600 dark:text-green-400" /> : <XCircle size={20} className="text-red-600 dark:text-red-400" />}
               <h4 className="text-base font-bold">
                 {actionType === 'APROBAR' ? 'Confirmar Aprobación' : 'Rechazar Solicitud'}
               </h4>
             </div>
-            
+
             <form onSubmit={handleConfirmAction} className="p-5 space-y-4">
-              <p className="text-sm text-neutral-600">
-                {actionType === 'APROBAR' 
+              <p className="text-sm text-muted-foreground">
+                {actionType === 'APROBAR'
                   ? `Estás a punto de aprobar el permiso de ${solicitud.dias_solicitados} días para ${solicitud.empleado_nombre}.`
                   : `Vas a rechazar la solicitud de ${solicitud.empleado_nombre}.`
                 }
               </p>
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                  Comentario / Observación {actionType === 'RECHAZAR' && <span className="text-red-500">*</span>}
+                <label className="form-label">
+                  Comentario / Observación {actionType === 'RECHAZAR' && <span className="text-danger">*</span>}
                 </label>
                 <textarea
                   rows={3}
-                  className="w-full px-3 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand resize-none"
+                  className="form-input resize-none"
                   placeholder={actionType === 'APROBAR' ? "Ej: Aprobado. Coordinar entregables pendientes." : "Especifica el motivo del rechazo..."}
                   value={comentario}
                   onChange={(e) => setComentario(e.target.value)}
@@ -330,12 +330,11 @@ export default function DetalleSolicitudPage({ params }: { params: { id: string 
                 <Button type="button" variant="outline" size="sm" onClick={() => setIsModalOpen(false)} disabled={processing}>
                   Cancelar
                 </Button>
-                <Button 
-                  type="submit" 
-                  variant="brand" 
-                  size="sm" 
+                <Button
+                  type="submit"
+                  variant={actionType === 'APROBAR' ? 'success' : 'danger'}
+                  size="sm"
                   loading={processing}
-                  className={actionType === 'APROBAR' ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500' : 'bg-red-600 hover:bg-red-700 focus:ring-red-500 border-red-600 text-white'}
                 >
                   {actionType === 'APROBAR' ? 'Sí, Aprobar' : 'Sí, Rechazar'}
                 </Button>

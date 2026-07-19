@@ -138,13 +138,13 @@ export default function EmpleadosPage() {
           <form onSubmit={handleBuscar} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 items-end">
             {/* Búsqueda por texto */}
             <div className="md:col-span-2">
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">Buscar por nombre o documento</label>
+              <label className="block text-xs font-semibold text-foreground mb-1">Buscar por nombre o documento</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                 <input
                   type="text"
                   placeholder="Ej: Juan Pérez o 745896..."
-                  className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                  className="form-input pl-9"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -153,9 +153,9 @@ export default function EmpleadosPage() {
 
             {/* Filtro por Estado */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">Estado</label>
+              <label className="block text-xs font-semibold text-foreground mb-1">Estado</label>
               <select
-                className="w-full px-3 py-2 border rounded-lg text-sm text-neutral-800 outline-none bg-white focus:ring-2 focus:ring-brand"
+                className="form-input"
                 value={estado}
                 onChange={(e) => setEstado(e.target.value as EstadoEmpleado | '')}
               >
@@ -167,9 +167,9 @@ export default function EmpleadosPage() {
 
             {/* Filtro por Sede (Dinámico) */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">Sede</label>
+              <label className="block text-xs font-semibold text-foreground mb-1">Sede</label>
               <select
-                className="w-full px-3 py-2 border rounded-lg text-sm text-neutral-800 outline-none bg-white focus:ring-2 focus:ring-brand disabled:opacity-50"
+                className="form-input disabled:opacity-50"
                 value={sedeId}
                 onChange={(e) => setSedeId(e.target.value)}
                 disabled={cargandoSedes}
@@ -200,16 +200,16 @@ export default function EmpleadosPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-neutral-50 border-b border-neutral-200">
-                <th className="p-4 font-semibold text-neutral-700 text-xs">Código / Colaborador</th>
-                <th className="p-4 font-semibold text-neutral-700 text-xs">Identificación</th>
-                <th className="p-4 font-semibold text-neutral-700 text-xs">Área / Cargo</th>
-                <th className="p-4 font-semibold text-neutral-700 text-xs">Sede</th>
-                <th className="p-4 font-semibold text-neutral-700 text-xs text-center">Estado</th>
-                <th className="p-4 font-semibold text-neutral-700 text-xs text-right">Acciones</th>
+              <tr className="bg-neutral-50 dark:bg-slate-800/60 border-b border-neutral-200 dark:border-slate-800">
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-xs">Código / Colaborador</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-xs">Identificación</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-xs">Área / Cargo</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-xs">Sede</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-xs text-center">Estado</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-xs text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-neutral-100 dark:divide-slate-800">
               {loading ? (
                 Array.from({ length: 7 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
@@ -223,43 +223,43 @@ export default function EmpleadosPage() {
                 ))
               ) : empleados.length > 0 ? (
                 empleados.map((emp) => (
-                  <tr key={emp.id} className="hover:bg-neutral-50/40 transition-colors">
+                  <tr key={emp.id} className="hover:bg-neutral-50 dark:hover:bg-slate-800/40 transition-colors">
                     {/* Código y Nombre */}
                     <td className="p-4">
-                      <div className="font-semibold text-neutral-800 text-sm">
+                      <div className="font-semibold text-foreground text-sm">
                         {emp.nombres} {emp.apellidos}
                       </div>
-                      <div className="text-[11px] font-mono text-neutral-400 mt-0.5">
+                      <div className="text-[11px] font-mono text-muted-foreground mt-0.5">
                         {emp.codigo_unico} • {emp.correo}
                       </div>
                     </td>
-                    
+
                     {/* Documento */}
-                    <td className="p-4 text-sm text-neutral-600">
-                      <span className="font-medium text-neutral-400 text-xs mr-1">{emp.tipo_documento}:</span>
+                    <td className="p-4 text-sm text-neutral-600 dark:text-slate-300">
+                      <span className="font-medium text-muted-foreground text-xs mr-1">{emp.tipo_documento}:</span>
                       {emp.numero_documento}
                     </td>
 
                     {/* Área y Cargo */}
                     <td className="p-4">
-                      <div className="text-sm text-neutral-800 font-medium">{emp.cargo}</div>
-                      <div className="text-xs text-neutral-500 flex items-center gap-1 mt-0.5">
-                        <Briefcase size={12} className="text-neutral-400" />
+                      <div className="text-sm text-foreground font-medium">{emp.cargo}</div>
+                      <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <Briefcase size={12} className="text-muted-foreground" />
                         {emp.area}
                       </div>
                     </td>
 
                     {/* Sede */}
-                    <td className="p-4 text-sm text-neutral-600">
+                    <td className="p-4 text-sm text-neutral-600 dark:text-slate-300">
                       {emp.sede_nombre || 'No asignada'}
                     </td>
 
                     {/* Estado */}
                     <td className="p-4 text-center">
                       <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                        emp.estado === 'ACTIVO' 
-                          ? 'bg-green-50 text-green-700 border border-green-100' 
-                          : 'bg-neutral-100 text-neutral-500 border border-neutral-200'
+                        emp.estado === 'ACTIVO'
+                          ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-800/40'
+                          : 'bg-neutral-100 dark:bg-slate-800 text-neutral-500 dark:text-slate-400 border border-neutral-200 dark:border-slate-700'
                       }`}>
                         {emp.estado}
                       </span>
@@ -289,7 +289,7 @@ export default function EmpleadosPage() {
                           disabled={actionLoading === emp.id}
                           onClick={() => handleToggleEstado(emp.id, emp.estado)}
                           title={emp.estado === 'ACTIVO' ? 'Desactivar empleado' : 'Reactivar empleado'}
-                          className={emp.estado === 'ACTIVO' ? 'hover:text-red-600 hover:bg-red-50' : 'hover:text-green-600 hover:bg-green-50'}
+                          className={emp.estado === 'ACTIVO' ? 'hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20' : 'hover:text-green-600 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20'}
                         >
                           {actionLoading === emp.id ? (
                             <Spinner size="xs" />
@@ -305,7 +305,7 @@ export default function EmpleadosPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="p-12 text-center text-sm text-neutral-500">
+                  <td colSpan={6} className="p-12 text-center text-sm text-muted-foreground">
                     No se encontraron colaboradores con los criterios seleccionados.
                   </td>
                 </tr>
@@ -315,8 +315,8 @@ export default function EmpleadosPage() {
         </div>
 
         {/* Paginador inferior */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-neutral-100 bg-neutral-50/50">
-          <span className="text-xs text-neutral-500 font-medium">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-neutral-100 dark:border-slate-800 bg-neutral-50/50 dark:bg-slate-800/30">
+          <span className="text-xs text-muted-foreground font-medium">
             Página {page} {totalItems > 0 && `• Total: ${totalItems} empleados`}
           </span>
           <div className="flex gap-1">

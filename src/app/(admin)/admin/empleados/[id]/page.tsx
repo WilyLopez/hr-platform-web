@@ -76,7 +76,7 @@ export default function DetalleEmpleadoPage({ params }: { params: { id: string }
     return (
       <div className="min-h-[400px] flex flex-col items-center justify-center">
         <Spinner size="lg" className="text-brand" />
-        <p className="mt-4 text-xs text-neutral-500 font-medium">Cargando perfil del colaborador...</p>
+        <p className="mt-4 text-xs text-muted-foreground font-medium">Cargando perfil del colaborador...</p>
       </div>
     );
   }
@@ -110,19 +110,19 @@ export default function DetalleEmpleadoPage({ params }: { params: { id: string }
               {iniciales}
             </div>
             <div>
-              <h2 className="text-xl font-bold text-neutral-800">
+              <h2 className="text-xl font-bold text-foreground">
                 {empleado.nombres} {empleado.apellidos}
               </h2>
-              <p className="text-sm text-neutral-500 font-medium mt-0.5">{empleado.cargo}</p>
+              <p className="text-sm text-muted-foreground font-medium mt-0.5">{empleado.cargo}</p>
               <div className="flex items-center justify-center sm:justify-start gap-2 mt-2">
                 <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                  empleado.estado === 'ACTIVO' 
-                    ? 'bg-green-50 text-green-700 border border-green-200' 
-                    : 'bg-neutral-100 text-neutral-500 border border-neutral-300'
+                  empleado.estado === 'ACTIVO'
+                    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/40'
+                    : 'bg-neutral-100 dark:bg-slate-800 text-neutral-500 dark:text-slate-400 border border-neutral-300 dark:border-slate-700'
                 }`}>
                   {empleado.estado}
                 </span>
-                <span className="text-xs text-neutral-400 font-mono">ID: {empleado.id}</span>
+                <span className="text-xs text-muted-foreground font-mono">ID: {empleado.id}</span>
               </div>
             </div>
           </div>
@@ -134,14 +134,14 @@ export default function DetalleEmpleadoPage({ params }: { params: { id: string }
                 Editar Datos
               </Button>
             </Link>
-            
+
             <Button
               variant="outline"
               loading={actionLoading}
               onClick={handleToggleEstado}
-              className={empleado.estado === 'ACTIVO' 
-                ? 'w-full sm:w-auto hover:text-red-600 hover:bg-red-50 border-neutral-200' 
-                : 'w-full sm:w-auto hover:text-green-600 hover:bg-green-50 border-neutral-200'
+              className={empleado.estado === 'ACTIVO'
+                ? 'w-full sm:w-auto hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 border-neutral-200 dark:border-slate-700'
+                : 'w-full sm:w-auto hover:text-green-600 dark:hover:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 border-neutral-200 dark:border-slate-700'
               }
               leftIcon={empleado.estado === 'ACTIVO' ? <UserX size={16} /> : <UserCheck size={16} />}
             >
@@ -157,40 +157,40 @@ export default function DetalleEmpleadoPage({ params }: { params: { id: string }
         {/* Card: Información de Identidad */}
         <Card>
           <CardBody className="space-y-4">
-            <h3 className="text-sm font-bold text-neutral-800 border-b pb-2 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-foreground border-b border-border pb-2 flex items-center gap-2">
               <Fingerprint size={16} className="text-brand" />
               Datos de Identidad
             </h3>
             
             <div className="space-y-3 pt-1">
               <div>
-                <span className="block text-xs font-semibold text-neutral-400 mb-0.5">Código Único Institucional</span>
-                <div className="text-sm font-mono font-bold text-neutral-800 bg-neutral-50 p-2 rounded-md border border-dashed flex items-center gap-2">
-                  <Hash size={14} className="text-neutral-400" />
+                <span className="block text-xs font-semibold text-muted-foreground mb-0.5">Código Único Institucional</span>
+                <div className="text-sm font-mono font-bold text-foreground bg-neutral-50 dark:bg-slate-800 p-2 rounded-md border border-dashed border-border flex items-center gap-2">
+                  <Hash size={14} className="text-muted-foreground" />
                   {empleado.codigo_unico}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="block text-xs font-semibold text-neutral-400 mb-0.5">Tipo de Documento</span>
-                  <div className="text-sm font-medium text-neutral-800 flex items-center gap-2">
-                    <CreditCard size={15} className="text-neutral-400" />
+                  <span className="block text-xs font-semibold text-muted-foreground mb-0.5">Tipo de Documento</span>
+                  <div className="text-sm font-medium text-foreground flex items-center gap-2">
+                    <CreditCard size={15} className="text-muted-foreground" />
                     {empleado.tipo_documento}
                   </div>
                 </div>
                 <div>
-                  <span className="block text-xs font-semibold text-neutral-400 mb-0.5">Número de Documento</span>
-                  <div className="text-sm font-mono font-semibold text-neutral-800">
+                  <span className="block text-xs font-semibold text-muted-foreground mb-0.5">Número de Documento</span>
+                  <div className="text-sm font-mono font-semibold text-foreground">
                     {empleado.numero_documento}
                   </div>
                 </div>
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-neutral-400 mb-0.5">Contacto Electrónico</span>
-                <div className="text-sm font-medium text-neutral-800 flex items-center gap-2 truncate">
-                  <Mail size={15} className="text-neutral-400" />
+                <span className="block text-xs font-semibold text-muted-foreground mb-0.5">Contacto Electrónico</span>
+                <div className="text-sm font-medium text-foreground flex items-center gap-2 truncate">
+                  <Mail size={15} className="text-muted-foreground" />
                   {empleado.correo}
                 </div>
               </div>
@@ -201,39 +201,39 @@ export default function DetalleEmpleadoPage({ params }: { params: { id: string }
         {/* Card: Estructura Organizacional */}
         <Card>
           <CardBody className="space-y-4">
-            <h3 className="text-sm font-bold text-neutral-800 border-b pb-2 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-foreground border-b border-border pb-2 flex items-center gap-2">
               <Briefcase size={16} className="text-brand" />
               Posición y Ubicación Laboral
             </h3>
             
             <div className="space-y-3 pt-1">
               <div>
-                <span className="block text-xs font-semibold text-neutral-400 mb-0.5">Área / Departamento</span>
-                <div className="text-sm font-medium text-neutral-800 flex items-center gap-2">
-                  <Briefcase size={15} className="text-neutral-400" />
+                <span className="block text-xs font-semibold text-muted-foreground mb-0.5">Área / Departamento</span>
+                <div className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <Briefcase size={15} className="text-muted-foreground" />
                   {empleado.area}
                 </div>
               </div>
 
               <div>
-                <span className="block text-xs font-semibold text-neutral-400 mb-0.5">Sede Operativa</span>
-                <div className="text-sm font-medium text-neutral-800 flex items-center gap-2">
-                  <MapPin size={15} className="text-neutral-400" />
+                <span className="block text-xs font-semibold text-muted-foreground mb-0.5">Sede Operativa</span>
+                <div className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <MapPin size={15} className="text-muted-foreground" />
                   {empleado.sede_nombre || 'Sede no especificada'}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="block text-xs font-semibold text-neutral-400 mb-0.5">Fecha de Ingreso</span>
-                  <div className="text-sm font-medium text-neutral-800 flex items-center gap-2">
-                    <Calendar size={15} className="text-neutral-400" />
+                  <span className="block text-xs font-semibold text-muted-foreground mb-0.5">Fecha de Ingreso</span>
+                  <div className="text-sm font-medium text-foreground flex items-center gap-2">
+                    <Calendar size={15} className="text-muted-foreground" />
                     {new Date(empleado.fecha_ingreso).toLocaleDateString()}
                   </div>
                 </div>
                 <div>
-                  <span className="block text-xs font-semibold text-neutral-400 mb-0.5">Alta en Sistema</span>
-                  <div className="text-sm font-medium text-neutral-500">
+                  <span className="block text-xs font-semibold text-muted-foreground mb-0.5">Alta en Sistema</span>
+                  <div className="text-sm font-medium text-muted-foreground">
                     {new Date(empleado.fecha_creacion).toLocaleDateString()}
                   </div>
                 </div>

@@ -102,7 +102,7 @@ export default function EditarEmpleadoPage({ params }: { params: { id: string } 
     return (
       <div className="min-h-[400px] flex flex-col items-center justify-center">
         <Spinner size="lg" className="text-brand" />
-        <p className="mt-4 text-xs text-neutral-500 font-medium">Cargando formulario de edición...</p>
+        <p className="mt-4 text-xs text-muted-foreground font-medium">Cargando formulario de edición...</p>
       </div>
     );
   }
@@ -123,14 +123,14 @@ export default function EditarEmpleadoPage({ params }: { params: { id: string } 
 
       {/* Bloque Informativo de Datos Inmutables */}
       {contexto && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-neutral-100 p-4 rounded-xl border border-neutral-200/60 text-xs">
-          <div className="flex items-center gap-2 text-neutral-500">
-            <Lock size={14} className="text-neutral-400 shrink-0" />
-            <span>Código Institucional (Fijo): <strong className="font-mono text-neutral-700">{contexto.codigo}</strong></span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-neutral-100 dark:bg-slate-800/60 p-4 rounded-xl border border-neutral-200/60 dark:border-slate-700 text-xs">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Lock size={14} className="text-muted-foreground shrink-0" />
+            <span>Código Institucional (Fijo): <strong className="font-mono text-foreground">{contexto.codigo}</strong></span>
           </div>
-          <div className="flex items-center gap-2 text-neutral-500 sm:justify-end">
-            <Lock size={14} className="text-neutral-400 shrink-0" />
-            <span>Identificación oficial: <strong className="text-neutral-700">{contexto.documento}</strong></span>
+          <div className="flex items-center gap-2 text-muted-foreground sm:justify-end">
+            <Lock size={14} className="text-muted-foreground shrink-0" />
+            <span>Identificación oficial: <strong className="text-foreground">{contexto.documento}</strong></span>
           </div>
         </div>
       )}
@@ -142,16 +142,16 @@ export default function EditarEmpleadoPage({ params }: { params: { id: string } 
             {/* Fila: Nombres y Apellidos */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="edit_nombres" className="block text-xs font-semibold text-neutral-700 mb-1">
+                <label htmlFor="edit_nombres" className="block text-xs font-semibold text-foreground mb-1">
                   Nombres
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                   <input
                     id="edit_nombres"
                     type="text"
                     required
-                    className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                    className="form-input pl-9"
                     value={nombres}
                     onChange={(e) => setNombres(e.target.value)}
                   />
@@ -159,16 +159,16 @@ export default function EditarEmpleadoPage({ params }: { params: { id: string } 
               </div>
 
               <div>
-                <label htmlFor="edit_apellidos" className="block text-xs font-semibold text-neutral-700 mb-1">
+                <label htmlFor="edit_apellidos" className="block text-xs font-semibold text-foreground mb-1">
                   Apellidos
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                   <input
                     id="edit_apellidos"
                     type="text"
                     required
-                    className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                    className="form-input pl-9"
                     value={apellidos}
                     onChange={(e) => setApellidos(e.target.value)}
                   />
@@ -178,16 +178,16 @@ export default function EditarEmpleadoPage({ params }: { params: { id: string } 
 
             {/* Campo: Correo Electrónico */}
             <div>
-              <label htmlFor="edit_correo" className="block text-xs font-semibold text-neutral-700 mb-1">
+              <label htmlFor="edit_correo" className="block text-xs font-semibold text-foreground mb-1">
                 Correo Electrónico Laboral
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                 <input
                   id="edit_correo"
                   type="email"
                   required
-                  className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                  className="form-input pl-9"
                   value={correo}
                   onChange={(e) => setCorreo(e.target.value)}
                 />
@@ -197,16 +197,16 @@ export default function EditarEmpleadoPage({ params }: { params: { id: string } 
             {/* Fila: Área y Cargo */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="edit_area" className="block text-xs font-semibold text-neutral-700 mb-1">
+                <label htmlFor="edit_area" className="block text-xs font-semibold text-foreground mb-1">
                   Área / Departamento
                 </label>
                 <div className="relative">
-                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                   <input
                     id="edit_area"
                     type="text"
                     required
-                    className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                    className="form-input pl-9"
                     value={area}
                     onChange={(e) => setArea(e.target.value)}
                   />
@@ -214,16 +214,16 @@ export default function EditarEmpleadoPage({ params }: { params: { id: string } 
               </div>
 
               <div>
-                <label htmlFor="edit_cargo" className="block text-xs font-semibold text-neutral-700 mb-1">
+                <label htmlFor="edit_cargo" className="block text-xs font-semibold text-foreground mb-1">
                   Cargo / Puesto Operativo
                 </label>
                 <div className="relative">
-                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                   <input
                     id="edit_cargo"
                     type="text"
                     required
-                    className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                    className="form-input pl-9"
                     value={cargo}
                     onChange={(e) => setCargo(e.target.value)}
                   />
@@ -232,7 +232,7 @@ export default function EditarEmpleadoPage({ params }: { params: { id: string } 
             </div>
 
             {/* Botonera de Envío */}
-            <div className="flex justify-end gap-3 pt-4 border-t border-neutral-100">
+            <div className="flex justify-end gap-3 pt-4 border-t border-neutral-100 dark:border-slate-800">
               <Link href={`/admin/empleados/${id}`}>
                 <Button type="button" variant="outline" disabled={submitting}>
                   Cancelar

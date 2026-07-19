@@ -182,44 +182,44 @@ export default function AsistenciaPage() {
               <Users size={24} />
             </div>
             <div>
-              <p className="text-sm text-slate-500">Total Marcajes</p>
-              <h3 className="text-2xl font-bold">{asistencias.length}</h3>
+              <p className="text-sm text-muted-foreground">Total Marcajes</p>
+              <h3 className="text-2xl font-bold text-foreground">{asistencias.length}</h3>
             </div>
           </CardBody>
         </Card>
-        
+
         <Card className="border-l-4 border-l-green-500">
           <CardBody className="p-4 flex items-center gap-4">
-            <div className="p-3 bg-green-50 text-green-600 rounded-lg">
+            <div className="p-3 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-lg">
               <CheckCircle2 size={24} />
             </div>
             <div>
-              <p className="text-sm text-slate-500">Presentes Hoy</p>
-              <h3 className="text-2xl font-bold">{resumenMonitor.presentes}</h3>
+              <p className="text-sm text-muted-foreground">Presentes Hoy</p>
+              <h3 className="text-2xl font-bold text-foreground">{resumenMonitor.presentes}</h3>
             </div>
           </CardBody>
         </Card>
 
         <Card className="border-l-4 border-l-amber-500">
           <CardBody className="p-4 flex items-center gap-4">
-            <div className="p-3 bg-amber-50 text-amber-600 rounded-lg">
+            <div className="p-3 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded-lg">
               <Clock size={24} />
             </div>
             <div>
-              <p className="text-sm text-slate-500">Llegadas Tarde</p>
-              <h3 className="text-2xl font-bold">{resumenMonitor.tardanzas}</h3>
+              <p className="text-sm text-muted-foreground">Llegadas Tarde</p>
+              <h3 className="text-2xl font-bold text-foreground">{resumenMonitor.tardanzas}</h3>
             </div>
           </CardBody>
         </Card>
 
         <Card className="border-l-4 border-l-rose-500">
           <CardBody className="p-4 flex items-center gap-4">
-            <div className="p-3 bg-rose-50 text-rose-600 rounded-lg">
+            <div className="p-3 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-lg">
               <AlertTriangle size={24} />
             </div>
             <div>
-              <p className="text-sm text-slate-500">Fuera de Horario</p>
-              <h3 className="text-2xl font-bold">{resumenMonitor.fuera_horario}</h3>
+              <p className="text-sm text-muted-foreground">Fuera de Horario</p>
+              <h3 className="text-2xl font-bold text-foreground">{resumenMonitor.fuera_horario}</h3>
             </div>
           </CardBody>
         </Card>
@@ -229,20 +229,20 @@ export default function AsistenciaPage() {
         <CardBody className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3 w-full md:w-auto">
             <div className="relative flex-1 md:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
               <input
                 type="text"
                 placeholder="Buscar empleado..."
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand outline-none"
+                className="form-input pl-10"
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white">
-              <CalendarIcon size={18} className="text-slate-400" />
+            <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-background border-border">
+              <CalendarIcon size={18} className="text-muted-foreground" />
               <input
                 type="date"
-                className="outline-none text-sm"
+                className="outline-none text-sm bg-transparent text-foreground"
                 value={filtroFecha}
                 onChange={(e) => setFiltroFecha(e.target.value)}
               />
@@ -255,17 +255,17 @@ export default function AsistenciaPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-sm">
-                <th className="p-4 font-semibold text-slate-700">Empleado</th>
-                <th className="p-4 font-semibold text-slate-700">Hora</th>
-                <th className="p-4 font-semibold text-slate-700">Tipo</th>
-                <th className="p-4 font-semibold text-slate-700">Origen</th>
-                <th className="p-4 font-semibold text-slate-700">Sede</th>
-                <th className="p-4 font-semibold text-slate-700">Resultado</th>
-                <th className="p-4 font-semibold text-slate-700">Estado Aud.</th>
+              <tr className="bg-neutral-50 dark:bg-slate-800/60 border-b border-neutral-200 dark:border-slate-800 text-sm">
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400">Empleado</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400">Hora</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400">Tipo</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400">Origen</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400">Sede</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400">Resultado</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400">Estado Aud.</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-neutral-100 dark:divide-slate-800">
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
@@ -280,12 +280,12 @@ export default function AsistenciaPage() {
                 ))
               ) : filtradas.length > 0 ? (
                 filtradas.map((registro: any) => (
-                  <tr key={registro.id} className="hover:bg-slate-50 transition-colors">
-                    <td className="p-4 font-medium text-slate-800">{registro.empleado_nombre}</td>
-                    <td className="p-4 text-slate-600 font-mono font-medium">{formatearHora(registro.timestamp)}</td>
-                    <td className="p-4 text-slate-600">{registro.tipo.replace('_', ' ')}</td>
-                    <td className="p-4 text-slate-600">{registro.origen}</td>
-                    <td className="p-4 text-slate-600">{registro.sede_nombre}</td>
+                  <tr key={registro.id} className="hover:bg-neutral-50 dark:hover:bg-slate-800/60 transition-colors">
+                    <td className="p-4 font-medium text-foreground">{registro.empleado_nombre}</td>
+                    <td className="p-4 text-neutral-600 dark:text-slate-300 font-mono font-medium">{formatearHora(registro.timestamp)}</td>
+                    <td className="p-4 text-neutral-600 dark:text-slate-300">{registro.tipo.replace('_', ' ')}</td>
+                    <td className="p-4 text-neutral-600 dark:text-slate-300">{registro.origen}</td>
+                    <td className="p-4 text-neutral-600 dark:text-slate-300">{registro.sede_nombre}</td>
                     <td className="p-4">
                       <Badge variant={getResultadoColor(registro.resultado)}>
                         {registro.resultado}
@@ -300,7 +300,7 @@ export default function AsistenciaPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={7} className="p-10 text-center text-slate-500">
+                  <td colSpan={7} className="p-10 text-center text-muted-foreground">
                     No se encontraron marcajes en esta fecha.
                   </td>
                 </tr>
@@ -317,16 +317,16 @@ export default function AsistenciaPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200 text-sm">
-                    <th className="p-4 font-semibold text-slate-700">Empleado</th>
-                    <th className="p-4 font-semibold text-slate-700">Fecha/Hora</th>
-                    <th className="p-4 font-semibold text-slate-700">Generadas (min)</th>
-                    <th className="p-4 font-semibold text-slate-700">Aprobadas (min)</th>
-                    <th className="p-4 font-semibold text-slate-700">Estado</th>
-                    <th className="p-4 font-semibold text-slate-700 text-right">Acción</th>
+                  <tr className="bg-neutral-50 dark:bg-slate-800/60 border-b border-neutral-200 dark:border-slate-800 text-sm">
+                    <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400">Empleado</th>
+                    <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400">Fecha/Hora</th>
+                    <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400">Generadas (min)</th>
+                    <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400">Aprobadas (min)</th>
+                    <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400">Estado</th>
+                    <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-right">Acción</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-neutral-100 dark:divide-slate-800">
                   {loadingExtras ? (
                     Array.from({ length: 3 }).map((_, i) => (
                       <tr key={i} className="animate-pulse">
@@ -340,11 +340,11 @@ export default function AsistenciaPage() {
                     ))
                   ) : extras.length > 0 ? (
                     extras.map((registro: any) => (
-                      <tr key={registro.id} className="hover:bg-slate-50 transition-colors">
-                        <td className="p-4 font-medium text-slate-800">{registro.empleado_nombre}</td>
-                        <td className="p-4 text-slate-600 font-mono text-sm">{new Date(registro.timestamp).toLocaleString()}</td>
-                        <td className="p-4 text-slate-600 font-bold">{registro.minutos_extra} min</td>
-                        <td className="p-4 text-slate-600 font-medium">
+                      <tr key={registro.id} className="hover:bg-neutral-50 dark:hover:bg-slate-800/60 transition-colors">
+                        <td className="p-4 font-medium text-foreground">{registro.empleado_nombre}</td>
+                        <td className="p-4 text-neutral-600 dark:text-slate-300 font-mono text-sm">{new Date(registro.timestamp).toLocaleString()}</td>
+                        <td className="p-4 text-neutral-600 dark:text-slate-300 font-bold">{registro.minutos_extra} min</td>
+                        <td className="p-4 text-neutral-600 dark:text-slate-300 font-medium">
                           {registro.minutos_extra_aprobados !== null ? `${registro.minutos_extra_aprobados} min` : '-'}
                         </td>
                         <td className="p-4">
@@ -371,7 +371,7 @@ export default function AsistenciaPage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={6} className="p-10 text-center text-slate-500">
+                      <td colSpan={6} className="p-10 text-center text-muted-foreground">
                         No hay horas extras registradas en esta fecha.
                       </td>
                     </tr>
@@ -390,12 +390,12 @@ export default function AsistenciaPage() {
       >
         {evaluatingExtra && (
           <div className="space-y-4">
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-neutral-600 dark:text-slate-300">
               Empleado: <strong>{evaluatingExtra.empleado_nombre}</strong><br />
               Horas extras generadas: <strong>{evaluatingExtra.minutos_extra} min</strong>
             </p>
             <div>
-              <label className="block text-sm font-medium mb-1">Minutos a aprobar (máximo {evaluatingExtra.minutos_extra}):</label>
+              <label className="form-label">Minutos a aprobar (máximo {evaluatingExtra.minutos_extra}):</label>
               <Input
                 type="number"
                 min={0}
@@ -405,7 +405,7 @@ export default function AsistenciaPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Comentario:</label>
+              <label className="form-label">Comentario:</label>
               <Input
                 type="text"
                 placeholder="Opcional..."

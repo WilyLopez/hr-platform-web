@@ -35,7 +35,7 @@ export function TableFilters({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3 p-4 border-b border-neutral-200">
+    <div className="flex flex-wrap items-center gap-3 p-4 border-b border-neutral-200 dark:border-slate-800">
       {onSearch && (
         <div className="flex-1 min-w-48 max-w-72">
           <Input
