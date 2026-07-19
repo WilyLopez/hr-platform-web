@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams, useRouter } from "next/navigation";
 import { PageHeader } from "@/components/layout/shared/PageHeader";
@@ -33,6 +33,14 @@ const EVENT_TYPES = [
 ];
 
 export default function SuperadminAuditoriaPage() {
+    return (
+        <Suspense fallback={null}>
+            <SuperadminAuditoriaContent />
+        </Suspense>
+    );
+}
+
+function SuperadminAuditoriaContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     
