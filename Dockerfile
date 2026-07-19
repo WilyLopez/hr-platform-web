@@ -23,6 +23,11 @@ FROM node:20-alpine AS runtime
 WORKDIR /app
 
 ENV NODE_ENV=production
+# El server standalone de Next.js resuelve HOSTNAME para hacer el bind del
+# socket; sin esto, en k8s hereda el hostname del pod y termina escuchando
+# solo en la IP interna del pod en vez de todas las interfaces (0.0.0.0),
+# lo que rompe port-forward, exec-probes y sidecars que usan localhost.
+ENV HOSTNAME=0.0.0.0
 
 # Only copy what's needed to run the app
 COPY --from=builder /app/.next/standalone ./
