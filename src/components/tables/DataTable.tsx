@@ -43,12 +43,12 @@ export function DataTable<T>({
     <div className={cn("overflow-x-auto", className)}>
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-neutral-200 bg-neutral-50">
+          <tr className="border-b border-neutral-200 dark:border-slate-800 bg-neutral-50 dark:bg-slate-800/60">
             {columns.map((col) => (
               <th
                 key={col.key}
                 className={cn(
-                  "px-4 py-3 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide",
+                  "px-4 py-3 text-left text-xs font-semibold text-neutral-500 dark:text-slate-400 uppercase tracking-wide",
                   col.width,
                   col.className
                 )}
@@ -58,7 +58,7 @@ export function DataTable<T>({
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-neutral-100">
+        <tbody className="divide-y divide-neutral-100 dark:divide-slate-800">
           {data.length === 0 ? (
             <tr>
               <td colSpan={columns.length}>
@@ -71,14 +71,14 @@ export function DataTable<T>({
                 key={String(row[keyField])}
                 onClick={() => onRowClick?.(row)}
                 className={cn(
-                  "bg-white hover:bg-neutral-50 transition-colors",
+                  "bg-white dark:bg-slate-900 hover:bg-neutral-50 dark:hover:bg-slate-800/60 transition-colors",
                   onRowClick && "cursor-pointer"
                 )}
               >
                 {columns.map((col) => (
                   <td
                     key={col.key}
-                    className={cn("px-4 py-3 text-neutral-700", col.className)}
+                    className={cn("px-4 py-3 text-neutral-700 dark:text-slate-300", col.className)}
                   >
                     {col.render
                       ? col.render(row)

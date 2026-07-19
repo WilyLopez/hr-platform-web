@@ -78,9 +78,9 @@ export default function QrPage({ params }: { params: { sede_id: string } }) {
           ) : qr ? (
             <div className="flex flex-col items-center gap-5">
               {vencido ? (
-                <div className="w-64 h-64 bg-neutral-100 rounded-xl flex flex-col items-center justify-center gap-3">
-                  <Clock size={32} className="text-neutral-400" />
-                  <p className="text-sm font-medium text-neutral-500">QR vencido</p>
+                <div className="w-64 h-64 bg-neutral-100 dark:bg-slate-800 rounded-xl flex flex-col items-center justify-center gap-3">
+                  <Clock size={32} className="text-muted-foreground" />
+                  <p className="text-sm font-medium text-muted-foreground">QR vencido</p>
                   <Button size="sm" onClick={generarQr} loading={loading}>
                     Generar nuevo
                   </Button>
@@ -89,26 +89,26 @@ export default function QrPage({ params }: { params: { sede_id: string } }) {
                 <img
                   src={qr.imagen_base64}
                   alt="Código QR de asistencia"
-                  className="w-64 h-64 rounded-xl border-4 border-neutral-100"
+                  className="w-64 h-64 rounded-xl border-4 border-neutral-100 dark:border-slate-800 bg-white"
                 />
               )}
 
               <div className="text-center">
-                <p className="text-xs text-neutral-500">Tiempo restante</p>
+                <p className="text-xs text-muted-foreground">Tiempo restante</p>
                 <p
                   className={`text-3xl font-bold font-mono mt-1 ${
-                    expCount < 60 ? "text-danger" : "text-neutral-800"
+                    expCount < 60 ? "text-danger" : "text-foreground"
                   }`}
                 >
                   {String(minutos).padStart(2, "0")}:{String(segundos).padStart(2, "0")}
                 </p>
-                <p className="text-xs text-neutral-400 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Vence: {formatDateTime(qr.expira_en)}
                 </p>
               </div>
 
-              <div className="w-full bg-brand-pale rounded-lg p-3 text-center">
-                <p className="text-xs text-brand-dark font-medium">
+              <div className="w-full bg-brand-pale dark:bg-brand/10 rounded-lg p-3 text-center">
+                <p className="text-xs text-brand-dark dark:text-brand-light font-medium">
                   Los empleados escanean este QR desde la app móvil para registrar su asistencia.
                 </p>
               </div>

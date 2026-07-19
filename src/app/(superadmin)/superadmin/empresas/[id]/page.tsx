@@ -4,7 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/layout/shared/PageHeader";
 import { StatCard } from "@/components/charts/StatCard";
-import { Card, CardHeader, CardBody, Badge, Button, Modal, Input, Progress, Select } from "@/components/ui";
+import { Card, CardHeader, CardBody, Badge, Button, Modal, Input, Progress, Select, Spinner } from "@/components/ui";
 import { empresaService } from "@/services/empresa.service";
 import { suscripcionService } from "@/services/suscripcion.service";
 import { auditoriaService } from "@/services/auditoria.service";
@@ -140,10 +140,24 @@ export default function EmpresaDetailPage() {
         reactivarMutation.mutate();
     };
 
-    if (isLoadingEmpresa || isLoadingMetricas) return <div>Cargando...</div>;
-    if (!empresa) return <div>Empresa no encontrada</div>;
+    if (isLoadingEmpresa || isLoadingMetricas) {
+        return (
+            <div className="flex flex-col items-center justify-center py-24 gap-3 text-muted-foreground">
+                <Spinner size="lg" />
+                <p className="text-sm">Cargando empresa...</p>
+            </div>
+        );
+    }
+    if (!empresa) {
+        return (
+            <div className="flex flex-col items-center justify-center py-24 gap-2 text-center">
+                <p className="text-base font-medium text-foreground">Empresa no encontrada</p>
+                <p className="text-sm text-muted-foreground">Verifica el enlace o vuelve al listado de empresas.</p>
+            </div>
+        );
+    }
 
-    const eState = ESTADOS_EMPRESA[empresa.estado] || { label: "Desconocido", variant: "default" };
+    const eState = ESTADOS_EMPRESA[empresa.estado] || { label: "Desconocido", variant: "neutral" };
     const pctUsuarios = metricas ? Math.min(100, Math.round((metricas.usuarios / metricas.limite_usuarios) * 100)) : 0;
     const pctEspacio = metricas ? Math.min(100, Math.round((metricas.espacio_gb / metricas.limite_espacio) * 100)) : 0;
 
@@ -195,15 +209,15 @@ export default function EmpresaDetailPage() {
                     <CardBody className="space-y-6">
                         <div>
                             <div className="flex justify-between text-sm mb-1">
-                                <span className="font-medium text-gray-700 dark:text-gray-200">Usuarios del Sistema</span>
-                                <span className="text-gray-500">{metricas?.usuarios} / {metricas?.limite_usuarios}</span>
+                                <span className="font-medium text-foreground">Usuarios del Sistema</span>
+                                <span className="text-muted-foreground">{metricas?.usuarios} / {metricas?.limite_usuarios}</span>
                             </div>
                             <Progress value={pctUsuarios} variant={pctUsuarios > 90 ? "danger" : "brand"} />
                         </div>
                         <div>
                             <div className="flex justify-between text-sm mb-1">
-                                <span className="font-medium text-gray-700 dark:text-gray-200">Almacenamiento (GB)</span>
-                                <span className="text-gray-500">{metricas?.espacio_gb} / {metricas?.limite_espacio}</span>
+                                <span className="font-medium text-foreground">Almacenamiento (GB)</span>
+                                <span className="text-muted-foreground">{metricas?.espacio_gb} / {metricas?.limite_espacio}</span>
                             </div>
                             <Progress value={pctEspacio} variant={pctEspacio > 90 ? "danger" : "brand"} />
                         </div>
@@ -230,10 +244,10 @@ export default function EmpresaDetailPage() {
                             <span>Ver Auditoría de esta Empresa</span>
                             <ArrowRightCircle className="w-4 h-4" />
                         </Button>
-                        <div className="pt-4 mt-4 border-t border-gray-100 dark:border-gray-800">
+                        <div className="pt-4 mt-4 border-t border-neutral-100 dark:border-slate-800">
                             {["ACTIVA", "EN_PRUEBA"].includes(empresa.estado) ? (
-                                <Button 
-                                    variant="danger" 
+                                <Button
+                                    variant="danger"
                                     className="w-full justify-between"
                                     onClick={() => setIsSuspendModalOpen(true)}
                                 >
@@ -241,9 +255,9 @@ export default function EmpresaDetailPage() {
                                     <ShieldAlert className="w-4 h-4" />
                                 </Button>
                             ) : (
-                                <Button 
-                                    variant={"outline" as any} 
-                                    className="w-full justify-between bg-green-500 text-white hover:bg-green-600 border-none"
+                                <Button
+                                    variant="success"
+                                    className="w-full justify-between"
                                     onClick={() => setIsReactivarModalOpen(true)}
                                 >
                                     <span>Reactivar Empresa</span>
@@ -260,15 +274,18 @@ export default function EmpresaDetailPage() {
                 <CardHeader title="Timeline Histórico" description="Eventos críticos de la empresa" />
                 <CardBody>
                     {isLoadingAuditoria ? (
-                        <div>Cargando timeline...</div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
+                            <Spinner size="sm" />
+                            Cargando timeline...
+                        </div>
                     ) : auditoria?.results?.length ? (
                         <div className="space-y-6">
                             {auditoria.results.map((log) => (
-                                <div key={log.id} className="relative flex gap-4 pl-4 border-l-2 border-brand-500">
-                                    <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-brand-500" />
+                                <div key={log.id} className="relative flex gap-4 pl-4 border-l-2 border-brand dark:border-brand-light">
+                                    <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-brand dark:bg-brand-light" />
                                     <div>
-                                        <p className="text-sm font-semibold">{log.descripcion}</p>
-                                        <div className="flex gap-2 text-xs text-gray-500 mt-1">
+                                        <p className="text-sm font-semibold text-foreground">{log.descripcion}</p>
+                                        <div className="flex gap-2 text-xs text-muted-foreground mt-1">
                                             <span>{formatDate(log.timestamp)}</span>
                                             <span>•</span>
                                             <span>{log.tipo_evento}</span>
@@ -278,7 +295,7 @@ export default function EmpresaDetailPage() {
                             ))}
                         </div>
                     ) : (
-                        <p className="text-sm text-gray-500 text-center py-4">No hay eventos históricos registrados.</p>
+                        <p className="text-sm text-muted-foreground text-center py-4">No hay eventos históricos registrados.</p>
                     )}
                 </CardBody>
             </Card>
@@ -290,7 +307,7 @@ export default function EmpresaDetailPage() {
                 title="Suspender Empresa"
             >
                 <div className="space-y-4 py-4">
-                    <p className="text-sm text-gray-500">Estás a punto de suspender los servicios de {empresa.razon_social}.</p>
+                    <p className="text-sm text-muted-foreground">Estás a punto de suspender los servicios de {empresa.razon_social}.</p>
                     <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-100 dark:border-red-800/30">
                         <h4 className="font-semibold text-red-800 dark:text-red-300 text-sm mb-2">Resumen de Impacto:</h4>
                         <ul className="list-disc list-inside text-sm text-red-700 dark:text-red-400 space-y-1">
@@ -301,17 +318,17 @@ export default function EmpresaDetailPage() {
                     </div>
 
                     {suspendError && (
-                        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mt-4" role="alert">
+                        <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 text-red-700 dark:text-red-400 p-4 mt-4 rounded-r-md" role="alert">
                             <div className="flex items-center mb-2">
                                 <AlertTriangle className="w-5 h-5 mr-2" />
                                 <span className="font-bold">Error de Políticas</span>
                             </div>
                             <p className="text-sm">{suspendError}</p>
-                            
+
                             {(suspendError.includes("suscripción activa") || suspendError.includes("plan")) && (
-                                <Button 
-                                    variant="outline" 
-                                    className="mt-3 text-red-700 border-red-700 hover:bg-red-200"
+                                <Button
+                                    variant="outline"
+                                    className="mt-3 text-red-700 dark:text-red-400 border-red-700 dark:border-red-500 hover:bg-red-100 dark:hover:bg-red-900/30"
                                     onClick={() => {
                                         closeSuspendModal();
                                         setIsPlanModalOpen(true);
@@ -331,13 +348,13 @@ export default function EmpresaDetailPage() {
                             onChange={(e) => setSuspendMotivo(e.target.value)}
                             options={MOTIVOS_SUSPENSION}
                         />
-                        
+
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            <label className="form-label">
                                 Descripción (comentario)
                             </label>
                             <textarea
-                                className="w-full px-3 py-2 border rounded-md dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none h-24"
+                                className="form-input resize-none h-24"
                                 placeholder="Especifique los detalles de la suspensión..."
                                 value={suspendComentario}
                                 onChange={(e) => setSuspendComentario(e.target.value)}
@@ -345,7 +362,7 @@ export default function EmpresaDetailPage() {
                         </div>
 
                         <div className="pt-2">
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            <p className="text-sm text-muted-foreground mb-2">
                                 Para confirmar esta acción crítica, por favor escribe <strong>SUSPENDER</strong>:
                             </p>
                             <Input
@@ -376,7 +393,7 @@ export default function EmpresaDetailPage() {
                 title="Reactivar Empresa"
             >
                 <div className="space-y-4 py-4">
-                    <p className="text-sm text-gray-500">Restaura el acceso a la plataforma para {empresa.razon_social}.</p>
+                    <p className="text-sm text-muted-foreground">Restaura el acceso a la plataforma para {empresa.razon_social}.</p>
                     <Select
                         label="Motivo (categoría)"
                         placeholder="Seleccione un motivo..."
@@ -389,13 +406,13 @@ export default function EmpresaDetailPage() {
                             { value: "OTRO", label: "Otro" }
                         ]}
                     />
-                    
+
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label className="form-label">
                             Descripción (comentario)
                         </label>
                         <textarea
-                            className="w-full px-3 py-2 border rounded-md dark:bg-gray-800 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none h-24"
+                            className="form-input resize-none h-24"
                             placeholder="Detalle la razón de la reactivación..."
                             value={reactivarComentario}
                             onChange={(e) => setReactivarComentario(e.target.value)}
@@ -404,9 +421,8 @@ export default function EmpresaDetailPage() {
                 </div>
                 <div className="flex justify-end gap-2">
                     <Button variant="outline" onClick={closeReactivarModal}>Cancelar</Button>
-                    <Button 
-                        variant={"outline" as any} 
-                        className="bg-green-500 text-white hover:bg-green-600 border-none"
+                    <Button
+                        variant="success"
                         onClick={handleReactivar}
                         loading={reactivarMutation.isPending}
                         disabled={!reactivarMotivo || !reactivarComentario}
@@ -423,7 +439,7 @@ export default function EmpresaDetailPage() {
                 title="Cambiar Plan de Suscripción"
             >
                 <div className="space-y-4 py-4">
-                    <p className="text-sm text-gray-500">Selecciona el nuevo plan para {empresa.razon_social}. El cambio aplicará inmediatamente.</p>
+                    <p className="text-sm text-muted-foreground">Selecciona el nuevo plan para {empresa.razon_social}. El cambio aplicará inmediatamente.</p>
                     <Select
                         label="Nuevo Plan"
                         placeholder="Selecciona un plan..."

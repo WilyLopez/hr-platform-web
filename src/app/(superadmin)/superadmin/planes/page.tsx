@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PageHeader } from "@/components/layout/shared/PageHeader";
-import { Card, CardHeader, CardBody, Button, Modal, Input, Badge } from "@/components/ui";
+import { Card, CardHeader, CardBody, Button, Modal, Input, Badge, Spinner } from "@/components/ui";
 import { suscripcionService } from "@/services/suscripcion.service";
 import { useToast } from "@/hooks/useToast";
 import { Edit2, Plus, Users, HardDrive, CheckCircle } from "lucide-react";
@@ -90,7 +90,10 @@ export default function PlanesPage() {
             </div>
 
             {isLoading ? (
-                <div>Cargando planes...</div>
+                <div className="flex items-center justify-center gap-2 py-16 text-muted-foreground">
+                    <Spinner size="md" />
+                    <span className="text-sm">Cargando planes...</span>
+                </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {planes?.map((plan) => (
@@ -99,23 +102,23 @@ export default function PlanesPage() {
                             <CardBody className="p-6 space-y-4">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <h3 className="text-xl font-bold">{plan.nombre}</h3>
-                                        <p className="text-sm text-gray-500 mt-1">{plan.descripcion_corta || "Sin descripción"}</p>
+                                        <h3 className="text-xl font-bold text-foreground">{plan.nombre}</h3>
+                                        <p className="text-sm text-muted-foreground mt-1">{plan.descripcion_corta || "Sin descripción"}</p>
                                     </div>
                                     <Badge variant="brand">${plan.precio_mensual}/mes</Badge>
                                 </div>
-                                
-                                <div className="space-y-2 py-4 border-y border-gray-100 dark:border-gray-800">
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <Users className="w-4 h-4 text-gray-400" />
+
+                                <div className="space-y-2 py-4 border-y border-neutral-100 dark:border-slate-800">
+                                    <div className="flex items-center gap-2 text-sm text-foreground">
+                                        <Users className="w-4 h-4 text-muted-foreground" />
                                         <span>Hasta {plan.limite_usuarios} usuarios</span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <HardDrive className="w-4 h-4 text-gray-400" />
+                                    <div className="flex items-center gap-2 text-sm text-foreground">
+                                        <HardDrive className="w-4 h-4 text-muted-foreground" />
                                         <span>{plan.almacenamiento_gb} GB Almacenamiento</span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-sm">
-                                        <CheckCircle className="w-4 h-4 text-green-500" />
+                                    <div className="flex items-center gap-2 text-sm text-foreground">
+                                        <CheckCircle className="w-4 h-4 text-success" />
                                         <span>{plan.empresas_count} empresas suscritas</span>
                                     </div>
                                 </div>

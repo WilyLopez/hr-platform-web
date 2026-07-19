@@ -13,8 +13,8 @@ import type { SuscripcionSuperadmin } from "@/types/suscripcion.types";
 const ESTADOS_SUSCRIPCION: Record<string, { label: string; variant: string }> = {
     TRIAL: { label: "Periodo de prueba", variant: "warning" },
     ACTIVA: { label: "Activa", variant: "success" },
-    VENCIDA: { label: "Vencida", variant: "error" },
-    SUSPENDIDA: { label: "Suspendida", variant: "error" },
+    VENCIDA: { label: "Vencida", variant: "danger" },
+    SUSPENDIDA: { label: "Suspendida", variant: "danger" },
 };
 
 const columns: Column<SuscripcionSuperadmin>[] = [
@@ -24,7 +24,7 @@ const columns: Column<SuscripcionSuperadmin>[] = [
         render: (row) => (
             <div>
                 <p className="font-medium">{row.empresa_nombre}</p>
-                <p className="text-xs text-gray-500">ID: {row.empresa_id}</p>
+                <p className="text-xs text-muted-foreground">ID: {row.empresa_id}</p>
             </div>
         ),
     },
@@ -39,7 +39,7 @@ const columns: Column<SuscripcionSuperadmin>[] = [
         key: "estado",
         header: "Estado",
         render: (row) => {
-            const e = ESTADOS_SUSCRIPCION[row.estado] ?? { label: row.estado, variant: "default" };
+            const e = ESTADOS_SUSCRIPCION[row.estado] ?? { label: row.estado, variant: "neutral" };
             return <Badge variant={e.variant as "success"} dot>{e.label}</Badge>;
         },
     },
@@ -113,7 +113,7 @@ export default function SuscripcionesPage() {
                                 <div className={`w-10 h-10 rounded-lg ${kpi.bg} flex items-center justify-center`}>
                                     <span className={`text-lg font-bold ${kpi.color}`}>{kpi.value}</span>
                                 </div>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">{kpi.label}</p>
+                                <p className="text-sm text-muted-foreground">{kpi.label}</p>
                             </div>
                         </CardBody>
                     </Card>
@@ -122,15 +122,15 @@ export default function SuscripcionesPage() {
 
             {/* Filters + Table */}
             <Card>
-                <div className="p-4 border-b border-gray-100 dark:border-gray-800">
+                <div className="p-4 border-b border-neutral-100 dark:border-slate-800">
                     <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                        <label className="text-sm font-medium text-foreground whitespace-nowrap">
                             Filtrar por estado:
                         </label>
                         <select
                             value={estadoFilter}
                             onChange={(e) => setEstadoFilter(e.target.value)}
-                            className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
+                            className="form-input w-auto text-sm"
                         >
                             {estadoOptions.map((opt) => (
                                 <option key={opt.value} value={opt.value}>{opt.label}</option>

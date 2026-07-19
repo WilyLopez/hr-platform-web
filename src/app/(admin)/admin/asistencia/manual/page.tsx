@@ -107,7 +107,7 @@ export default function RegistroManualPage() {
             
             {/* Buscador de Empleado */}
             <div>
-              <label htmlFor="buscar_empleado" className="block text-sm font-medium text-neutral-700 mb-1">
+              <label htmlFor="buscar_empleado" className="form-label">
                 Empleado
               </label>
               
@@ -116,17 +116,17 @@ export default function RegistroManualPage() {
                   id="buscar_empleado"
                   type="text"
                   placeholder="Escribe para filtrar empleados..."
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand outline-none text-neutral-800 bg-neutral-50 mb-2"
+                  className="form-input mb-2"
                   value={busquedaEmpleado}
                   onChange={(e) => setBusquedaEmpleado(e.target.value)}
                 />
                 
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                   <select
                     id="empleado_id"
                     required
-                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand outline-none text-neutral-800 bg-white"
+                    className="form-input pl-10"
                     value={empleadoId}
                     onChange={(e) => setEmpleadoId(e.target.value)}
                   >
@@ -147,12 +147,12 @@ export default function RegistroManualPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Tipo de Marcaje */}
               <div>
-                <label htmlFor="tipo" className="block text-sm font-medium text-neutral-700 mb-1">
+                <label htmlFor="tipo" className="form-label">
                   Tipo de Marcaje
                 </label>
                 <select
                   id="tipo"
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand outline-none bg-white text-neutral-800"
+                  className="form-input"
                   value={tipo}
                   onChange={(e) => setTipo(e.target.value as TipoMarcaje)}
                 >
@@ -163,16 +163,16 @@ export default function RegistroManualPage() {
 
               {/* Fecha */}
               <div>
-                <label htmlFor="fecha" className="block text-sm font-medium text-neutral-700 mb-1">
+                <label htmlFor="fecha" className="form-label">
                   Fecha del Marcaje
                 </label>
-                <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-brand">
-                  <CalendarIcon size={18} className="text-neutral-400" />
+                <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-background border-border focus-within:ring-2 focus-within:ring-brand">
+                  <CalendarIcon size={18} className="text-muted-foreground" />
                   <input
                     id="fecha"
                     type="date"
                     required
-                    className="w-full outline-none text-sm text-neutral-800"
+                    className="w-full outline-none text-sm bg-transparent text-foreground"
                     value={fecha}
                     onChange={(e) => setFecha(e.target.value)}
                   />
@@ -182,16 +182,16 @@ export default function RegistroManualPage() {
 
             {/* Hora del Marcaje */}
             <div>
-              <label htmlFor="hora" className="block text-sm font-medium text-neutral-700 mb-1">
+              <label htmlFor="hora" className="form-label">
                 Hora del Marcaje
               </label>
-              <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-brand">
-                <Clock size={18} className="text-neutral-400" />
+              <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-background border-border focus-within:ring-2 focus-within:ring-brand">
+                <Clock size={18} className="text-muted-foreground" />
                 <input
                   id="hora"
                   type="time"
                   required
-                  className="w-full outline-none text-sm text-neutral-800 font-mono"
+                  className="w-full outline-none text-sm bg-transparent text-foreground font-mono"
                   value={hora}
                   onChange={(e) => setHora(e.target.value)}
                 />
@@ -200,29 +200,29 @@ export default function RegistroManualPage() {
 
             {/* Justificación */}
             <div>
-              <label htmlFor="justificacion" className="block text-sm font-medium text-neutral-700 mb-1">
+              <label htmlFor="justificacion" className="form-label">
                 Justificación / Motivo
               </label>
               <div className="relative flex items-start">
-                <FileText className="absolute left-3 top-3 text-neutral-400" size={18} />
+                <FileText className="absolute left-3 top-3 text-muted-foreground" size={18} />
                 <textarea
                   id="justificacion"
                   required
                   rows={4}
                   placeholder="Ej: El empleado olvidó marcar al ingresar debido a una reunión urgente con gerencia..."
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand outline-none text-neutral-800 placeholder-neutral-400 resize-none"
+                  className="form-input pl-10 resize-none"
                   value={justificacion}
                   onChange={(e) => setJustificacion(e.target.value)}
                 />
               </div>
-              <div className="mt-1 flex justify-between text-xs text-neutral-400">
+              <div className="mt-1 flex justify-between text-xs text-muted-foreground">
                 <span>Explique brevemente por qué se realiza este registro manual.</span>
                 <span>{justificacion.length} caracteres</span>
               </div>
             </div>
 
             {/* Acciones del formulario */}
-            <div className="flex justify-end gap-3 pt-2 border-t border-neutral-100">
+            <div className="flex justify-end gap-3 pt-2 border-t border-neutral-100 dark:border-slate-800">
               <Link href="/admin/asistencia">
                 <Button type="button" variant="outline" disabled={loading}>
                   Cancelar

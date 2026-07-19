@@ -167,24 +167,24 @@ export default function NuevoEmpleadoPage() {
             
             {/* Sección: Información Personal */}
             <div className={currentStep === 0 ? "block" : "hidden"}>
-              <h3 className="text-sm font-bold text-neutral-800 mb-4 border-b pb-2">
+              <h3 className="text-sm font-bold text-foreground mb-4 border-b border-border pb-2">
                 Información Personal
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Nombres */}
                 <div>
-                  <label htmlFor="nombres" className="block text-xs font-semibold text-neutral-700 mb-1">
+                  <label htmlFor="nombres" className="block text-xs font-semibold text-foreground mb-1">
                     Nombres
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                     <input
                       id="nombres"
                       type="text"
                       required
                       placeholder="Ej: Juan Carlos"
-                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                      className="form-input pl-9"
                       value={nombres}
                       onChange={(e) => setNombres(e.target.value)}
                     />
@@ -193,17 +193,17 @@ export default function NuevoEmpleadoPage() {
 
                 {/* Apellidos */}
                 <div>
-                  <label htmlFor="apellidos" className="block text-xs font-semibold text-neutral-700 mb-1">
+                  <label htmlFor="apellidos" className="block text-xs font-semibold text-foreground mb-1">
                     Apellidos
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                     <input
                       id="apellidos"
                       type="text"
                       required
                       placeholder="Ej: Pérez Quispe"
-                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                      className="form-input pl-9"
                       value={apellidos}
                       onChange={(e) => setApellidos(e.target.value)}
                     />
@@ -212,12 +212,12 @@ export default function NuevoEmpleadoPage() {
 
                 {/* Tipo de Documento */}
                 <div>
-                  <label htmlFor="tipo_documento" className="block text-xs font-semibold text-neutral-700 mb-1">
+                  <label htmlFor="tipo_documento" className="block text-xs font-semibold text-foreground mb-1">
                     Tipo de Documento
                   </label>
                   <select
                     id="tipo_documento"
-                    className="w-full px-3 py-2 border rounded-lg text-sm text-neutral-800 outline-none bg-white focus:ring-2 focus:ring-brand"
+                    className="form-input"
                     value={tipoDocumento}
                     onChange={(e) => setTipoDocumento(e.target.value as TipoDocumento)}
                   >
@@ -230,18 +230,18 @@ export default function NuevoEmpleadoPage() {
 
                 {/* Número de Documento */}
                 <div>
-                  <label htmlFor="numero_documento" className="block text-xs font-semibold text-neutral-700 mb-1">
+                  <label htmlFor="numero_documento" className="block text-xs font-semibold text-foreground mb-1">
                     Número de Documento
                   </label>
                   <div className="relative">
-                    <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                     <input
                       id="numero_documento"
                       type="text"
                       required
                       placeholder={tipoDocumento === 'DNI' ? '8 dígitos' : 'Ingresa el número'}
                       maxLength={tipoDocumento === 'DNI' ? 8 : tipoDocumento === 'RUC' ? 11 : 20}
-                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                      className="form-input pl-9"
                       value={numeroDocumento}
                       onChange={(e) => setNumeroDocumento(e.target.value.replace(/\s/g, ''))} // Elimina espacios
                     />
@@ -252,24 +252,24 @@ export default function NuevoEmpleadoPage() {
 
             {/* Sección: Información Laboral y de Contacto */}
             <div className={currentStep === 1 ? "block animate-fade-in" : "hidden"}>
-              <h3 className="text-sm font-bold text-neutral-800 mb-4 border-b pb-2 pt-2">
+              <h3 className="text-sm font-bold text-foreground mb-4 border-b border-border pb-2 pt-2">
                 Información Laboral y de Contacto
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Correo Electrónico */}
                 <div className="md:col-span-2">
-                  <label htmlFor="correo" className="block text-xs font-semibold text-neutral-700 mb-1">
+                  <label htmlFor="correo" className="block text-xs font-semibold text-foreground mb-1">
                     Correo Electrónico
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                     <input
                       id="correo"
                       type="email"
                       required
                       placeholder="ejemplo@empresa.com"
-                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                      className="form-input pl-9"
                       value={correo}
                       onChange={(e) => setCorreo(e.target.value)}
                     />
@@ -278,17 +278,17 @@ export default function NuevoEmpleadoPage() {
 
                 {/* Área */}
                 <div>
-                  <label htmlFor="area" className="block text-xs font-semibold text-neutral-700 mb-1">
+                  <label htmlFor="area" className="block text-xs font-semibold text-foreground mb-1">
                     Área / Departamento
                   </label>
                   <div className="relative">
-                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                     <input
                       id="area"
                       type="text"
                       required
                       placeholder="Ej: Sistemas, Contabilidad, RRHH"
-                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                      className="form-input pl-9"
                       value={area}
                       onChange={(e) => setArea(e.target.value)}
                     />
@@ -297,17 +297,17 @@ export default function NuevoEmpleadoPage() {
 
                 {/* Cargo */}
                 <div>
-                  <label htmlFor="cargo" className="block text-xs font-semibold text-neutral-700 mb-1">
+                  <label htmlFor="cargo" className="block text-xs font-semibold text-foreground mb-1">
                     Cargo / Puesto
                   </label>
                   <div className="relative">
-                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                     <input
                       id="cargo"
                       type="text"
                       required
                       placeholder="Ej: Desarrollador Full-Stack, Analista"
-                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                      className="form-input pl-9"
                       value={cargo}
                       onChange={(e) => setCargo(e.target.value)}
                     />
@@ -317,7 +317,7 @@ export default function NuevoEmpleadoPage() {
                 {/* Sede */}
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label htmlFor="sede_id" className="block text-xs font-semibold text-neutral-700">
+                    <label htmlFor="sede_id" className="block text-xs font-semibold text-foreground">
                       Sede Asignada
                     </label>
                     <button 
@@ -330,12 +330,12 @@ export default function NuevoEmpleadoPage() {
                     </button>
                   </div>
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                     <select
                       id="sede_id"
                       required
                       disabled={cargandoSedes}
-                      className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none bg-white focus:ring-2 focus:ring-brand disabled:opacity-50"
+                      className="form-input pl-9 disabled:opacity-50"
                       value={sedeId}
                       onChange={(e) => setSedeId(e.target.value)}
                     >
@@ -354,16 +354,16 @@ export default function NuevoEmpleadoPage() {
 
                 {/* Fecha de Ingreso */}
                 <div>
-                  <label htmlFor="fecha_ingreso" className="block text-xs font-semibold text-neutral-700 mb-1">
+                  <label htmlFor="fecha_ingreso" className="block text-xs font-semibold text-foreground mb-1">
                     Fecha de Ingreso
                   </label>
-                  <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-brand">
-                    <Calendar size={16} className="text-neutral-400" />
+                  <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-background border-border focus-within:ring-2 focus-within:ring-brand">
+                    <Calendar size={16} className="text-muted-foreground" />
                     <input
                       id="fecha_ingreso"
                       type="date"
                       required
-                      className="w-full outline-none text-sm text-neutral-800"
+                      className="w-full outline-none text-sm bg-transparent text-foreground"
                       value={fechaIngreso}
                       onChange={(e) => setFechaIngreso(e.target.value)}
                     />

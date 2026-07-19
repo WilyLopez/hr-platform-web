@@ -75,17 +75,17 @@ export default function BandejaSolicitudesPage() {
   const obtenerEstiloEstado = (est: EstadoSolicitud) => {
     switch (est) {
       case 'PENDIENTE':
-        return 'bg-amber-50 text-amber-700 border-amber-200';
+        return 'bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800/40';
       case 'EN_REVISION':
-        return 'bg-blue-50 text-blue-700 border-blue-200';
+        return 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800/40';
       case 'APROBADA':
-        return 'bg-green-50 text-green-700 border-green-200';
+        return 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800/40';
       case 'RECHAZADA':
-        return 'bg-red-50 text-red-700 border-red-200';
+        return 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800/40';
       case 'CANCELADA':
-        return 'bg-neutral-100 text-neutral-500 border-neutral-300';
+        return 'bg-neutral-100 dark:bg-slate-800 text-neutral-500 dark:text-slate-400 border-neutral-300 dark:border-slate-700';
       default:
-        return 'bg-neutral-50 text-neutral-600 border-neutral-200';
+        return 'bg-neutral-50 dark:bg-slate-800 text-neutral-600 dark:text-slate-300 border-neutral-200 dark:border-slate-700';
     }
   };
 
@@ -107,13 +107,13 @@ export default function BandejaSolicitudesPage() {
             
             {/* ID Empleado */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">ID de Empleado</label>
+              <label className="block text-xs font-semibold text-foreground mb-1">ID de Empleado</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
                 <input
                   type="number"
                   placeholder="Ej: 1045"
-                  className="w-full pl-9 pr-4 py-2 border rounded-lg text-sm text-neutral-800 outline-none focus:ring-2 focus:ring-brand"
+                  className="form-input pl-9"
                   value={empleadoId}
                   onChange={(e) => setEmpleadoId(e.target.value)}
                 />
@@ -122,9 +122,9 @@ export default function BandejaSolicitudesPage() {
 
             {/* Filtrar por Estado */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">Estado</label>
+              <label className="block text-xs font-semibold text-foreground mb-1">Estado</label>
               <select
-                className="w-full px-3 py-2 border rounded-lg text-sm text-neutral-800 outline-none bg-white focus:ring-2 focus:ring-brand"
+                className="form-input"
                 value={estado}
                 onChange={(e) => setEstado(e.target.value as EstadoSolicitud | '')}
               >
@@ -139,12 +139,12 @@ export default function BandejaSolicitudesPage() {
 
             {/* Fecha Desde */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">Desde</label>
-              <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-brand">
-                <CalendarIcon size={16} className="text-neutral-400" />
+              <label className="block text-xs font-semibold text-foreground mb-1">Desde</label>
+              <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-background border-border focus-within:ring-2 focus-within:ring-brand">
+                <CalendarIcon size={16} className="text-muted-foreground" />
                 <input
                   type="date"
-                  className="w-full outline-none text-xs text-neutral-800"
+                  className="w-full outline-none text-xs bg-transparent text-foreground"
                   value={fechaDesde}
                   onChange={(e) => setFechaDesde(e.target.value)}
                 />
@@ -153,12 +153,12 @@ export default function BandejaSolicitudesPage() {
 
             {/* Fecha Hasta */}
             <div>
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">Hasta</label>
-              <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-brand">
-                <CalendarIcon size={16} className="text-neutral-400" />
+              <label className="block text-xs font-semibold text-foreground mb-1">Hasta</label>
+              <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-background border-border focus-within:ring-2 focus-within:ring-brand">
+                <CalendarIcon size={16} className="text-muted-foreground" />
                 <input
                   type="date"
-                  className="w-full outline-none text-xs text-neutral-800"
+                  className="w-full outline-none text-xs bg-transparent text-foreground"
                   value={fechaHasta}
                   onChange={(e) => setFechaHasta(e.target.value)}
                 />
@@ -179,54 +179,54 @@ export default function BandejaSolicitudesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-neutral-50 border-b border-neutral-200">
-                <th className="p-4 font-semibold text-neutral-700 text-xs">Empleado</th>
-                <th className="p-4 font-semibold text-neutral-700 text-xs">Tipo de Permiso</th>
-                <th className="p-4 font-semibold text-neutral-700 text-xs">Período Solicitado</th>
-                <th className="p-4 font-semibold text-neutral-700 text-xs text-center">Días</th>
-                <th className="p-4 font-semibold text-neutral-700 text-xs text-center">Estado</th>
-                <th className="p-4 font-semibold text-neutral-700 text-xs text-right">Evaluación</th>
+              <tr className="bg-neutral-50 dark:bg-slate-800/60 border-b border-neutral-200 dark:border-slate-800">
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-xs">Empleado</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-xs">Tipo de Permiso</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-xs">Período Solicitado</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-xs text-center">Días</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-xs text-center">Estado</th>
+                <th className="p-4 font-semibold text-neutral-500 dark:text-slate-400 text-xs text-right">Evaluación</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-neutral-100 dark:divide-slate-800">
               {loading ? (
                 <tr>
                   <td colSpan={6} className="p-12 text-center">
                     <Spinner size="md" className="mx-auto" />
-                    <p className="mt-2 text-xs text-neutral-500">Recuperando solicitudes pendientes...</p>
+                    <p className="mt-2 text-xs text-muted-foreground">Recuperando solicitudes pendientes...</p>
                   </td>
                 </tr>
               ) : solicitudes.length > 0 ? (
                 solicitudes.map((sol) => (
-                  <tr key={sol.id} className="hover:bg-neutral-50/40 transition-colors">
+                  <tr key={sol.id} className="hover:bg-neutral-50 dark:hover:bg-slate-800/40 transition-colors">
                     {/* Empleado */}
                     <td className="p-4">
-                      <div className="font-semibold text-neutral-800 text-sm">{sol.empleado_nombre}</div>
-                      <div className="text-[10px] text-neutral-400 font-mono mt-0.5">ID Colaborador: {sol.empleado_id}</div>
+                      <div className="font-semibold text-foreground text-sm">{sol.empleado_nombre}</div>
+                      <div className="text-[10px] text-muted-foreground font-mono mt-0.5">ID Colaborador: {sol.empleado_id}</div>
                     </td>
 
                     {/* Tipo Permiso */}
-                    <td className="p-4 text-sm text-neutral-700 font-medium">
+                    <td className="p-4 text-sm text-neutral-700 dark:text-slate-300 font-medium">
                       {sol.tipo_permiso_nombre}
                     </td>
 
                     {/* Período */}
-                    <td className="p-4 text-xs text-neutral-600">
+                    <td className="p-4 text-xs text-neutral-600 dark:text-slate-300">
                       <div className="flex items-center gap-1 font-medium">
-                        <CalendarIcon size={12} className="text-neutral-400" />
+                        <CalendarIcon size={12} className="text-muted-foreground" />
                         <span>{sol.fecha_inicio === sol.fecha_fin ? formatearFecha(sol.fecha_inicio) : `${formatearFecha(sol.fecha_inicio)} al ${formatearFecha(sol.fecha_fin)}`}</span>
                       </div>
                       {sol.hora_inicio && sol.hora_fin && (
-                        <div className="flex items-center gap-1 mt-1 text-indigo-600 font-medium">
+                        <div className="flex items-center gap-1 mt-1 text-indigo-600 dark:text-indigo-400 font-medium">
                           <Clock size={12} />
                           <span>{sol.hora_inicio.slice(0,5)} - {sol.hora_fin.slice(0,5)}</span>
                         </div>
                       )}
-                      <div className="text-[10px] text-neutral-400 mt-1 truncate max-w-[180px]" title={sol.motivo}>
+                      <div className="text-[10px] text-muted-foreground mt-1 truncate max-w-[180px]" title={sol.motivo}>
                         Motivo: {sol.motivo}
                       </div>
                       {sol.adjunto_url && (
-                        <a href={sol.adjunto_url} target="_blank" rel="noreferrer" className="flex items-center gap-1 mt-1 text-xs text-brand-600 hover:underline">
+                        <a href={sol.adjunto_url} target="_blank" rel="noreferrer" className="flex items-center gap-1 mt-1 text-xs text-brand dark:text-brand-light hover:underline">
                           <FileText size={12} />
                           Ver adjunto
                         </a>
@@ -234,7 +234,7 @@ export default function BandejaSolicitudesPage() {
                     </td>
 
                     {/* Días */}
-                    <td className="p-4 text-sm font-bold text-neutral-700 text-center">
+                    <td className="p-4 text-sm font-bold text-neutral-700 dark:text-slate-300 text-center">
                       {sol.dias_solicitados} d
                     </td>
 
@@ -261,7 +261,7 @@ export default function BandejaSolicitudesPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="p-12 text-center text-sm text-neutral-500">
+                  <td colSpan={6} className="p-12 text-center text-sm text-muted-foreground">
                     No se encontraron solicitudes registradas en este período.
                   </td>
                 </tr>
@@ -271,8 +271,8 @@ export default function BandejaSolicitudesPage() {
         </div>
 
         {/* Paginador Inferior */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-neutral-100 bg-neutral-50/50">
-          <span className="text-xs text-neutral-500 font-medium">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-neutral-100 dark:border-slate-800 bg-neutral-50/50 dark:bg-slate-800/30">
+          <span className="text-xs text-muted-foreground font-medium">
             Página {page} {totalItems > 0 && `• Registros totales: ${totalItems}`}
           </span>
           <div className="flex gap-1">

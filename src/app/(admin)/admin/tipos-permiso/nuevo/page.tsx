@@ -71,71 +71,71 @@ export default function NuevoTipoPermisoPage() {
             
             {/* Nombre del Tipo de Permiso */}
             <div>
-              <label htmlFor="nombre" className="block text-sm font-medium text-neutral-700 mb-1">
+              <label htmlFor="nombre" className="form-label">
                 Nombre del Permiso
               </label>
               <div className="relative">
-                <Heading className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
+                <Heading className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                 <input
                   id="nombre"
                   type="text"
                   required
                   placeholder="Ej: Licencia por Paternidad, Permiso Médico, Vacaciones"
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand outline-none text-neutral-800"
+                  className="form-input pl-10"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                 />
               </div>
-              <p className="mt-1 text-xs text-neutral-400">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Asigna un nombre claro y directo que los empleados reconozcan fácilmente en la app móvil.
               </p>
             </div>
 
             {/* Descripción detallada */}
             <div>
-              <label htmlFor="descripcion" className="block text-sm font-medium text-neutral-700 mb-1">
+              <label htmlFor="descripcion" className="form-label">
                 Descripción / Detalles de la Regla
               </label>
               <div className="relative flex items-start">
-                <AlignLeft className="absolute left-3 top-3 text-neutral-400" size={18} />
+                <AlignLeft className="absolute left-3 top-3 text-muted-foreground" size={18} />
                 <textarea
                   id="descripcion"
                   required
                   rows={4}
                   placeholder="Ej: Permiso con goce de haber otorgado en caso de citas médicas debidamente justificadas..."
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand outline-none text-neutral-800 placeholder-neutral-400 resize-none"
+                  className="form-input pl-10 resize-none"
                   value={descripcion}
                   onChange={(e) => setDescripcion(e.target.value)}
                 />
               </div>
-              <p className="mt-1 text-xs text-neutral-400">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Describe detalladamente los lineamientos o políticas asociadas a este tipo de ausencia.
               </p>
             </div>
 
             {/* Configuración de Adjunto Obligatorio */}
-            <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200/60 flex items-start gap-3">
+            <div className="bg-neutral-50 dark:bg-slate-800/60 p-4 rounded-xl border border-neutral-200/60 dark:border-slate-700 flex items-start gap-3">
               <div className="flex h-5 items-center">
                 <input
                   id="requiere_adjunto"
                   type="checkbox"
-                  className="h-4 w-4 rounded border-neutral-300 text-brand focus:ring-brand cursor-pointer"
+                  className="h-4 w-4 rounded border-neutral-300 dark:border-slate-600 text-brand focus:ring-brand cursor-pointer"
                   checked={requiereAdjunto}
                   onChange={(e) => setRequiereAdjunto(e.target.checked)}
                 />
               </div>
               <div className="text-sm">
-                <label htmlFor="requiere_adjunto" className="font-semibold text-neutral-700 cursor-pointer select-none">
+                <label htmlFor="requiere_adjunto" className="font-semibold text-foreground cursor-pointer select-none">
                   Requiere Sustento / Adjunto Obligatorio
                 </label>
-                <p className="text-xs text-neutral-500 mt-0.5">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   Al activar esto, el sistema obligará al colaborador a subir un archivo digital (constancia, certificado, receta, etc.) para poder enviar la solicitud de permiso.
                 </p>
               </div>
             </div>
 
             {/* Botones de acción */}
-            <div className="flex justify-end gap-3 pt-4 border-t border-neutral-100">
+            <div className="flex justify-end gap-3 pt-4 border-t border-neutral-100 dark:border-slate-800">
               <Link href="/admin/tipos-permiso">
                 <Button type="button" variant="outline" disabled={loading}>
                   Cancelar

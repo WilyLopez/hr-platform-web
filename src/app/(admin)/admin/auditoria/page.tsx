@@ -138,13 +138,13 @@ export default function AuditoriaPage() {
         <CardBody>
           <form onSubmit={handleBuscar} className="flex flex-col md:flex-row items-end gap-4">
             <div className="w-full md:w-1/4">
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Desde</label>
-              <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-brand">
-                <CalendarIcon size={18} className="text-neutral-400" />
+              <label className="form-label">Desde</label>
+              <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-background border-border focus-within:ring-2 focus-within:ring-brand">
+                <CalendarIcon size={18} className="text-muted-foreground" />
                 <input
                   type="date"
                   required
-                  className="w-full outline-none text-sm text-neutral-800"
+                  className="w-full outline-none text-sm bg-transparent text-foreground"
                   value={fechaDesde}
                   onChange={(e) => setFechaDesde(e.target.value)}
                 />
@@ -152,13 +152,13 @@ export default function AuditoriaPage() {
             </div>
 
             <div className="w-full md:w-1/4">
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Hasta</label>
-              <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-white focus-within:ring-2 focus-within:ring-brand">
-                <CalendarIcon size={18} className="text-neutral-400" />
+              <label className="form-label">Hasta</label>
+              <div className="flex items-center gap-2 border rounded-lg px-3 py-2 bg-background border-border focus-within:ring-2 focus-within:ring-brand">
+                <CalendarIcon size={18} className="text-muted-foreground" />
                 <input
                   type="date"
                   required
-                  className="w-full outline-none text-sm text-neutral-800"
+                  className="w-full outline-none text-sm bg-transparent text-foreground"
                   value={fechaHasta}
                   onChange={(e) => setFechaHasta(e.target.value)}
                 />
@@ -166,13 +166,13 @@ export default function AuditoriaPage() {
             </div>
 
             <div className="w-full md:w-1/3">
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Tipo de Evento</label>
+              <label className="form-label">Tipo de Evento</label>
               <div className="relative">
-                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" size={18} />
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
                 <input
                   type="text"
                   placeholder="Ej: LOGIN, CREAR_USUARIO..."
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-brand outline-none text-sm text-neutral-800"
+                  className="form-input pl-10"
                   value={tipoEvento}
                   onChange={(e) => setTipoEvento(e.target.value)}
                 />
@@ -192,7 +192,7 @@ export default function AuditoriaPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-neutral-900 text-white border-b border-neutral-700">
+              <tr className="bg-neutral-900 dark:bg-slate-950 text-white border-b border-neutral-700 dark:border-slate-800">
                 <th className="p-4 font-semibold text-sm rounded-tl-lg">Timestamp</th>
                 <th className="p-4 font-semibold text-sm">Evento</th>
                 <th className="p-4 font-semibold text-sm">Usuario / Rol</th>
@@ -200,42 +200,42 @@ export default function AuditoriaPage() {
                 <th className="p-4 font-semibold text-sm rounded-tr-lg">IP / Detalles</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-200">
+            <tbody className="divide-y divide-neutral-200 dark:divide-slate-800">
               {loading ? (
                 <tr>
                   <td colSpan={5} className="p-10 text-center">
                     <Spinner size="md" className="mx-auto" />
-                    <p className="mt-2 text-xs text-neutral-500">Recuperando logs del sistema...</p>
+                    <p className="mt-2 text-xs text-muted-foreground">Recuperando logs del sistema...</p>
                   </td>
                 </tr>
               ) : logs.length > 0 ? (
                 logs.map((log) => {
                   const { fecha, hora } = formatearFechaHora(log.timestamp);
                   return (
-                    <tr key={log.id} className="hover:bg-neutral-50 transition-colors">
+                    <tr key={log.id} className="hover:bg-neutral-50 dark:hover:bg-slate-800/60 transition-colors">
                       <td className="p-4">
-                        <div className="text-sm font-medium text-neutral-800">{fecha}</div>
-                        <div className="text-xs text-neutral-500 font-mono">{hora}</div>
+                        <div className="text-sm font-medium text-foreground">{fecha}</div>
+                        <div className="text-xs text-muted-foreground font-mono">{hora}</div>
                       </td>
                       <td className="p-4">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-neutral-100 text-neutral-800 border border-neutral-200">
-                          <Activity size={12} className="text-brand" />
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-neutral-100 dark:bg-slate-800 text-neutral-800 dark:text-slate-200 border border-neutral-200 dark:border-slate-700">
+                          <Activity size={12} className="text-brand dark:text-brand-light" />
                           {log.tipo_evento}
                         </span>
                       </td>
                       <td className="p-4">
-                        <div className="text-sm text-neutral-800 font-medium">ID: {log.usuario_id || 'Sistema'}</div>
-                        <div className="text-xs text-neutral-500">{log.rol_usuario || 'N/A'}</div>
+                        <div className="text-sm text-foreground font-medium">ID: {log.usuario_id || 'Sistema'}</div>
+                        <div className="text-xs text-muted-foreground">{log.rol_usuario || 'N/A'}</div>
                       </td>
-                      <td className="p-4 text-sm text-neutral-600 max-w-xs">
+                      <td className="p-4 text-sm text-neutral-600 dark:text-slate-300 max-w-xs">
                         {log.descripcion}
                       </td>
                       <td className="p-4">
-                        <div className="text-xs font-mono text-neutral-500 mb-1">IP: {log.ip_address || '127.0.0.1'}</div>
+                        <div className="text-xs font-mono text-muted-foreground mb-1">IP: {log.ip_address || '127.0.0.1'}</div>
                         {log.detalles && Object.keys(log.detalles).length > 0 && (
-                          <details className="text-xs text-neutral-400 cursor-pointer">
-                            <summary className="hover:text-brand">Ver JSON</summary>
-                            <pre className="mt-2 p-2 bg-neutral-50 rounded border border-neutral-200 overflow-x-auto text-[10px] text-neutral-600">
+                          <details className="text-xs text-muted-foreground cursor-pointer">
+                            <summary className="hover:text-brand dark:hover:text-brand-light">Ver JSON</summary>
+                            <pre className="mt-2 p-2 bg-neutral-50 dark:bg-slate-800/60 rounded border border-neutral-200 dark:border-slate-700 overflow-x-auto text-[10px] text-neutral-600 dark:text-slate-300">
                               {JSON.stringify(log.detalles, null, 2)}
                             </pre>
                           </details>
@@ -246,7 +246,7 @@ export default function AuditoriaPage() {
                 })
               ) : (
                 <tr>
-                  <td colSpan={5} className="p-10 text-center text-sm text-neutral-500">
+                  <td colSpan={5} className="p-10 text-center text-sm text-muted-foreground">
                     No se encontraron registros de auditoría con los filtros aplicados.
                   </td>
                 </tr>
@@ -254,10 +254,10 @@ export default function AuditoriaPage() {
             </tbody>
           </table>
         </div>
-        
+
         {/* Paginación */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-neutral-200 bg-neutral-50">
-          <span className="text-sm text-neutral-500">Página {page}</span>
+        <div className="flex items-center justify-between px-6 py-4 border-t border-neutral-200 dark:border-slate-800 bg-neutral-50 dark:bg-slate-800/40">
+          <span className="text-sm text-muted-foreground">Página {page}</span>
           <div className="flex gap-2">
             <Button 
               variant="outline" 

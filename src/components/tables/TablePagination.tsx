@@ -20,8 +20,8 @@ export function TablePagination({
   const to   = Math.min(currentPage * pageSize, totalItems);
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-200">
-      <p className="text-xs text-neutral-500">
+    <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-200 dark:border-slate-800">
+      <p className="text-xs text-neutral-500 dark:text-slate-400">
         Mostrando <span className="font-medium">{from}–{to}</span> de{" "}
         <span className="font-medium">{totalItems}</span> resultados
       </p>
@@ -35,7 +35,7 @@ export function TablePagination({
         >
           Anterior
         </Button>
-        <span className="text-xs text-neutral-500 px-2">
+        <span className="text-xs text-neutral-500 dark:text-slate-400 px-2">
           {currentPage} / {totalPages}
         </span>
         <Button

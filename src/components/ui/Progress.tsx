@@ -67,10 +67,10 @@ export function Progress({
       {(label || showLabel) && (
         <div className="flex items-center justify-between mb-1">
           {label && (
-            <span className="text-xs text-neutral-500 font-medium">{label}</span>
+            <span className="text-xs text-neutral-500 dark:text-slate-400 font-medium">{label}</span>
           )}
           {showLabel && (
-            <span className="text-xs font-semibold text-neutral-700">
+            <span className="text-xs font-semibold text-neutral-700 dark:text-slate-300">
               {Math.round(pct)}%
             </span>
           )}
@@ -84,7 +84,7 @@ export function Progress({
         aria-valuemin={0}
         aria-valuemax={max}
         className={cn(
-          "w-full rounded-full bg-neutral-200 overflow-hidden",
+          "w-full rounded-full bg-neutral-200 dark:bg-slate-700 overflow-hidden",
           trackSizes[size]
         )}
       >

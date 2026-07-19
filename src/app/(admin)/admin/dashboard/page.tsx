@@ -299,7 +299,7 @@ export default function AdminDashboardPage() {
                       `En ${diasDiferencia} días`;
                     return (
                       <div key={evento.id} className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-600">
+                        <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0 text-amber-600 dark:text-amber-400">
                           <Calendar size={18} />
                         </div>
                         <div className="min-w-0">

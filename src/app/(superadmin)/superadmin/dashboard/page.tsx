@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui";
 import { empresaService } from "@/services/empresa.service";
 import { formatDate } from "@/utils/format";
 import { ESTADOS_EMPRESA } from "@/utils/constants";
-import { Building2, Users, CreditCard, TrendingUp } from "lucide-react";
+import { Building2, Users, CreditCard, TrendingUp, ShieldCheck } from "lucide-react";
 import type { Column } from "@/components/tables/DataTable";
 import type { EmpresaListItem } from "@/types/empresa.types";
 
@@ -107,8 +107,12 @@ export default function SuperadminDashboardPage() {
                         description="Monitor de operaciones críticas"
                     />
                     <CardBody>
-                        <div className="text-center py-10 text-gray-500 text-sm">
-                            No hay alertas críticas en el sistema
+                        <div className="flex flex-col items-center justify-center py-10 text-center gap-2">
+                            <div className="w-10 h-10 rounded-full bg-success-light dark:bg-success/10 flex items-center justify-center">
+                                <ShieldCheck className="w-5 h-5 text-success" />
+                            </div>
+                            <p className="text-sm font-medium text-foreground">Todo en orden</p>
+                            <p className="text-xs text-muted-foreground">No hay alertas críticas en el sistema</p>
                         </div>
                     </CardBody>
                 </Card>
